@@ -40,6 +40,7 @@ const Plan = () => {
     const [loading, setLoading] = useState(true);
     const [msg, setMsg] = useState({ text: '', type: '' });
     const [buying, setBuying] = useState(null);
+    const [activeTab, setActiveTab] = useState('Standard');
     const { user, setUser } = useContext(AuthContext);
 
     useEffect(() => { fetchPlans(); }, []);
@@ -80,6 +81,40 @@ const Plan = () => {
                 </div>
             </div>
 
+            {/* Tab Navigation */}
+            <div style={{
+                display: 'flex',
+                background: '#f1f5f9',
+                borderRadius: '16px',
+                padding: '4px',
+                marginBottom: '24px',
+                gap: '4px'
+            }}>
+                {['Standard', 'VIP'].map((tab) => (
+                    <button
+                        key={tab}
+                        onClick={() => setActiveTab(tab)}
+                        style={{
+                            flex: 1,
+                            padding: '12px 0',
+                            borderRadius: '12px',
+                            fontSize: '12px',
+                            fontWeight: 800,
+                            textTransform: 'uppercase',
+                            letterSpacing: '0.1em',
+                            border: 'none',
+                            cursor: 'pointer',
+                            transition: 'all 0.2s',
+                            background: activeTab === tab ? 'white' : 'transparent',
+                            color: activeTab === tab ? '#2563eb' : '#64748b',
+                            boxShadow: activeTab === tab ? '0 4px 12px rgba(0,0,0,0.05)' : 'none',
+                        }}
+                    >
+                        {tab} Plans
+                    </button>
+                ))}
+            </div>
+
             {/* Notification */}
             {msg.text && (
                 <div style={{
@@ -112,8 +147,12 @@ const Plan = () => {
 
             {/* Plan Cards */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', paddingBottom: '24px' }}>
-                {plans.map((plan, index) => {
-                    const theme = TIER_THEMES[index % TIER_THEMES.length];
+                {plans
+                    .map((plan, index) => ({ ...plan, originalIndex: index }))
+                    .filter((_, index) => activeTab === 'Standard' ? index < 4 : index >= 4)
+                    .map((plan) => {
+                        const index = plan.originalIndex;
+                        const theme = TIER_THEMES[index % TIER_THEMES.length];
                     const roiPercent = ((plan.daily / plan.amount) * 100).toFixed(1);
                     const totalProfit = plan.daily * 99;
 
@@ -195,8 +234,8 @@ const Plan = () => {
 
                             {/* CTA Button */}
                             <button
-                                onClick={() => handleBuy(index)}
-                                disabled={buying === index}
+                                onClick={() => handleBuy(plan.originalIndex)}
+                                disabled={buying === plan.originalIndex}
                                 style={{
                                     width: '100%', height: '50px', borderRadius: '14px',
                                     background: 'rgba(255,255,255,0.96)', border: 'none',
