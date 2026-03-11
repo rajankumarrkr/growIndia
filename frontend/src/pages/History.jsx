@@ -40,11 +40,7 @@ const History = () => {
 
     return (
         <Layout title="Operational Lore">
-            <div className="mb-10 px-2 flex justify-between items-end">
-                <div>
-                    <h1 className="text-3xl font-black text-slate-900 tracking-tight">Activity Log</h1>
-                    <p className="text-label mt-1">Full transaction and settlement trace</p>
-                </div>
+            <div className="mb-6 px-2 flex justify-end items-center">
                 <button className="w-10 h-10 bg-slate-50 rounded-xl flex items-center justify-center text-slate-400">
                     <Filter size={18} />
                 </button>

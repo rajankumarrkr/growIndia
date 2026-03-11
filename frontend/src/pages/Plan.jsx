@@ -69,14 +69,11 @@ const Plan = () => {
 
     return (
         <Layout title="Investment Plans">
-            {/* Header */}
-            <div className="mb-6 flex justify-between items-center">
-                <div>
-                    <h1 className="text-2xl font-black text-slate-900 tracking-tight">Investment Plans</h1>
-                    <p style={{ fontSize: '11px', fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.12em', marginTop: '4px' }}>
-                        Select a plan to earn daily
-                    </p>
-                </div>
+            {/* Balance and Info bar */}
+            <div className="mb-6 flex justify-between items-end">
+                <p style={{ fontSize: '11px', fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.12em' }}>
+                    Select a plan to earn daily
+                </p>
                 <div className="text-right">
                     <p style={{ fontSize: '10px', fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '2px' }}>Balance</p>
                     <p className="text-xl font-black text-royal-blue">&#8377;{user?.walletBalance?.toLocaleString() || '0'}</p>
