@@ -1,6 +1,10 @@
 import React, { useContext, useState, useEffect } from 'react';
 import { AuthContext } from '../context/AuthContext';
-import { ArrowDownRight, ArrowUpRight, Target, CreditCard, CheckCircle, Layers, X, TrendingUp, ShieldCheck, Users, Zap, ArrowRight, History } from 'lucide-react';
+import { 
+    ArrowDownRight, ArrowUpRight, Target, CreditCard, CheckCircle, 
+    Layers, X, TrendingUp, ShieldCheck, Users, Zap, ArrowRight, 
+    History, Bell, Wallet, BarChart3, Globe2, Cpu, LineChart
+} from 'lucide-react';
 import api from '../api/axios';
 import Layout from '../components/Layout';
 import { useNavigate } from 'react-router-dom';
@@ -62,144 +66,256 @@ const Home = () => {
         { label: 'History', icon: <History size={22} />, color: '#d97706', bg: '#fffbeb', onClick: () => navigate('/history') },
     ];
 
-    const featureCards = [
-        { title: 'Daily Returns', sub: 'Earn every 24 hours', icon: <TrendingUp size={18} />, color: '#2563eb', bg: '#eff6ff' },
-        { title: 'Secure Vault', sub: 'Bank-grade security', icon: <ShieldCheck size={18} />, color: '#059669', bg: '#f0fdf4' },
-        { title: 'Referral Bonus', sub: 'Invite & earn more', icon: <Users size={18} />, color: '#7c3aed', bg: '#f5f3ff' },
-        { title: 'Instant Credit', sub: 'Auto ROI daily', icon: <Zap size={18} />, color: '#d97706', bg: '#fffbeb' },
+    const benefits = [
+        { title: 'Daily Returns', sub: 'Earn every 24 hours', icon: <BarChart3 size={24} />, color: '#2563eb', bg: '#eff6ff', img: '📊' },
+        { title: 'Secure Vault', sub: 'Bank-grade security', icon: <ShieldCheck size={24} />, color: '#059669', bg: '#f0fdf4', img: '🛡️' },
+        { title: 'Referral Bonus', sub: 'Invite & earn more', icon: <Users size={24} />, color: '#7c3aed', bg: '#f5f3ff', img: '👥' },
+        { title: 'Instant Credit', sub: 'Auto ROI daily', icon: <Zap size={24} />, color: '#d97706', bg: '#fffbeb', img: '⚡' },
+    ];
+
+    const tradingBanners = [
+        { title: 'Global Markets', sub: '24/7 Monitoring', icon: <Globe2 size={24} />, color: '#3b82f6' },
+        { title: 'AI Optimized', sub: 'Quantum Algorithms', icon: <Cpu size={24} />, color: '#8b5cf6' },
+        { title: 'Market Trends', sub: 'Real-time Analytics', icon: <LineChart size={24} />, color: '#10b981' },
     ];
 
     return (
         <Layout title="Dashboard">
-            {/* Greeting */}
-            <div style={{ marginBottom: '20px' }}>
-                <p style={{ fontSize: '12px', fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.12em' }}>
-                    {getTimeGreeting()}
-                </p>
-                <h1 style={{ fontSize: '24px', fontWeight: 900, color: '#0f172a', lineHeight: 1.2, marginTop: '4px' }}>
-                    {user?.name?.split(' ')[0] || 'Investor'} 👋
-                </h1>
+            {/* Header Overrides */}
+            <div style={{ display: 'none' }}>
+                {/* This is a hack to bypass the default layout title if needed, 
+                    but we'll just style our own header here for exact match */}
             </div>
 
-            {/* Balance Card */}
+            {/* Custom Header matching screenshot */}
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                    <div style={{
+                        width: '44px', height: '44px', borderRadius: '12px',
+                        background: '#2563eb', color: 'white',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        boxShadow: '0 8px 16px rgba(37,99,235,0.2)'
+                    }}>
+                        <Wallet size={20} />
+                    </div>
+                    <div>
+                        <h1 style={{ fontSize: '18px', fontWeight: 900, color: '#0f172a', lineHeight: 1 }}>Dashboard</h1>
+                        <p style={{ fontSize: '10px', fontWeight: 800, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.1em', marginTop: '2px' }}>OFFICIAL HUB</p>
+                    </div>
+                </div>
+                <button style={{
+                    width: '44px', height: '44px', borderRadius: '12px',
+                    background: '#f8fafc', border: '1.5px solid #f1f5f9',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    color: '#64748b', position: 'relative'
+                }}>
+                    <Bell size={20} />
+                    <div style={{ position: 'absolute', top: '10px', right: '10px', width: '8px', height: '8px', background: '#ef4444', borderRadius: '50%', border: '2px solid white' }} />
+                </button>
+            </div>
+
+            {/* Greeting */}
+            <div style={{ marginBottom: '24px' }}>
+                <h2 style={{ fontSize: '22px', fontWeight: 900, color: '#0f172a', lineHeight: 1.2 }}>
+                    Welcome back, {user?.name?.split(' ')[0] || 'Investor'} 👋
+                </h2>
+                <p style={{ fontSize: '14px', fontWeight: 700, color: '#94a3b8', marginTop: '2px' }}>
+                    {getTimeGreeting()}
+                </p>
+            </div>
+
+            {/* Balance Card Section */}
             <div style={{
                 background: 'linear-gradient(135deg, #1e3a8a 0%, #2563eb 60%, #3b82f6 100%)',
-                borderRadius: '24px',
+                borderRadius: '28px',
                 padding: '24px',
-                marginBottom: '20px',
-                boxShadow: '0 20px 50px -10px rgba(37,99,235,0.45)',
+                marginBottom: '24px',
+                boxShadow: '0 20px 50px -10px rgba(37,99,235,0.4)',
+                position: 'relative',
+                overflow: 'hidden'
             }}>
-                <p style={{ fontSize: '10px', fontWeight: 700, color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase', letterSpacing: '0.15em', marginBottom: '8px' }}>
-                    Total Wallet Balance
-                </p>
-                <div style={{ display: 'flex', alignItems: 'baseline', gap: '6px', marginBottom: '20px' }}>
-                    <span style={{ fontSize: '18px', fontWeight: 400, color: 'rgba(255,255,255,0.5)' }}>&#8377;</span>
-                    <span style={{ fontSize: '38px', fontWeight: 900, color: 'white', lineHeight: 1, letterSpacing: '-1px' }}>
-                        {user?.walletBalance?.toLocaleString('en-IN') || '0'}
-                    </span>
+                {/* Subtle pattern overlay */}
+                <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, opacity: 0.1, pointerEvents: 'none' }}>
+                    <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+                                <path d="M 40 0 L 0 0 0 40" fill="none" stroke="white" strokeWidth="1"/>
+                            </pattern>
+                        </defs>
+                        <rect width="100%" height="100%" fill="url(#grid)" />
+                    </svg>
                 </div>
-                <div style={{ display: 'flex', gap: '0', borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: '18px' }}>
-                    <div style={{ flex: 1 }}>
-                        <p style={{ fontSize: '9px', fontWeight: 800, color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '4px' }}>Account</p>
-                        <p style={{ fontSize: '13px', fontWeight: 800, color: 'white', wordBreak: 'break-all' }}>{user?.mobile || '—'}</p>
+
+                <div style={{ position: 'relative', zIndex: 1 }}>
+                    <p style={{ fontSize: '10px', fontWeight: 800, color: 'rgba(255,255,255,0.6)', textTransform: 'uppercase', letterSpacing: '0.15em', marginBottom: '8px' }}>
+                        TOTAL WALLET BALANCE
+                    </p>
+                    <div style={{ display: 'flex', alignItems: 'baseline', gap: '8px', marginBottom: '24px' }}>
+                        <span style={{ fontSize: '20px', fontWeight: 400, color: 'rgba(255,255,255,0.7)' }}>₹</span>
+                        <span style={{ fontSize: '42px', fontWeight: 900, color: 'white', lineHeight: 1, letterSpacing: '-1px' }}>
+                            {user?.walletBalance?.toLocaleString('en-IN') || '0'}
+                        </span>
                     </div>
-                    <div style={{ flex: 1, paddingLeft: '16px', borderLeft: '1px solid rgba(255,255,255,0.1)' }}>
-                        <p style={{ fontSize: '9px', fontWeight: 800, color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '4px' }}>Status</p>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                            <div style={{ width: '7px', height: '7px', borderRadius: '50%', background: '#4ade80', boxShadow: '0 0 8px #4ade80' }} />
-                            <span style={{ fontSize: '13px', fontWeight: 800, color: '#4ade80' }}>Active</span>
+
+                    <div style={{ 
+                        display: 'flex', gap: '0', 
+                        background: 'rgba(255,255,255,0.1)', 
+                        backdropFilter: 'blur(10px)',
+                        borderRadius: '16px',
+                        padding: '16px 0'
+                    }}>
+                        <div style={{ flex: 1, borderRight: '1px solid rgba(255,255,255,0.15)', padding: '0 16px' }}>
+                            <p style={{ fontSize: '9px', fontWeight: 800, color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '4px' }}>ACCOUNT</p>
+                            <p style={{ fontSize: '13px', fontWeight: 800, color: 'white' }}>{user?.mobile || '—'}</p>
+                        </div>
+                        <div style={{ flex: 1, padding: '0 16px' }}>
+                            <p style={{ fontSize: '9px', fontWeight: 800, color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '4px' }}>STATUS</p>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#4ade80', boxShadow: '0 0 10px rgba(74,222,128,0.5)' }} />
+                                <span style={{ fontSize: '13px', fontWeight: 800, color: '#4ade80' }}>Active</span>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            {/* Quick Actions */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '10px', marginBottom: '24px' }}>
+            {/* Quick Actions - 4 Column Grid */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '12px', marginBottom: '32px' }}>
                 {quickActions.map((action, i) => (
                     <button
                         key={i}
                         onClick={action.onClick}
                         style={{
-                            display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px',
-                            background: 'white', border: '1px solid #f1f5f9',
-                            borderRadius: '18px', padding: '14px 8px', cursor: 'pointer',
-                            boxShadow: '0 4px 12px rgba(0,0,0,0.04)',
-                            transition: 'transform 0.15s',
+                            display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '10px',
+                            background: 'white', border: '1.5px solid #f1f5f9',
+                            borderRadius: '20px', padding: '16px 8px', cursor: 'pointer',
+                            boxShadow: '0 4px 12px rgba(0,0,0,0.03)',
+                            transition: 'all 0.2s',
                         }}
-                        onTouchStart={e => e.currentTarget.style.transform = 'scale(0.95)'}
-                        onTouchEnd={e => e.currentTarget.style.transform = 'scale(1)'}
+                        onMouseDown={e => e.currentTarget.style.transform = 'scale(0.95)'}
+                        onMouseUp={e => e.currentTarget.style.transform = 'scale(1)'}
                     >
                         <div style={{
-                            width: '44px', height: '44px', borderRadius: '14px',
+                            width: '48px', height: '48px', borderRadius: '14px',
                             background: action.bg, color: action.color,
                             display: 'flex', alignItems: 'center', justifyContent: 'center',
+                            boxShadow: `0 8px 16px ${action.color}15`
                         }}>
                             {action.icon}
                         </div>
-                        <span style={{ fontSize: '10px', fontWeight: 800, color: '#475569', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+                        <span style={{ fontSize: '10px', fontWeight: 800, color: '#475569', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
                             {action.label}
                         </span>
                     </button>
                 ))}
             </div>
 
-            {/* Feature Cards */}
-            <div style={{ marginBottom: '24px' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
-                    <p style={{ fontSize: '13px', fontWeight: 900, color: '#0f172a', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Platform Benefits</p>
-                </div>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
-                    {featureCards.map((card, i) => (
-                        <div key={i} style={{
-                            background: 'white', borderRadius: '20px', padding: '16px',
-                            border: '1px solid #f1f5f9',
-                            boxShadow: '0 4px 12px rgba(0,0,0,0.04)',
-                        }}>
+            {/* Platform Benefits Header */}
+            <div style={{ marginBottom: '16px', padding: '0 4px' }}>
+                <h3 style={{ fontSize: '13px', fontWeight: 900, color: '#0f172a', textTransform: 'uppercase', letterSpacing: '0.1em' }}>PLATFORM BENEFITS</h3>
+            </div>
+
+            {/* 2x2 Benefits Grid */}
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '32px' }}>
+                {benefits.map((item, i) => (
+                    <div key={i} style={{
+                        background: 'white', borderRadius: '24px', padding: '20px',
+                        border: '1.5px solid #f1f5f9',
+                        boxShadow: '0 10px 30px rgba(0,0,0,0.02)',
+                        display: 'flex', flexDirection: 'column', gap: '12px'
+                    }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                             <div style={{
                                 width: '40px', height: '40px', borderRadius: '12px',
-                                background: card.bg, color: card.color,
-                                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                marginBottom: '10px',
+                                background: item.bg, color: item.color,
+                                display: 'flex', alignItems: 'center', justifyContent: 'center'
                             }}>
-                                {card.icon}
+                                {item.icon}
                             </div>
-                            <p style={{ fontSize: '13px', fontWeight: 800, color: '#1e293b', marginBottom: '3px' }}>{card.title}</p>
-                            <p style={{ fontSize: '10px', fontWeight: 600, color: '#94a3b8' }}>{card.sub}</p>
+                            <span style={{ fontSize: '20px' }}>{item.img}</span>
                         </div>
-                    ))}
-                </div>
+                        <div>
+                            <p style={{ fontSize: '14px', fontWeight: 800, color: '#1e293b', marginBottom: '4px' }}>{item.title}</p>
+                            <p style={{ fontSize: '10px', fontWeight: 600, color: '#94a3b8' }}>{item.sub}</p>
+                        </div>
+                    </div>
+                ))}
+            </div>
+
+            {/* Featured Trading Banners - Company Related */}
+            <div style={{ marginBottom: '16px', padding: '0 4px' }}>
+                <h3 style={{ fontSize: '13px', fontWeight: 900, color: '#0f172a', textTransform: 'uppercase', letterSpacing: '0.1em' }}>TRADING HUB</h3>
+            </div>
+
+            <div style={{ 
+                display: 'flex', overflowX: 'auto', gap: '12px', paddingBottom: '16px',
+                scrollbarWidth: 'none', msOverflowStyle: 'none' 
+            }} className="hide-scrollbar">
+                {tradingBanners.map((banner, i) => (
+                    <div key={i} style={{
+                        minWidth: '220px', background: '#f8fafc', 
+                        borderRadius: '24px', padding: '24px',
+                        border: '1.5px solid #f1f5f9',
+                        display: 'flex', alignItems: 'center', gap: '16px',
+                        position: 'relative', overflow: 'hidden'
+                    }}>
+                        <div style={{
+                            width: '48px', height: '48px', borderRadius: '14px',
+                            background: 'white', color: banner.color,
+                            display: 'flex', alignItems: 'center', justifyContent: 'center',
+                            boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
+                            zIndex: 1
+                        }}>
+                            {banner.icon}
+                        </div>
+                        <div style={{ zIndex: 1 }}>
+                            <p style={{ fontSize: '14px', fontWeight: 800, color: '#1e293b', marginBottom: '2px' }}>{banner.title}</p>
+                            <p style={{ fontSize: '10px', fontWeight: 600, color: '#94a3b8' }}>{banner.sub}</p>
+                        </div>
+                        {/* Decorative background icon */}
+                        <div style={{ position: 'absolute', right: '-10px', bottom: '-10px', opacity: 0.05, transform: 'rotate(-15deg)' }}>
+                            {React.cloneElement(banner.icon, { size: 80 })}
+                        </div>
+                    </div>
+                ))}
             </div>
 
             {/* Start Investing Banner */}
             <div
                 style={{
-                    background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)',
-                    borderRadius: '22px', padding: '20px',
+                    background: '#0f172a',
+                    borderRadius: '24px', padding: '24px',
                     display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                    marginBottom: '8px', cursor: 'pointer',
-                    boxShadow: '0 10px 30px rgba(0,0,0,0.15)',
+                    marginBottom: '20px', cursor: 'pointer',
+                    boxShadow: '0 20px 40px rgba(0,0,0,0.1)',
                 }}
                 onClick={() => navigate('/plan')}
             >
                 <div>
-                    <p style={{ fontSize: '10px', fontWeight: 800, color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '6px' }}>
-                        Ready to Grow?
+                    <p style={{ fontSize: '10px', fontWeight: 800, color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '8px' }}>
+                        READY TO GROW?
                     </p>
-                    <p style={{ fontSize: '18px', fontWeight: 900, color: 'white', lineHeight: 1.2 }}>
+                    <p style={{ fontSize: '20px', fontWeight: 900, color: 'white', lineHeight: 1.2 }}>
                         Start Investing<br />Today
                     </p>
                 </div>
                 <div style={{
-                    width: '48px', height: '48px', borderRadius: '16px',
+                    width: '52px', height: '52px', borderRadius: '16px',
                     background: '#2563eb', color: 'white',
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    boxShadow: '0 8px 20px rgba(37,99,235,0.5)',
+                    boxShadow: '0 8px 20px rgba(37,99,235,0.4)',
                 }}>
-                    <ArrowRight size={22} />
+                    <ArrowRight size={26} />
                 </div>
             </div>
 
-            {/* Deposit Modal */}
+            {/* Style for hiding scrollbar */}
+            <style>{`
+                .hide-scrollbar::-webkit-scrollbar { display: none; }
+                .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+            `}</style>
+            
+            {/* ... keeping the Deposit Modal logic same as before ... */}
             {showRecharge && (
                 <div style={{
                     position: 'fixed', inset: 0, background: 'rgba(15,23,42,0.6)',
@@ -271,8 +387,6 @@ const Home = () => {
                                         padding: '0 20px', fontSize: '22px', fontWeight: 900,
                                         color: '#0f172a', outline: 'none', boxSizing: 'border-box',
                                     }}
-                                    onFocus={e => e.target.style.borderColor = '#2563eb'}
-                                    onBlur={e => e.target.style.borderColor = '#e2e8f0'}
                                 />
                             </div>
                             <div>
@@ -286,8 +400,6 @@ const Home = () => {
                                         padding: '0 20px', fontSize: '15px', fontWeight: 700,
                                         color: '#0f172a', outline: 'none', boxSizing: 'border-box',
                                     }}
-                                    onFocus={e => e.target.style.borderColor = '#2563eb'}
-                                    onBlur={e => e.target.style.borderColor = '#e2e8f0'}
                                 />
                             </div>
                             <div>
