@@ -35,13 +35,27 @@ const bootstrapAdmin = async () => {
     }
 };
 
-mongoose.connect(process.env.MONGODB_URI)
-    .then(() => {
-        console.log('MongoDB Connected');
-        bootstrapAdmin();
-        initCron(); // Initialize ROI Cron
-    })
-    .catch(err => console.log(err));
+// Database Connection and Server Start
+const startServer = async () => {
+    try {
+        console.log('Connecting to MongoDB...');
+        await mongoose.connect(process.env.MONGODB_URI);
+        console.log('MongoDB Connected successfully');
 
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+        await bootstrapAdmin();
+        initCron(); // Initialize ROI Cron
+
+        const PORT = process.env.PORT || 5000;
+        app.listen(PORT, () => {
+            console.log(`Server is running on port ${PORT}`);
+            console.log('Ready to handle requests');
+        });
+    } catch (err) {
+        console.error('Critical Database Connection Error:');
+        console.error(err.message);
+        console.error('Check your MONGODB_URI and IP Whitelist settings.');
+        process.exit(1);
+    }
+};
+
+startServer();
