@@ -1,8 +1,9 @@
 import React, { useContext, useState } from 'react';
 import Layout from '../components/Layout';
 import { AuthContext } from '../context/AuthContext';
-import { User, Shield, CreditCard, History, Headphones, LogOut, ChevronRight, Settings, Banknote, ShieldCheck, Mail, MapPin, Activity, Wallet, Smartphone, Landmark, X } from 'lucide-react';
+import { User, Shield, CreditCard, History, Headphones, LogOut, ChevronRight, Settings, Banknote, ShieldCheck, Mail, MapPin, Activity, Wallet, Smartphone, Landmark, X, Zap } from 'lucide-react';
 import api from '../api/axios';
+import { Link } from 'react-router-dom';
 
 const Profile = () => {
     const { user, logout, setUser } = useContext(AuthContext);
@@ -25,67 +26,51 @@ const Profile = () => {
 
     const menuSections = [
         {
-            title: 'Financial Assets',
+            title: 'Financial Modules',
             items: [
-                { name: 'Transaction History', icon: <History className="text-royal-blue" />, path: '#' },
-                { name: 'Withdrawal Repository', icon: <Banknote className="text-electric-azure" />, path: '#' },
-                { name: 'Linked Bank Account', icon: <Landmark className="text-royal-blue" />, action: () => setShowBankModal(true) },
+                { name: 'Active Nodes', icon: <Activity className="text-royal-blue" />, path: '/investments' },
+                { name: 'Wallet Hub', icon: <Wallet className="text-slate-600" />, path: '/wallet' },
+                { name: 'Activity Log', icon: <History className="text-slate-400" />, path: '/history' },
+                { name: 'Bank Registry', icon: <Landmark className="text-royal-blue" />, action: () => setShowBankModal(true) },
             ]
         },
         {
-            title: 'Member Support',
+            title: 'Ecosystem',
             items: [
-                { name: 'Consortium Hotline', icon: <Headphones className="text-deep-sapphire" />, path: 'https://t.me/growindia' },
-                { name: 'Protocol Updates', icon: <Activity className="text-midnight-cobalt" />, path: '#' },
+                { name: 'Affiliate Hub', icon: <Zap className="text-amber-500" />, path: '/team' },
+                { name: 'Support Proxy', icon: <Headphones className="text-slate-400" />, path: 'https://t.me/growindia', external: true },
             ]
         }
     ];
 
     return (
-        <Layout>
-            <div className="mb-10">
-                <div className="flex items-center gap-2 mb-4 opacity-80">
-                    <User className="text-royal-blue" size={14} />
-                    <p className="text-[10px] font-black uppercase tracking-[0.3em] text-royal-blue/60">Console Access Layer</p>
-                </div>
-                <h1 className="text-4xl font-extrabold text-text-bright tracking-tight">Profile Dashboard</h1>
-            </div>
-
-            {/* Profile Hero Card */}
-            <div className="glass-card-blue !rounded-[3rem] p-10 relative overflow-hidden mb-12 group border-blue-50/50 !bg-white/80 shadow-2xl">
-                {/* Dynamic Background Glows */}
-                <div className="absolute top-[-20%] right-[-10%] w-80 h-80 bg-royal-blue/15 rounded-full blur-[100px] group-hover:bg-royal-blue/25 transition-all duration-1000"></div>
-                <div className="absolute bottom-[-20%] left-[-10%] w-72 h-72 bg-electric-azure/10 rounded-full blur-[100px] group-hover:bg-electric-azure/20 transition-all duration-1000" style={{ animationDelay: '1.2s' }}></div>
-
-                <div className="relative z-10 flex flex-col items-center">
-                    <div className="w-32 h-32 bg-white shadow-2xl rounded-[2.5rem] p-1.5 mb-8 relative group-hover:scale-105 transition-all duration-700">
-                        <div className="absolute inset-0 bg-gradient-to-tr from-royal-blue via-primary-indigo to-deep-sapphire rounded-[2.5rem] opacity-30 group-hover:opacity-50 transition-opacity"></div>
-                        <div className="relative w-full h-full bg-white rounded-[2rem] flex items-center justify-center border border-blue-50/50 overflow-hidden">
-                            <div className="absolute inset-0 bg-gradient-to-br from-black/5 to-transparent"></div>
-                            <User size={64} className="text-text-muted opacity-40 relative z-10" />
+        <Layout title="Account Command">
+            <div className="mb-10 px-2">
+                <div className="flex items-center justify-between mb-8">
+                    <div className="flex items-center gap-4">
+                        <div className="w-16 h-16 bg-slate-50 border border-slate-100 rounded-[2rem] flex items-center justify-center text-slate-300 relative">
+                            <User size={32} />
+                            <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-royal-blue rounded-xl border-4 border-white shadow-sm flex items-center justify-center">
+                                <ShieldCheck size={10} className="text-white" />
+                            </div>
                         </div>
-                        <div className="absolute -bottom-2 -right-2 w-10 h-10 bg-royal-blue rounded-2xl border-4 border-white shadow-[0_4px_15px_rgba(37,99,235,0.4)] flex items-center justify-center">
-                            <ShieldCheck size={22} className="text-white" />
+                        <div>
+                            <h1 className="text-2xl font-black text-slate-900 tracking-tight">{user?.name}</h1>
+                            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{user?.mobile}</p>
                         </div>
-                    </div>
-
-                    <h2 className="text-4xl font-black text-text-bright tracking-tight mb-4 uppercase">{user?.name}</h2>
-                    <div className="flex items-center gap-3 px-5 py-2 bg-white border border-blue-50/50 rounded-full shadow-md">
-                        <Smartphone size={16} className="text-royal-blue" />
-                        <span className="text-xs font-black text-text-bright tracking-[0.2em] uppercase opacity-60">{user?.mobile}</span>
                     </div>
                 </div>
 
-                <div className="grid grid-cols-2 mt-12 pt-10 border-t border-blue-50/50 gap-8 relative z-10">
-                    <div className="text-center group/bal">
-                        <p className="text-[10px] font-black uppercase text-text-muted mb-3 tracking-[0.3em] opacity-40 group-hover/bal:text-royal-blue transition-all">Available Liquidity</p>
-                        <p className="text-3xl font-black text-royal-blue tracking-tighter">₹{user?.walletBalance?.toLocaleString()}</p>
-                    </div>
-                    <div className="text-center border-l border-blue-50/50 group/stat">
-                        <p className="text-[10px] font-black uppercase text-text-muted mb-3 tracking-[0.3em] opacity-40 group-hover/stat:text-royal-blue transition-all">Node Integrity</p>
-                        <div className="inline-flex items-center gap-2 px-5 py-1.5 bg-blue-50 border border-blue-100/50 rounded-full">
-                            <div className="w-2 h-2 bg-royal-blue rounded-full shadow-[0_0_12px_#2563eb] animate-pulse"></div>
-                            <span className="text-[10px] font-black text-royal-blue uppercase tracking-[0.2em]">Active Protocol</span>
+                <div className="fintech-card bg-slate-900 !p-8 relative overflow-hidden group">
+                    <div className="absolute top-0 right-0 w-32 h-32 bg-royal-blue/20 rounded-full blur-3xl" />
+                    <div className="relative z-10 flex flex-col gap-6">
+                        <div>
+                            <p className="text-[9px] font-bold text-white/30 uppercase tracking-[0.3em] mb-1">Liquid Balance</p>
+                            <h2 className="text-3xl font-black text-white tracking-tight">₹{user?.walletBalance?.toLocaleString()}</h2>
+                        </div>
+                        <div className="flex items-center gap-2 px-3 py-1 bg-white/5 rounded-lg w-fit border border-white/5">
+                            <Activity size={10} className="text-royal-blue" />
+                            <span className="text-[9px] font-bold text-white/40 uppercase tracking-widest">Protocol Version 4.2.1 Stable</span>
                         </div>
                     </div>
                 </div>
@@ -93,92 +78,97 @@ const Profile = () => {
 
             {/* Navigation Sections */}
             {menuSections.map((section, idx) => (
-                <div key={idx} className="mb-10">
-                    <h4 className="text-[11px] font-black uppercase tracking-[0.4em] text-text-muted ml-8 mb-4 opacity-40">{section.title}</h4>
-                    <div className="glass-card-blue !rounded-[2.5rem] border-blue-50/50 !bg-white/80 overflow-hidden shadow-xl">
-                        {section.items.map((item, i) => (
-                            <button
-                                key={i}
-                                onClick={item.action}
-                                className={`w-full flex items-center justify-between p-7 hover:bg-white transition-all group ${i !== section.items.length - 1 ? 'border-b border-blue-50/50' : ''}`}
-                            >
-                                <div className="flex items-center gap-6">
-                                    <div className="bg-white w-14 h-14 rounded-2xl flex items-center justify-center border border-blue-50/50 shadow-sm group-hover:scale-110 group-hover:-rotate-3 transition-all duration-500">
-                                        {React.cloneElement(item.icon, { size: 24, strokeWidth: 2.5 })}
-                                    </div>
-                                    <div className="text-left">
-                                        <span className="font-black text-text-bright tracking-tight text-base mb-0.5 block">{item.name}</span>
-                                        <div className="flex items-center gap-1.5">
-                                            <div className="w-1 h-1 bg-royal-blue/20 rounded-full"></div>
-                                            <p className="text-[9px] font-black text-text-muted uppercase tracking-[0.2em] opacity-30">Protocol v{4.2 + i}.0-Prime</p>
+                <div key={idx} className="mb-8 overflow-hidden">
+                    <h4 className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-300 ml-4 mb-4">{section.title}</h4>
+                    <div className="fintech-card !p-0 overflow-hidden divide-y divide-slate-50">
+                        {section.items.map((item, i) => {
+                            const Content = () => (
+                                <div className="flex items-center justify-between p-5 group">
+                                    <div className="flex items-center gap-4">
+                                        <div className="w-10 h-10 bg-slate-50 rounded-xl flex items-center justify-center group-hover:bg-blue-50 group-hover:text-royal-blue transition-all">
+                                            {item.icon}
                                         </div>
+                                        <span className="text-sm font-black text-slate-700">{item.name}</span>
                                     </div>
+                                    <ChevronRight size={16} className="text-slate-200 group-hover:text-royal-blue group-hover:translate-x-1 transition-all" />
                                 </div>
-                                <div className="w-10 h-10 rounded-xl bg-blue-50/50 flex items-center justify-center text-royal-blue group-hover:text-white group-hover:bg-royal-blue transition-all group-hover:translate-x-1 shadow-sm">
-                                    <ChevronRight size={20} />
-                                </div>
-                            </button>
-                        ))}
+                            );
+
+                            return item.action ? (
+                                <button key={i} onClick={item.action} className="w-full text-left">
+                                    <Content />
+                                </button>
+                            ) : item.external ? (
+                                <a key={i} href={item.path} target="_blank" rel="noopener noreferrer">
+                                    <Content />
+                                </a>
+                            ) : (
+                                <Link key={i} to={item.path}>
+                                    <Content />
+                                </Link>
+                            );
+                        })}
                     </div>
                 </div>
             ))}
 
-            {/* Logout Action */}
             <button
                 onClick={logout}
-                className="w-full glass-card !rounded-2xl py-6 text-danger-rose font-bold text-xs uppercase tracking-[0.2em] flex items-center justify-center gap-3 border-danger-rose/10 bg-danger-rose/5 hover:bg-danger-rose/10 transition-all mb-12 shadow-premium"
+                className="w-full flex items-center justify-center gap-2 p-6 text-[10px] font-black uppercase tracking-[0.25em] text-red-400 hover:text-red-500 transition-colors mb-12"
             >
-                <LogOut size={20} /> Terminate Session
+                <LogOut size={16} /> Terminate Current Session
             </button>
 
-            {/* Bank Repository Modal - Light Mode */}
+            {/* Bank Repository Modal */}
             {showBankModal && (
-                <div className="fixed inset-0 bg-black/20 backdrop-blur-xl z-[200] flex items-end sm:items-center justify-center p-6">
-                    <div className="bg-white w-full max-w-md !rounded-[2.5rem] p-10 border-black/5 shadow-2xl animate-in fade-in slide-in-from-bottom-10 duration-500 relative overflow-hidden">
-                        <div className="absolute top-0 left-0 w-64 h-64 bg-royal-blue/10 rounded-full -translate-x-1/2 -translate-y-1/2 blur-[80px]"></div>
+                <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-[200] flex items-end justify-center">
+                    <div className="bg-white w-full max-w-xl rounded-t-[3rem] p-8 pb-12 shadow-2xl animate-in slide-in-from-bottom duration-500">
+                        <div className="w-12 h-1.5 bg-slate-100 rounded-full mx-auto mb-8" />
 
-                        <div className="flex justify-between items-start mb-10 relative z-10">
+                        <div className="flex justify-between items-center mb-10">
                             <div>
-                                <h2 className="text-2xl font-black text-text-bright tracking-tight mb-2 uppercase">Bank <span className="text-royal-blue">Registry</span></h2>
-                                <p className="text-[10px] font-black text-text-muted uppercase tracking-[0.3em] opacity-40">Settlement Portal</p>
+                                <h2 className="text-2xl font-black text-slate-900">Bank Registry</h2>
+                                <p className="text-label mt-1">Settlement node configuration</p>
                             </div>
-                            <button onClick={() => setShowBankModal(false)} className="w-10 h-10 flex items-center justify-center bg-blue-50/50 rounded-xl text-text-muted hover:bg-blue-100/50 transition-all">
+                            <button onClick={() => setShowBankModal(false)} className="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center text-slate-400">
                                 <X size={20} />
                             </button>
                         </div>
 
-                        <form onSubmit={handleBankUpdate} className="space-y-6 relative z-10">
+                        <form onSubmit={handleBankUpdate} className="space-y-6">
                             <div className="space-y-2">
+                                <label className="text-label ml-2">Holder Name</label>
                                 <input
                                     placeholder="Enter full name"
-                                    className="w-full bg-blue-50/30 border border-blue-50/50 rounded-2xl py-5 px-6 focus:border-royal-blue/30 outline-none text-sm font-black text-text-bright placeholder:text-text-muted/10 transition-all font-sans"
+                                    className="w-full h-15 bg-slate-50 border border-slate-100 rounded-2xl px-6 text-sm font-black text-slate-900 focus:bg-white focus:border-royal-blue/30 transition-all outline-none"
                                     value={bankData.holderName}
                                     onChange={(e) => setBankData({ ...bankData, holderName: e.target.value })}
                                     required
                                 />
                             </div>
                             <div className="space-y-2">
-                                <label className="text-[10px] uppercase font-bold text-text-muted ml-4 tracking-[0.2em] opacity-40">Numerical Chain (Account)</label>
+                                <label className="text-label ml-2">Account Number</label>
                                 <input
-                                    placeholder="Digit chain"
-                                    className="w-full bg-blue-50/30 border border-blue-50/50 rounded-2xl py-5 px-6 focus:border-royal-blue/30 outline-none text-sm font-black font-mono text-royal-blue placeholder:text-royal-blue/10 transition-all"
+                                    placeholder="Numerical chain"
+                                    className="w-full h-15 bg-slate-50 border border-slate-100 rounded-2xl px-6 text-sm font-black text-royal-blue font-mono tracking-widest focus:bg-white focus:border-royal-blue/30 transition-all outline-none"
                                     value={bankData.accountNumber}
                                     onChange={(e) => setBankData({ ...bankData, accountNumber: e.target.value })}
                                     required
                                 />
                             </div>
                             <div className="space-y-2">
-                                <label className="text-[10px] uppercase font-bold text-text-muted ml-4 tracking-[0.2em] opacity-40">Network Routing (IFSC)</label>
+                                <label className="text-label ml-2">IFSC Routing</label>
                                 <input
-                                    placeholder="IFSC code"
-                                    className="w-full bg-blue-50/30 border border-blue-50/50 rounded-2xl py-5 px-6 focus:border-royal-blue/30 outline-none text-sm font-black font-mono text-royal-blue uppercase placeholder:text-royal-blue/10 transition-all"
+                                    placeholder="Network code"
+                                    className="w-full h-15 bg-slate-50 border border-slate-100 rounded-2xl px-6 text-sm font-black text-royal-blue font-mono tracking-widest uppercase focus:bg-white focus:border-royal-blue/30 transition-all outline-none"
                                     value={bankData.ifsc}
                                     onChange={(e) => setBankData({ ...bankData, ifsc: e.target.value })}
                                     required
                                 />
                             </div>
-                            <button className="btn-primary w-full py-6 text-sm uppercase tracking-[0.3em] font-black shadow-indigo mt-4 !rounded-2xl !bg-gradient-to-r from-royal-blue to-deep-sapphire border-none">
-                                UPDATE CONSORTIUM REGISTRY
+
+                            <button className="btn-fintech btn-fintech-primary w-full mt-4 uppercase tracking-[0.2em] text-xs">
+                                Update Settlement Node
                             </button>
                         </form>
                     </div>

@@ -2,7 +2,7 @@ import React, { useEffect, useState, useContext } from 'react';
 import Layout from '../components/Layout';
 import api from '../api/axios';
 import { AuthContext } from '../context/AuthContext';
-import { ShoppingBag, Timer, TrendingUp, Gem, ChevronRight, Check, Award, Layers, Wallet } from 'lucide-react';
+import { ShoppingBag, Timer, TrendingUp, Gem, ChevronRight, Check, Award, Layers, Wallet, ArrowRight, Activity, Zap } from 'lucide-react';
 
 const Plan = () => {
     const [plans, setPlans] = useState([]);
@@ -36,112 +36,94 @@ const Plan = () => {
     };
 
     return (
-        <Layout>
-            <div className="mb-10">
-                <div className="flex items-center gap-2 mb-4 opacity-80">
-                    <Layers className="text-royal-blue" size={14} />
-                    <p className="text-[10px] font-black uppercase tracking-[0.3em] text-royal-blue/60">Portfolio Expansion Nexus</p>
+        <Layout title="Investment Tiers">
+            {/* Header Section */}
+            <div className="mb-10 px-2 flex justify-between items-end">
+                <div>
+                    <h1 className="text-3xl font-black text-slate-900 tracking-tight">Investment Plans</h1>
+                    <p className="text-label mt-1">Select a protocol to begin earning</p>
                 </div>
-                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6">
-                    <h1 className="text-4xl font-black text-text-bright tracking-tight">Investment <span className="premium-gradient-text text-[0.9em]">Tiers</span></h1>
-                    <div className="glass-card-blue px-8 py-5 flex items-center gap-6 !bg-white border-blue-50/50 shadow-xl group">
-                        <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-royal-blue via-electric-azure to-primary-indigo flex items-center justify-center text-white border-4 border-white shadow-royal-blue transition-transform group-hover:rotate-12 group-hover:scale-110">
-                            <Wallet size={24} />
-                        </div>
-                        <div>
-                            <p className="text-[10px] font-black text-text-muted uppercase tracking-[0.3em] leading-none mb-1.5 opacity-40">Active Credit Shield</p>
-                            <p className="text-3xl font-black text-text-bright leading-none tracking-tight">₹{user?.walletBalance?.toLocaleString()}</p>
-                        </div>
+                <div className="flex flex-col items-end">
+                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Available Liquidity</p>
+                    <div className="flex items-center gap-2">
+                        <span className="text-xl font-black text-royal-blue">₹{user?.walletBalance?.toLocaleString()}</span>
                     </div>
                 </div>
             </div>
 
+            {/* Notifications */}
             {msg.text && (
-                <div className={`p-5 rounded-2xl mb-8 flex items-center gap-4 animate-in fade-in zoom-in duration-300 border ${msg.type === 'success'
-                    ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-500'
-                    : 'bg-danger-rose/10 border-danger-rose/20 text-danger-rose'
+                <div className={`mx-2 p-4 rounded-2xl mb-8 flex items-center gap-3 animate-in fade-in slide-in-from-top-4 duration-300 border ${msg.type === 'success'
+                    ? 'bg-emerald-50 border-emerald-100 text-emerald-600'
+                    : 'bg-red-50 border-red-100 text-red-600'
                     }`}>
-                    <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${msg.type === 'success' ? 'bg-emerald-500 text-white' : 'bg-danger-rose text-white'
+                    <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${msg.type === 'success' ? 'bg-emerald-500 text-white' : 'bg-red-500 text-white'
                         }`}>
-                        {msg.type === 'success' ? <Check size={20} /> : <TrendingUp size={20} />}
+                        {msg.type === 'success' ? <Check size={16} /> : <Activity size={16} />}
                     </div>
-                    <span className="text-sm font-bold uppercase tracking-wider">{msg.text}</span>
+                    <span className="text-xs font-black uppercase tracking-wider">{msg.text}</span>
                 </div>
             )}
 
+            {/* Loading Skeletal State */}
             {loading && (
-                <div className="space-y-8">
+                <div className="space-y-6">
                     {[1, 2, 3].map(i => (
-                        <div key={i} className="h-64 glass-card animate-pulse shadow-premium border-black/5"></div>
+                        <div key={i} className="h-64 bg-slate-50 border border-slate-100 rounded-[2.5rem] animate-pulse"></div>
                     ))}
                 </div>
             )}
 
-            <div className="space-y-8 mb-12">
-                {plans.map((plan, index) => {
-                    const colors = [
-                        { card: 'glass-card-blue', text: 'text-electric-azure', bg: 'bg-electric-azure/10', border: 'border-electric-azure/20', icon: 'text-electric-azure', btn: 'bg-gradient-to-r from-electric-azure to-royal-blue shadow-blue' },
-                        { card: 'glass-card-blue', text: 'text-royal-blue', bg: 'bg-royal-blue/10', border: 'border-royal-blue/20', icon: 'text-royal-blue', btn: 'bg-gradient-to-r from-royal-blue to-primary-indigo shadow-royal-blue' },
-                        { card: 'glass-card-sapphire', text: 'text-royal-blue', bg: 'bg-deep-sapphire/10', border: 'border-deep-sapphire/20', icon: 'text-deep-sapphire', btn: 'bg-gradient-to-r from-deep-sapphire via-royal-blue to-deep-sapphire shadow-royal-blue' },
-                        { card: 'glass-card-sapphire', text: 'text-royal-blue', bg: 'bg-midnight-cobalt/10', border: 'border-midnight-cobalt/20', icon: 'text-midnight-cobalt', btn: 'bg-gradient-to-r from-midnight-cobalt via-deep-sapphire to-midnight-cobalt shadow-royal-blue' },
-                    ][index % 4];
+            {/* Investment Grid */}
+            <div className="space-y-6 mb-12">
+                {plans.map((plan, index) => (
+                    <div key={index} className="fintech-card !p-8 group relative overflow-hidden">
+                        {/* Status Badge */}
+                        <div className="absolute top-8 right-8 flex items-center gap-1.5 px-3 py-1 bg-blue-50 rounded-full border border-blue-100">
+                            <div className="w-1.5 h-1.5 bg-royal-blue rounded-full animate-pulse" />
+                            <span className="text-[10px] font-black text-royal-blue uppercase tracking-widest">Active Pool</span>
+                        </div>
 
-                    return (
-                        <div key={index} className={`${colors.card} p-1 relative group transition-all duration-700 hover:-translate-y-2 !bg-white/60 border-black/5 shadow-premium`}>
-                            {/* Accent Glow */}
-                            <div className={`absolute top-0 right-0 w-32 h-32 ${colors.bg} rounded-full blur-[40px] opacity-0 group-hover:opacity-100 transition-opacity duration-1000`}></div>
-
-                            <div className="p-8 relative z-10">
-                                <div className="flex justify-between items-start mb-12">
-                                    <div className="flex items-center gap-6">
-                                        <div className={`w-20 h-20 bg-white shadow-lg border border-blue-50/50 rounded-[2rem] flex items-center justify-center ${colors.text} relative group-hover:scale-110 group-hover:-rotate-3 transition-all duration-700`}>
-                                            <Gem size={36} className={`${colors.text}`} />
-                                            <div className="absolute -top-1 -right-1 w-5 h-5 bg-royal-blue rounded-full border-4 border-white shadow-[0_0_12px_#2563eb] animate-pulse"></div>
-                                        </div>
-                                        <div>
-                                            <h3 className="text-3xl font-black text-text-bright tracking-tight mb-2 uppercase">{plan.name}</h3>
-                                            <div className={`flex items-center gap-2.5 px-4 py-1.5 ${colors.bg} ${colors.border} border rounded-full inline-flex`}>
-                                                <div className="w-2 h-2 bg-royal-blue rounded-full animate-ping"></div>
-                                                <span className={`text-[10px] font-black ${colors.text} uppercase tracking-[0.3em]`}>Tier Port-{index + 1}</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className="text-right">
-                                        <p className="text-[10px] font-black text-text-muted uppercase tracking-[0.4em] mb-2 opacity-30">STAKE TARGET</p>
-                                        <p className="text-4xl font-black text-text-bright tracking-tighter">₹{plan.amount.toLocaleString()}</p>
-                                    </div>
-                                </div>
-
-                                <div className="grid grid-cols-2 gap-5 mb-10">
-                                    <div className="bg-white border border-blue-50 p-6 rounded-[2.5rem] shadow-sm group-hover:border-royal-blue/10 transition-all duration-700">
-                                        <p className="text-[10px] font-black text-text-muted uppercase mb-3 flex items-center gap-2 tracking-[0.2em] opacity-40">
-                                            <TrendingUp size={14} className="text-royal-blue" /> Daily ROI Stream
-                                        </p>
-                                        <p className="text-3xl font-black text-royal-blue tracking-tight">₹{plan.daily.toLocaleString()}</p>
-                                    </div>
-                                    <div className="bg-white border border-blue-50 p-6 rounded-[2.5rem] shadow-sm group-hover:border-royal-blue/10 transition-all duration-700">
-                                        <p className="text-[10px] font-black text-text-muted uppercase mb-3 flex items-center gap-2 tracking-[0.2em] opacity-40">
-                                            <ShoppingBag size={14} className="text-royal-blue" /> Total Yield
-                                        </p>
-                                        <p className="text-3xl font-black text-text-bright tracking-tight">₹{(plan.daily * 99).toLocaleString()}</p>
-                                    </div>
-                                </div>
-
-                                <button
-                                    onClick={() => handleBuy(index)}
-                                    className={`w-full !rounded-[2rem] py-6 text-base font-black uppercase tracking-[0.3em] border-none shadow-premium group-hover:scale-[1.01] transition-all duration-500 text-white ${colors.btn}`}
-                                >
-                                    ACTIVATE PROTOCOL <ChevronRight size={22} className="ml-2 group-hover:translate-x-2 transition-transform duration-500" />
-                                </button>
-
-                                <div className="mt-8 pt-6 border-t border-black/5 flex justify-between items-center opacity-60">
-                                    <span className="text-[10px] font-black tracking-widest uppercase flex items-center gap-2 text-text-muted"><Timer size={14} /> 99 Cycle Contract</span>
-                                    <span className="text-[10px] font-black tracking-widest uppercase text-text-muted">Stability: Crystal-7</span>
-                                </div>
+                        <div className="flex items-start gap-5 mb-10">
+                            <div className="w-14 h-14 bg-slate-50 rounded-2xl flex items-center justify-center text-slate-400 group-hover:bg-royal-blue group-hover:text-white transition-all duration-500 group-hover:scale-110 group-hover:rotate-3">
+                                <Zap size={24} />
+                            </div>
+                            <div>
+                                <h3 className="text-2xl font-black text-slate-900 tracking-tight leading-none mb-2">{plan.name}</h3>
+                                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Tier {index + 1} Investment Protocol</p>
                             </div>
                         </div>
-                    );
-                })}
+
+                        <div className="grid grid-cols-2 gap-6 mb-10 pb-10 border-b border-slate-50">
+                            <div>
+                                <p className="text-label mb-1.5">Stake Amount</p>
+                                <p className="text-2xl font-black text-slate-900">₹{plan.amount.toLocaleString()}</p>
+                            </div>
+                            <div className="text-right">
+                                <p className="text-label mb-1.5">Daily Return</p>
+                                <p className="text-2xl font-black text-royal-blue">₹{plan.daily.toLocaleString()}</p>
+                            </div>
+                        </div>
+
+                        <div className="flex items-center justify-between mb-8 text-[11px] font-bold text-slate-500 uppercase tracking-widest px-1">
+                            <div className="flex items-center gap-2">
+                                <Timer size={14} className="text-slate-300" />
+                                <span>99 Cycles</span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <TrendingUp size={14} className="text-emerald-500" />
+                                <span>Total: ₹{(plan.daily * 99).toLocaleString()}</span>
+                            </div>
+                        </div>
+
+                        <button
+                            onClick={() => handleBuy(index)}
+                            className="btn-fintech btn-fintech-primary w-full py-5 text-xs font-black uppercase tracking-[0.2em] flex items-center justify-center gap-2"
+                        >
+                            Stake Assets <ArrowRight size={14} />
+                        </button>
+                    </div>
+                ))}
             </div>
         </Layout>
     );

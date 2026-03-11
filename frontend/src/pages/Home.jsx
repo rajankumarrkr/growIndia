@@ -1,6 +1,6 @@
 import React, { useContext, useState } from 'react';
 import { AuthContext } from '../context/AuthContext';
-import { Wallet, ArrowDownRight, ArrowUpRight, TrendingUp, ShieldCheck, ChevronRight, Zap, Target, Globe, CreditCard, Activity } from 'lucide-react';
+import { Wallet, ArrowDownRight, ArrowUpRight, TrendingUp, ShieldCheck, ChevronRight, Zap, Target, Globe, CreditCard, Activity, ArrowRight, PieChart, Layers } from 'lucide-react';
 import api from '../api/axios';
 import Layout from '../components/Layout';
 
@@ -22,168 +22,197 @@ const Home = () => {
         }
     };
 
+    // Hypothetical chart data for visual polish
+    const chartPath = "M 0 80 Q 50 70, 100 75 T 200 45 T 300 50 T 400 20";
+
     return (
-        <Layout>
-            {/* Main Portfolio Header */}
-            <div className="mb-10 relative">
-                <div className="flex items-center gap-2 mb-6 opacity-80">
-                    <Activity className="text-royal-blue animate-pulse" size={14} />
-                    <p className="text-[10px] font-black uppercase tracking-[0.3em] text-royal-blue/60">Live Portfolio Flux</p>
-                </div>
-
-                <div className="glass-card !rounded-[3rem] p-10 relative overflow-hidden group border-black/5 bg-white/40 shadow-premium">
-                    {/* Dynamic Ambient Background for Card - Ultra Blue Focus */}
-                    <div className="absolute top-[-20%] right-[-10%] w-80 h-80 bg-royal-blue/20 rounded-full blur-[90px] group-hover:bg-royal-blue/30 transition-all duration-1000"></div>
-                    <div className="absolute bottom-[-20%] left-[-10%] w-72 h-72 bg-electric-azure/20 rounded-full blur-[90px] group-hover:bg-electric-azure/30 transition-all duration-1000" style={{ animationDelay: '1.2s' }}></div>
-                    <div className="absolute top-[20%] left-[20%] w-40 h-40 bg-deep-sapphire/20 rounded-full blur-[60px] group-hover:opacity-100 opacity-50 transition-all duration-1000"></div>
-
-                    <div className="relative z-10">
-                        <div className="flex justify-between items-start mb-16">
-                            <div className="space-y-1">
-                                <div className="flex items-center gap-2 mb-3">
-                                    <div className="w-8 h-8 rounded-lg bg-royal-blue/10 flex items-center justify-center text-royal-blue">
-                                        <Wallet size={16} />
-                                    </div>
-                                    <p className="text-[10px] font-black text-text-muted uppercase tracking-[0.25em]">Vault Reserve</p>
-                                </div>
-                                <h2 className="text-5xl font-black tracking-tight text-text-bright flex items-baseline gap-2">
-                                    <span className="text-2xl font-light text-text-muted/30 tracking-normal">₹</span>
-                                    <span className="premium-gradient-text">{user?.walletBalance?.toLocaleString() || '0'}</span>
-                                    <span className="text-sm font-black text-royal-blue bg-royal-blue/5 px-3 py-1 rounded-full ml-3 border border-royal-blue/10 shadow-sm">+0.00%</span>
-                                </h2>
-                            </div>
-                            <div className="flex flex-col items-end gap-3">
-                                <div className="px-5 py-2 bg-white border border-blue-50/50 rounded-2xl shadow-xl flex items-center gap-2.5">
-                                    <div className="w-2 h-2 bg-royal-blue rounded-full animate-ping shadow-[0_0_12px_#2563eb]"></div>
-                                    <span className="text-[10px] font-black text-text-bright uppercase tracking-[0.1em]">Secure Interface</span>
-                                </div>
-                                <p className="text-[10px] font-black text-royal-blue/40 uppercase tracking-[0.4em] mr-2">Core v4.2</p>
-                            </div>
-                        </div>
-
-                        <div className="grid grid-cols-2 gap-5">
-                            <button
-                                onClick={() => setShowRecharge(true)}
-                                className="btn-primary group/btn !bg-gradient-to-r from-royal-blue via-primary-indigo to-deep-sapphire border-none shadow-indigo !rounded-2xl py-6"
-                            >
-                                <ArrowDownRight size={22} className="group-hover/btn:translate-x-1 group-hover/btn:-translate-y-1 transition-transform" />
-                                <span className="relative z-10 text-base font-black tracking-widest">DEPOSIT HUB</span>
-                            </button>
-                            <button className="btn-secondary group/btn !bg-white border-blue-50/50 hover:!bg-blue-50 shadow-sm !rounded-2xl py-6">
-                                <span className="relative z-10 text-base font-black tracking-widest text-text-bright uppercase">Outflow</span>
-                                <ArrowUpRight size={22} className="text-royal-blue/30 group-hover/btn:text-royal-blue group-hover/btn:translate-x-1 group-hover/btn:-translate-y-1 transition-all" />
-                            </button>
-                        </div>
+        <Layout title="Dashboard">
+            {/* Portfolio Overview Section */}
+            <section className="mb-8">
+                <div className="flex items-center justify-between mb-4 px-2">
+                    <p className="text-label">Portfolio Overview</p>
+                    <div className="flex items-center gap-1.5 px-2.5 py-1 bg-emerald-50 rounded-full border border-emerald-100">
+                        <TrendingUp size={10} className="text-emerald-500" />
+                        <span className="text-[10px] font-bold text-emerald-600">+12.4%</span>
                     </div>
                 </div>
-            </div>
 
-            {/* Metrics Grid */}
-            <div className="grid grid-cols-3 gap-4 mb-10">
-                {[
-                    { label: 'Today\'s Delta', value: '₹0.00', color: 'text-royal-blue', icon: <TrendingUp size={16} />, trend: '+0.0%', card: 'glass-card-blue' },
-                    { label: 'Active Streams', value: '1', color: 'text-electric-azure', icon: <Globe size={16} />, trend: 'Stable', card: 'glass-card-blue' },
-                    { label: 'Neural Rank', value: 'Prime', color: 'text-primary-indigo', icon: <Zap size={16} />, trend: 'Level 1', card: 'glass-card-sapphire' }
-                ].map((stat, i) => (
-                    <div key={i} className={`${stat.card} !rounded-[2.5rem] p-8 flex flex-col items-center group cursor-default hover:-translate-y-2 transition-all duration-700 bg-white/80 active:scale-[0.98]`}>
-                        <div className={`p-4 rounded-2xl bg-white shadow-lg ${stat.color} mb-5 group-hover:rotate-6 transition-transform duration-500 border border-blue-50/50`}>
-                            {stat.icon}
-                        </div>
-                        <p className="text-[10px] font-black uppercase tracking-[0.25em] text-text-muted mb-2 text-center opacity-40">{stat.label}</p>
-                        <p className={`text-2xl font-black ${stat.color} tracking-tight mb-4`}>{stat.value}</p>
-                        <div className="flex items-center gap-2 px-4 py-1.5 rounded-full bg-white border border-blue-50 shadow-md">
-                            <div className="w-2 h-2 rounded-full bg-royal-blue/30 shadow-inner"></div>
-                            <span className="text-[10px] font-black text-text-bright uppercase tracking-tighter">{stat.trend}</span>
-                        </div>
-                    </div>
-                ))}
-            </div>
+                <div className="fintech-card bg-royal-blue !p-8 relative overflow-hidden group">
+                    {/* Atmospheric Glows */}
+                    <div className="absolute top-0 right-0 w-48 h-48 bg-white/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
+                    <div className="absolute bottom-0 left-0 w-32 h-32 bg-blue-400/20 rounded-full blur-2xl translate-y-1/2 -translate-x-1/2" />
 
-            {/* Strategic Access */}
-            <div className="flex items-center justify-between mb-8 px-4">
-                <h3 className="text-base font-black text-text-bright flex items-center gap-3">
-                    <Target size={18} className="text-royal-blue" /> Nexus Operations
-                </h3>
-                <span className="text-[10px] font-black text-royal-blue/40 uppercase tracking-[0.3em]">Stable Port 4.2</span>
-            </div>
-
-            <div className="space-y-4 mb-8">
-                {[
-                    { title: 'Neural Quantum Bot', desc: 'Syncing multi-protocol ROI cycles', icon: <Zap size={22} />, color: 'from-royal-blue to-primary-indigo', shadow: 'shadow-royal-blue/20' },
-                    { title: 'Obsidian Lock', desc: 'Sovereign-grade asset repository', icon: <ShieldCheck size={22} />, color: 'from-deep-sapphire to-royal-blue', shadow: 'shadow-blue/20' }
-                ].map((item, i) => (
-                    <div key={i} className="glass-card !p-6 flex items-center gap-6 group cursor-pointer hover:bg-white/80 transition-all active:scale-[0.98] border-black/5 bg-white/40 shadow-premium">
-                        <div className={`bg-gradient-to-br ${item.color} w-16 h-16 rounded-[1.5rem] flex items-center justify-center text-white shadow-xl ${item.shadow} transition-transform group-hover:scale-110 group-hover:rotate-3`}>
-                            {item.icon}
+                    <div className="relative z-10 flex flex-col gap-8">
+                        <div>
+                            <p className="text-[10px] font-bold text-white/50 uppercase tracking-[0.2em] mb-1.5">Total Available Balance</p>
+                            <h2 className="text-4xl font-black text-white tracking-tight flex items-baseline gap-2">
+                                <span className="text-xl font-light opacity-50">₹</span>
+                                {user?.walletBalance?.toLocaleString() || '0.00'}
+                            </h2>
                         </div>
-                        <div className="flex-1">
-                            <h3 className="font-bold text-lg text-text-bright leading-none mb-1.5">{item.title}</h3>
-                            <p className="text-xs text-text-muted font-medium tracking-wide opacity-80">{item.desc}</p>
-                        </div>
-                        <div className="w-12 h-12 rounded-2xl bg-white shadow-sm flex items-center justify-center text-text-muted group-hover:text-royal-blue group-hover:translate-x-1 transition-all">
-                            <ChevronRight size={20} />
-                        </div>
-                    </div>
-                ))}
-            </div>
 
-            {/* Recharge Flow - Glass Modal - Light Mode */}
-            {showRecharge && (
-                <div className="fixed inset-0 bg-black/20 backdrop-blur-xl z-[200] flex items-end sm:items-center justify-center p-4">
-                    <div className="bg-white w-full max-w-lg rounded-t-[3rem] sm:rounded-[3rem] p-10 border border-black/5 shadow-premium relative overflow-hidden animate-in slide-in-from-bottom duration-500">
-                        {/* Modal Ambient Glow */}
-                        <div className="absolute top-0 right-0 w-64 h-64 bg-royal-blue/5 rounded-full -translate-y-1/2 translate-x-1/2 blur-[80px]"></div>
-
-                        <div className="flex justify-between items-center mb-10 relative z-10">
+                        <div className="grid grid-cols-2 gap-6 border-t border-white/10 pt-6">
                             <div>
-                                <h2 className="text-3xl font-black tracking-tight text-text-bright uppercase">Injection <span className="text-royal-blue">Portal</span></h2>
-                                <p className="text-[10px] font-black text-royal-blue/40 tracking-[0.4em] mt-2 uppercase">Unified Access Layer</p>
+                                <p className="text-[9px] font-bold text-white/40 uppercase tracking-widest mb-1">Total Invested</p>
+                                <p className="text-lg font-black text-white">₹12,450</p>
                             </div>
-                            <button
-                                onClick={() => setShowRecharge(false)}
-                                className="w-10 h-10 flex items-center justify-center bg-black/5 rounded-full hover:bg-black/10 transition-colors text-text-bright"
-                            >
-                                &times;
+                            <div>
+                                <p className="text-[9px] font-bold text-white/40 uppercase tracking-widest mb-1">Gross Earnings</p>
+                                <p className="text-lg font-black text-emerald-300">₹3,210</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            {/* Quick Actions */}
+            <section className="grid grid-cols-3 gap-4 mb-8">
+                <button
+                    onClick={() => setShowRecharge(true)}
+                    className="flex flex-col items-center gap-3 group"
+                >
+                    <div className="w-16 h-16 rounded-2xl bg-white shadow-fintech border border-slate-100 flex items-center justify-center text-royal-blue group-active:scale-95 transition-all">
+                        <ArrowDownRight size={24} />
+                    </div>
+                    <span className="text-[11px] font-bold text-slate-600 uppercase tracking-wider">Deposit</span>
+                </button>
+                <button className="flex flex-col items-center gap-3 group">
+                    <div className="w-16 h-16 rounded-2xl bg-white shadow-fintech border border-slate-100 flex items-center justify-center text-slate-400 group-active:scale-95 transition-all">
+                        <ArrowUpRight size={24} />
+                    </div>
+                    <span className="text-[11px] font-bold text-slate-600 uppercase tracking-wider">Withdraw</span>
+                </button>
+                <button className="flex flex-col items-center gap-3 group">
+                    <div className="w-16 h-16 rounded-2xl bg-royal-blue shadow-lg shadow-blue-500/30 flex items-center justify-center text-white group-active:scale-95 transition-all">
+                        <Target size={24} />
+                    </div>
+                    <span className="text-[11px] font-bold text-royal-blue uppercase tracking-wider">Invest</span>
+                </button>
+            </section>
+
+            {/* Earnings Growth Visualization */}
+            <section className="mb-8">
+                <div className="fintech-card !p-0 overflow-hidden">
+                    <div className="p-6 flex justify-between items-center border-b border-slate-50">
+                        <div>
+                            <p className="text-label">Earnings Growth</p>
+                            <p className="text-xl font-black text-slate-900 mt-1">Growth Index</p>
+                        </div>
+                        <div className="flex gap-2">
+                            {['1W', '1M', '3M'].map((t, i) => (
+                                <button key={t} className={`px-3 py-1.5 rounded-lg text-[10px] font-black transition-all ${i === 1 ? 'bg-royal-blue text-white' : 'bg-slate-50 text-slate-400 hover:text-slate-600'}`}>
+                                    {t}
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+                    <div className="h-40 relative px-2 pt-4">
+                        <svg className="w-full h-full overflow-visible" viewBox="0 0 400 100" preserveAspectRatio="none">
+                            <defs>
+                                <linearGradient id="chartGradient" x1="0" y1="0" x2="0" y2="1">
+                                    <stop offset="0%" stopColor="var(--color-royal-blue)" />
+                                    <stop offset="100%" stopColor="white" />
+                                </linearGradient>
+                            </defs>
+                            <path d={`${chartPath} L 400 100 L 0 100 Z`} className="chart-area" />
+                            <path d={chartPath} className="chart-path" />
+                        </svg>
+                    </div>
+                </div>
+            </section>
+
+            {/* Strategic Access Points */}
+            <section className="mb-8 px-2">
+                <div className="flex items-center justify-between mb-6">
+                    <h3 className="text-sm font-black text-slate-900 uppercase tracking-wider">Nexus Operations</h3>
+                    <p className="text-[9px] font-bold text-slate-300 uppercase tracking-widest leading-none">Protocol Active</p>
+                </div>
+
+                <div className="grid grid-cols-1 gap-4">
+                    {[
+                        { title: 'Neural Quantum Bot', status: 'Syncing', icon: <Zap size={20} />, color: 'text-royal-blue', bg: 'bg-blue-50' },
+                        { title: 'Sovereign Vault', status: 'Secured', icon: <ShieldCheck size={20} />, color: 'text-emerald-500', bg: 'bg-emerald-50' }
+                    ].map((item, i) => (
+                        <div key={i} className="fintech-card fintech-card-hover !p-5 flex items-center justify-between group">
+                            <div className="flex items-center gap-4">
+                                <div className={`w-12 h-12 rounded-2xl ${item.bg} ${item.color} flex items-center justify-center`}>
+                                    {item.icon}
+                                </div>
+                                <div>
+                                    <h4 className="text-sm font-black text-slate-800">{item.title}</h4>
+                                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">{item.status} Node</p>
+                                </div>
+                            </div>
+                            <div className="w-8 h-8 rounded-full border border-slate-100 flex items-center justify-center text-slate-300 group-hover:text-royal-blue group-hover:bg-blue-50 transition-all">
+                                <ArrowRight size={14} />
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            </section>
+
+            {/* Recharge Portal Redesign */}
+            {showRecharge && (
+                <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-[200] flex items-end justify-center">
+                    <div className="bg-white w-full max-w-xl rounded-t-[3rem] p-8 pb-12 shadow-2xl animate-in slide-in-from-bottom duration-500">
+                        <div className="w-12 h-1.5 bg-slate-100 rounded-full mx-auto mb-8" />
+
+                        <div className="flex justify-between items-center mb-10">
+                            <div>
+                                <h2 className="text-2xl font-black text-slate-900">Add Assets</h2>
+                                <p className="text-label mt-1">Unified Gateway Protocol</p>
+                            </div>
+                            <button onClick={() => setShowRecharge(false)} className="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center text-slate-400">
+                                <Globe size={20} />
                             </button>
                         </div>
 
-                        <div className="mb-10 p-6 bg-black/5 rounded-2xl border border-black/5 text-center group">
-                            <p className="text-[10px] text-text-muted font-bold uppercase mb-2 tracking-widest">Gateway UPI ID</p>
-                            <p className="text-2xl font-mono font-black text-royal-blue tracking-widest select-all group-hover:scale-105 transition-transform">growindia@upi</p>
-                        </div>
-
-                        <form onSubmit={handleRecharge} className="space-y-6 relative z-10">
-                            <div className="space-y-2">
-                                <label className="text-[10px] font-bold uppercase text-text-muted ml-4 tracking-widest">Deposit Amount</label>
-                                <div className="relative">
-                                    <span className="absolute left-6 top-1/2 -translate-y-1/2 text-2xl font-black text-royal-blue/20">₹</span>
-                                    <input
-                                        type="number"
-                                        placeholder="Min 300"
-                                        className="w-full bg-blue-50/50 border border-blue-100/50 rounded-2xl py-6 pl-14 pr-6 focus:border-royal-blue/30 outline-none text-3xl font-black text-text-bright transition-all placeholder:text-text-muted/10"
-                                        value={amount}
-                                        onChange={(e) => setAmount(e.target.value)}
-                                        required
-                                    />
+                        <div className="mb-10 p-4 bg-slate-50 border border-slate-100 rounded-2xl flex items-center justify-between group">
+                            <div className="flex items-center gap-3">
+                                <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-royal-blue shadow-sm">
+                                    <CreditCard size={18} />
+                                </div>
+                                <div>
+                                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Gateway UPI</p>
+                                    <p className="text-sm font-black text-slate-800 font-mono tracking-wider">growindia@upi</p>
                                 </div>
                             </div>
+                            <button className="px-4 py-2 bg-white rounded-xl text-[10px] font-black text-royal-blue border border-slate-100 shadow-sm active:scale-95">COPY</button>
+                        </div>
+
+                        <form onSubmit={handleRecharge} className="space-y-6">
                             <div className="space-y-2">
-                                <label className="text-[10px] font-bold uppercase text-text-muted ml-4 tracking-widest">Verification UTR</label>
+                                <label className="text-label ml-2">Amount (₹)</label>
+                                <input
+                                    type="number"
+                                    placeholder="Min 300"
+                                    className="w-full h-18 bg-slate-50 border border-slate-100 rounded-2xl px-6 text-2xl font-black text-slate-900 focus:bg-white focus:border-royal-blue/30 transition-all outline-none"
+                                    value={amount}
+                                    onChange={(e) => setAmount(e.target.value)}
+                                    required
+                                />
+                            </div>
+                            <div className="space-y-2">
+                                <label className="text-label ml-2">UTR / Reference</label>
                                 <input
                                     type="text"
-                                    placeholder="12-digit transaction number"
-                                    className="w-full bg-blue-50/30 border border-blue-50/50 rounded-2xl py-6 px-6 focus:border-royal-blue/30 outline-none text-lg font-mono font-black text-royal-blue uppercase tracking-widest transition-all placeholder:text-royal-blue/20"
+                                    placeholder="12 digit transaction ID"
+                                    className="w-full h-18 bg-slate-50 border border-slate-100 rounded-2xl px-6 text-base font-black text-slate-900 focus:bg-white focus:border-royal-blue/30 transition-all outline-none"
                                     value={utr}
                                     onChange={(e) => setUtr(e.target.value)}
                                     required
                                 />
                             </div>
+
                             {msg && (
-                                <div className={`p-4 rounded-xl text-center font-bold text-xs tracking-wide animate-pulse ${msg.includes('Failed') ? 'bg-danger-rose/10 text-danger-rose border border-danger-rose/20' : 'bg-emerald-500/10 text-emerald-500 border border-emerald-500/20'}`}>
+                                <div className={`p-4 rounded-xl text-center text-xs font-black uppercase tracking-widest ${msg.includes('Failed') ? 'bg-red-50 text-red-500' : 'bg-emerald-50 text-emerald-500'}`}>
                                     {msg}
                                 </div>
                             )}
-                            <button className="btn-primary w-full py-6 text-base uppercase tracking-[0.3em] font-black shadow-royal-blue mt-4 !bg-gradient-to-r from-royal-blue to-deep-sapphire border-none">CONFIRM DEPOSIT</button>
+
+                            <button className="btn-fintech btn-fintech-primary w-full mt-4 uppercase tracking-[0.2em] text-xs">
+                                Confirm Asset Injection
+                            </button>
                         </form>
                     </div>
                 </div>

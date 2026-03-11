@@ -1,7 +1,7 @@
 import React, { useContext, useState, useEffect } from 'react';
 import Layout from '../components/Layout';
 import { AuthContext } from '../context/AuthContext';
-import { Share2, Users, IndianRupee, Trophy, Copy, Check, Target, ChevronRight, Info } from 'lucide-react';
+import { Share2, Users, IndianRupee, Trophy, Copy, Check, Target, ChevronRight, Info, Zap, TrendingUp } from 'lucide-react';
 import api from '../api/axios';
 
 const Team = () => {
@@ -28,83 +28,78 @@ const Team = () => {
     };
 
     return (
-        <Layout>
-            <div className="mb-10">
-                <div className="flex items-center gap-2 mb-4 opacity-80">
-                    <Users className="text-royal-blue" size={14} />
-                    <p className="text-[10px] font-black uppercase tracking-[0.3em] text-royal-blue/60">Network Expansion Hub</p>
+        <Layout title="Expansion Hub">
+            <div className="mb-10 px-2 flex justify-between items-end">
+                <div>
+                    <h1 className="text-3xl font-black text-slate-900 tracking-tight">Affiliate Hub</h1>
+                    <p className="text-label mt-1">Scale your network & earn rewards</p>
                 </div>
-                <h1 className="text-4xl font-extrabold text-text-bright tracking-tight">Affiliate Hub</h1>
-            </div>
-
-            {/* Performance Metrics */}
-            <div className="grid grid-cols-2 gap-5 mb-10">
-                <div className="glass-card-blue !rounded-[2.5rem] p-8 group cursor-default !bg-white/80 border-blue-50/50 shadow-xl">
-                    <div className="bg-royal-blue/10 w-16 h-16 rounded-[1.5rem] flex items-center justify-center text-royal-blue border border-royal-blue/20 mb-8 group-hover:scale-110 group-hover:rotate-6 transition-all duration-700 shadow-sm">
-                        <Users size={32} />
-                    </div>
-                    <p className="text-[10px] text-text-muted uppercase font-black tracking-[0.3em] mb-2 opacity-40">Verified Nodes</p>
-                    <p className="text-4xl font-black text-text-bright tracking-tight">{stats.teamSize}</p>
-                </div>
-                <div className="glass-card-blue !rounded-[2.5rem] p-8 group cursor-default !bg-white/80 border-blue-50/50 shadow-xl">
-                    <div className="bg-electric-azure/10 w-16 h-16 rounded-[1.5rem] flex items-center justify-center text-electric-azure border border-electric-azure/20 mb-8 group-hover:scale-110 group-hover:-rotate-6 transition-all duration-700 shadow-sm">
-                        <IndianRupee size={32} />
-                    </div>
-                    <p className="text-[10px] text-text-muted uppercase font-black tracking-[0.3em] mb-2 opacity-40">Credit Pool</p>
-                    <p className="text-4xl font-black text-royal-blue tracking-tight">₹{stats.commission}</p>
+                <div className="w-12 h-12 bg-blue-50 rounded-2xl flex items-center justify-center text-royal-blue shadow-sm">
+                    <TrendingUp size={24} />
                 </div>
             </div>
 
-            {/* Referral Nexus */}
-            <div className="glass-card-blue !rounded-[3rem] p-10 bg-gradient-to-br from-blue-50/50 via-white to-white relative overflow-hidden mb-12 border-blue-100/30 shadow-2xl group">
-                {/* Vibrant Background Elements */}
-                <div className="absolute top-[-20%] right-[-10%] w-80 h-80 bg-royal-blue/10 rounded-full blur-[100px] group-hover:bg-royal-blue/20 transition-all duration-1000"></div>
-                <div className="absolute bottom-[-20%] left-[-10%] w-72 h-72 bg-electric-azure/5 rounded-full blur-[100px] group-hover:bg-electric-azure/15 transition-all duration-1000"></div>
-
-                <div className="relative z-10 text-center">
-                    <div className="inline-flex p-6 bg-white shadow-xl rounded-[2.5rem] border border-black/5 mb-10 animate-soft-float">
-                        <Trophy size={56} className="text-warning-amber drop-shadow-[0_0_15px_rgba(245,158,11,0.3)]" />
+            {/* Stats Grid */}
+            <div className="grid grid-cols-2 gap-4 mb-10">
+                <div className="fintech-card group">
+                    <div className="w-10 h-10 bg-slate-50 text-slate-400 rounded-xl flex items-center justify-center mb-6 group-hover:bg-blue-50 group-hover:text-royal-blue transition-all">
+                        <Users size={20} />
                     </div>
-                    <h2 className="text-3xl font-black text-text-bright mb-4 tracking-tight uppercase">Ambassador <span className="premium-gradient-text">Consortium</span></h2>
-                    <p className="text-sm font-bold text-text-muted mb-12 px-6 leading-relaxed opacity-60">
-                        Authorize new secondary nodes into the network and earn <span className="text-royal-blue font-black tracking-tight">10.0% UNIFIED COMMISSIONS</span> on all verified injections.
+                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Total Nodes</p>
+                    <p className="text-2xl font-black text-slate-900">{stats.teamSize}</p>
+                </div>
+                <div className="fintech-card group">
+                    <div className="w-10 h-10 bg-slate-50 text-slate-400 rounded-xl flex items-center justify-center mb-6 group-hover:bg-emerald-50 group-hover:text-emerald-500 transition-all">
+                        <IndianRupee size={20} />
+                    </div>
+                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Bonus Pool</p>
+                    <p className="text-2xl font-black text-emerald-500">₹{stats.commission}</p>
+                </div>
+            </div>
+
+            {/* Invite Card */}
+            <div className="fintech-card bg-slate-900 !p-10 relative overflow-hidden mb-10">
+                <div className="absolute top-0 right-0 w-48 h-48 bg-royal-blue/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
+
+                <div className="relative z-10">
+                    <div className="w-14 h-14 bg-white/5 rounded-2xl flex items-center justify-center text-amber-400 border border-white/10 mb-8">
+                        <Trophy size={28} />
+                    </div>
+                    <h2 className="text-2xl font-black text-white mb-4 tracking-tight uppercase">Network Master</h2>
+                    <p className="text-xs font-bold text-white/40 leading-relaxed max-w-[80%] mb-12 uppercase tracking-widest">
+                        Expand the consortium and receive <span className="text-white">10.0% Royalties</span> on all verified injections.
                     </p>
 
-                    <div className="bg-white border border-blue-50/50 rounded-[2.5rem] p-8 flex flex-col items-center gap-5 mb-10 shadow-sm group/key hover:shadow-lg transition-all duration-500">
-                        <p className="text-[10px] font-black text-text-muted uppercase tracking-[0.4em] opacity-30 group-hover/key:text-royal-blue transition-colors">Unified Invocator Key</p>
-                        <div className="flex items-center gap-8">
-                            <span className="text-5xl font-mono font-black text-text-bright tracking-[0.3em] drop-shadow-sm">{user?.referralCode}</span>
-                            <button onClick={copyLink} className={`w-16 h-16 flex items-center justify-center rounded-2xl border transition-all active:scale-90 ${copied ? 'bg-royal-blue text-white border-royal-blue shadow-indigo' : 'bg-blue-50/50 text-royal-blue border-blue-100/50 hover:bg-white hover:shadow-xl'}`}>
-                                {copied ? <Check size={32} strokeWidth={3} /> : <Copy size={32} />}
+                    <div className="bg-white/5 border border-white/5 rounded-3xl p-6 mb-8 flex flex-col items-center gap-4">
+                        <p className="text-[9px] font-bold text-white/20 uppercase tracking-[0.4em]">Unique Invocator Key</p>
+                        <div className="flex items-center gap-6">
+                            <span className="text-4xl font-black text-white tracking-[0.2em] font-mono">{user?.referralCode}</span>
+                            <button onClick={copyLink} className={`w-12 h-12 rounded-xl flex items-center justify-center transition-all ${copied ? 'bg-emerald-500 text-white' : 'bg-white/10 text-white hover:bg-white/20'}`}>
+                                {copied ? <Check size={20} /> : <Copy size={20} />}
                             </button>
                         </div>
                     </div>
-                    <button onClick={copyLink} className="btn-primary w-full py-6 text-base uppercase tracking-[0.3em] font-black shadow-royal-blue !bg-gradient-to-r from-royal-blue via-primary-indigo to-deep-sapphire bg-[length:200%_auto] hover:bg-right transition-all duration-[1.5s] !rounded-[2rem]">
-                        <Share2 size={24} className="mr-3" /> BROADCAST INVITE LINK
+
+                    <button onClick={copyLink} className="btn-fintech btn-fintech-primary w-full py-5 text-xs font-black uppercase tracking-[0.2em] flex items-center justify-center gap-3">
+                        <Share2 size={16} /> Broadcast Invite
                     </button>
                 </div>
             </div>
 
-            {/* Execution Steps */}
-            <div className="glass-card-blue !rounded-[3rem] p-10 mb-12 !bg-white/80 border-blue-50/50 shadow-xl">
-                <div className="flex items-center gap-4 mb-10">
-                    <div className="bg-royal-blue/10 w-12 h-12 rounded-2xl flex items-center justify-center text-royal-blue shadow-sm border border-blue-50">
-                        <Info size={24} />
-                    </div>
-                    <h4 className="text-xl font-black text-text-bright tracking-tight uppercase">Protocol Execution Log</h4>
-                </div>
-                <div className="space-y-8">
+            {/* Protocol Steps */}
+            <div className="mb-12 px-2">
+                <h4 className="text-[10px] font-black uppercase tracking-[0.4em] text-slate-300 mb-6">Execution Protocol</h4>
+                <div className="space-y-6">
                     {[
-                        { text: "Broadcast your unique ambassador link to prospect nodes.", color: "text-royal-blue", bg: "bg-royal-blue/10" },
-                        { text: "Monitor network integration via the real-time hub above.", color: "text-electric-azure", bg: "bg-electric-azure/10" },
-                        { text: "Receive automated 10% credits on verified node injections.", color: "text-royal-blue", bg: "bg-royal-blue/10" },
-                        { text: "Access rewards instantly via the withdrawal portal.", color: "text-deep-sapphire", bg: "bg-deep-sapphire/10" }
+                        { text: "Broadcast your unique link to prospect nodes", icon: <Share2 /> },
+                        { text: "Monitor integration status in real-time hub", icon: <Activity /> },
+                        { text: "Receive automated 10% royalties on injections", icon: <TrendingUp /> }
                     ].map((step, idx) => (
-                        <div key={idx} className="flex gap-6 items-start group">
-                            <div className={`w-12 h-12 rounded-[1rem] ${step.bg} ${step.color} flex items-center justify-center shrink-0 border border-blue-50/50 font-black text-xs group-hover:scale-110 group-hover:-rotate-3 transition-all duration-500 shadow-sm`}>
-                                0{idx + 1}
+                        <div key={idx} className="flex gap-5 items-start group">
+                            <div className="w-10 h-10 bg-slate-50 rounded-xl flex items-center justify-center text-slate-400 group-hover:bg-blue-50 group-hover:text-royal-blue transition-all shrink-0">
+                                {React.cloneElement(step.icon, { size: 16 })}
                             </div>
-                            <p className="text-sm font-bold text-text-muted leading-relaxed pt-3.5 opacity-60 group-hover:opacity-100 transition-opacity">{step.text}</p>
+                            <p className="text-xs font-bold text-slate-500 leading-relaxed pt-2.5">{step.text}</p>
                         </div>
                     ))}
                 </div>

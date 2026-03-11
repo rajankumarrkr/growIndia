@@ -1,203 +1,156 @@
 @import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 
 @theme {
-  /* Premium Light Palette */
+  /* Fintech Pro Light Theme */
   --color-bg-deep: #f8fafc;
-  /* Slate 50 - Clean Light Base */
-  --color-bg-card: #ffffff;
-  /* Pure White - Card Surface */
+  /* Slate 50 */
+  --color-bg-base: #ffffff;
 
+  /* Advanced Color Logic */
+  --color-royal-blue: #2563eb;
+  --color-electric-azure: #0ea5e9;
   --color-primary-indigo: #4f46e5;
-  /* Indigo 600 - More contrast for light */
-  --color-primary-light: #6366f1;
-  /* Indigo 500 */
-  --color-secondary-violet: #7c3aed;
-  /* Violet 600 */
+  --color-deep-sapphire: #1e3a8a;
 
   --color-success-emerald: #10b981;
-  /* Emerald 500 */
-  --color-danger-rose: #f43f5e;
-  /* Rose 500 */
-  --color-warning-amber: #f59e0b;
-  /* Amber 500 */
-  --color-royal-blue: #3b82f6;
-  /* Blue 500 */
-  --color-sunset-orange: #f97316;
-  /* Orange 500 */
-  --color-neon-purple: #a855f7;
-  /* Purple 500 */
-
-  --color-text-muted: #64748b;
-  /* Slate 500 */
-  --color-text-base: #334155;
-  /* Slate 700 */
-  --color-text-bright: #0f172a;
-  /* Slate 900 - High Contrast Title */
-
-  --font-sans: 'Plus Jakarta Sans', 'Inter', system-ui, sans-serif;
-
-  /* Refined Effects for Light Mode */
-  /* Ultra-Premium Blue Palette */
-  --primary-indigo: #4f46e5;
-  --royal-blue: #2563eb;
-  --deep-sapphire: #1e3a8a;
-  --electric-azure: #0ea5e9;
-  --midnight-cobalt: #0f172a;
-
-  --color-success-emerald: #10b981;
-  --color-danger-rose: #f43f5e;
+  --color-danger-rose: #ef4444;
   --color-warning-amber: #f59e0b;
 
-  /* Semantic Surfaces (Blue Focus) */
-  --bg-glass: rgba(255, 255, 255, 0.7);
-  --bg-glass-deep: rgba(240, 249, 255, 0.8);
-  --border-glass: rgba(37, 99, 235, 0.1);
-  --shadow-premium: 0 20px 50px rgba(30, 58, 138, 0.1);
-  --shadow-indigo: 0 10px 30px rgba(79, 70, 229, 0.25);
-  --shadow-nav: 0 -10px 40px rgba(30, 58, 138, 0.08);
+  /* Typography */
+  --font-sans: 'Inter', 'Plus Jakarta Sans', system-ui, sans-serif;
+  --font-display: 'Plus Jakarta Sans', 'Inter', sans-serif;
 
-  /* Blue-Centric Gradients */
-  --gradient-blue: linear-gradient(135deg, #2563eb 0%, #4f46e5 100%);
-  --gradient-azure: linear-gradient(135deg, #0ea5e9 0%, #2563eb 100%);
-  --gradient-sapphire: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%);
-  --gradient-midnight: linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%);
-  --gradient-multi-blue: linear-gradient(135deg, #4f46e5 0%, #2563eb 50%, #0ea5e9 100%);
+  /* Modern Surfaces */
+  --bg-glass: rgba(255, 255, 255, 0.85);
+  --border-glass: rgba(226, 232, 240, 0.8);
 
-  /* Text Colors */
-  --text-bright: #0f172a;
-  --text-base: #334155;
-  --text-muted: #64748b;
+  /* Elevation System */
+  --shadow-fintech: 0 10px 40px -10px rgba(30, 58, 138, 0.05), 0 5px 20px -5px rgba(0, 0, 0, 0.02);
+  --shadow-elevated: 0 20px 60px -15px rgba(0, 0, 0, 0.06);
+  --shadow-primary: 0 8px 25px -5px rgba(37, 99, 235, 0.35);
+  --shadow-primary-hover: 0 12px 30px -5px rgba(37, 99, 235, 0.45);
+  --shadow-glow: 0 0 30px rgba(37, 99, 235, 0.08);
+  --shadow-nav: 0 -15px 50px rgba(0, 0, 0, 0.03);
 
-  --shadow-premium: 0 10px 30px -5px rgba(0, 0, 0, 0.04), 0 4px 12px -4px rgba(0, 0, 0, 0.02);
-  --shadow-indigo: 0 10px 25px -5px rgba(79, 70, 229, 0.15);
-  --shadow-emerald: 0 10px 25px -5px rgba(16, 185, 129, 0.15);
-  --shadow-rose: 0 10px 25px -5px rgba(244, 63, 94, 0.15);
-  --shadow-amber: 0 10px 25px -5px rgba(245, 158, 11, 0.15);
-  --shadow-nav: 0 -10px 40px rgba(0, 0, 0, 0.05);
-  --color-glass-bg: rgba(255, 255, 255, 0.7);
-  /* Frosted White */
-  --color-glass-border: rgba(0, 0, 0, 0.05);
-
-  /* Vibrant Gradients */
-  --gradient-gold: linear-gradient(135deg, #f59e0b 0%, #fbbf24 50%, #f59e0b 100%);
-  --gradient-emerald: linear-gradient(135deg, #10b981 0%, #34d399 50%, #10b981 100%);
-  --gradient-indigo: linear-gradient(135deg, #4f46e5 0%, #818cf8 50%, #4f46e5 100%);
-  --gradient-rose: linear-gradient(135deg, #f43f5e 0%, #fb7185 50%, #f43f5e 100%);
-  --gradient-multi: linear-gradient(135deg, #4f46e5 0%, #a855f7 50%, #f43f5e 100%);
+  /* Gradients */
+  --gradient-fintech: linear-gradient(135deg, #2563eb 0%, #4f46e5 100%);
+  --gradient-soft: linear-gradient(180deg, rgba(255, 255, 255, 1) 0%, rgba(248, 250, 252, 1) 100%);
 }
 
 @layer base {
   :root {
     background-color: var(--color-bg-deep);
-    color: var(--color-text-base);
+    color: #1e293b;
+    /* Slate 800 */
+    -webkit-font-smoothing: antialiased;
   }
 
   body {
-    @apply m-0 font-sans overflow-x-hidden antialiased selection:bg-primary-indigo selection:text-white;
+    @apply m-0 font-sans selection:bg-royal-blue/10 selection:text-royal-blue;
+    touch-action: manipulation;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    @apply font-display tracking-tight text-slate-900;
   }
 }
 
 @layer components {
-  .glass-card {
-    @apply bg-white/70 backdrop-blur-3xl border border-blue-100/50 rounded-[2rem] shadow-premium transition-all duration-500;
+
+  /* High-Fidelity Cards */
+  .fintech-card {
+    @apply bg-white rounded-[2.5rem] shadow-fintech border border-slate-100/60 p-6 transition-all duration-500;
   }
 
-  .glass-card::before {
-    content: '';
-    @apply absolute inset-0 bg-gradient-to-br from-white/40 to-transparent pointer-events-none;
+  .fintech-card-hover {
+    @apply hover:shadow-elevated hover:-translate-y-1.5 active:scale-[0.98];
   }
 
-  .premium-gradient-text {
-    @apply bg-clip-text text-transparent bg-gradient-to-r from-primary-indigo via-royal-blue to-electric-azure font-black;
+  /* Glassmorphism Refined */
+  .ethereal-glass {
+    @apply bg-white/80 backdrop-blur-2xl border border-white/40 shadow-fintech;
   }
 
-  .glass-card-blue {
-    @apply bg-blue-50/60 backdrop-blur-3xl border border-blue-200/30 rounded-[2rem] shadow-premium transition-all duration-500;
+  /* Interactive Elements */
+  .btn-fintech {
+    @apply relative overflow-hidden h-16 px-8 rounded-2xl flex items-center justify-center gap-3 font-bold transition-all duration-300 active:scale-95 disabled:opacity-50;
   }
 
-  .glass-card-sapphire {
-    @apply bg-indigo-900/5 backdrop-blur-3xl border border-indigo-900/10 rounded-[2rem] shadow-premium transition-all duration-500;
+  .btn-fintech-primary {
+    @apply bg-royal-blue text-white shadow-primary hover:bg-blue-700 hover:shadow-primary-hover;
   }
 
-  .glass-card-emerald {
-    @apply glass-card !border-success-emerald/20 !shadow-emerald;
+  .btn-fintech-secondary {
+    @apply bg-slate-100/50 text-slate-700 hover:bg-slate-100;
   }
 
-  .glass-card-amber {
-    @apply glass-card !border-warning-amber/20 !shadow-amber;
+  /* Stat & Action Pills */
+  .action-pill {
+    @apply flex items-center gap-2 px-4 py-2 font-bold text-[11px] uppercase tracking-widest rounded-full border transition-all;
   }
 
-  .glass-card-rose {
-    @apply glass-card !border-danger-rose/20 !shadow-rose;
+  .pill-success {
+    @apply bg-emerald-50 text-emerald-600 border-emerald-100;
   }
 
-  .btn-primary {
-    @apply relative overflow-hidden bg-primary-indigo text-white font-bold py-4 px-8 rounded-2xl active:scale-95 transition-all duration-500 flex items-center justify-center gap-2 shadow-indigo hover:shadow-primary-indigo/40 hover:-translate-y-1;
+  .pill-danger {
+    @apply bg-red-50 text-red-600 border-red-100;
   }
 
-  .btn-primary::after {
-    content: '';
-    @apply absolute inset-0 bg-white/20 translate-y-full transition-transform duration-500;
+  .pill-primary {
+    @apply bg-blue-50 text-royal-blue border-blue-100;
   }
 
-  .btn-primary:hover::after {
-    @apply translate-y-0;
+  /* Navigation Base */
+  .mobile-nav-shell {
+    @apply fixed bottom-0 left-0 w-full px-6 pb-8 z-[100];
   }
 
-  .btn-secondary {
-    @apply bg-black/5 backdrop-blur-xl text-text-bright font-bold py-4 px-8 rounded-2xl hover:bg-black/10 hover:-translate-y-1 transition-all duration-500 border border-black/5 flex items-center justify-center gap-2;
+  .mobile-nav-core {
+    @apply bg-white/95 backdrop-blur-3xl border border-slate-100/80 rounded-[2.5rem] shadow-nav h-20 flex items-center justify-between px-8;
   }
 
-  .nav-blur {
-    @apply fixed bottom-0 left-0 w-full h-24 bg-white/80 backdrop-blur-3xl border-t border-black/5 rounded-t-[2.5rem] flex items-center justify-around px-8 z-50 shadow-nav;
-  }
-}
-
-/* Atmospheric Animations */
-@keyframes soft-float {
-
-  0%,
-  100% {
-    transform: translateY(0);
+  /* Typography Utilities */
+  .text-label {
+    @apply text-[10px] font-black uppercase tracking-[0.2em] text-slate-400;
   }
 
-  50% {
-    transform: translateY(-15px) scale(1.02);
+  .text-amount {
+    @apply text-3xl font-black tracking-tight text-slate-900;
   }
 }
 
-.animate-soft-float {
-  animation: soft-float 4s ease-in-out infinite;
+/* Page Transitions */
+.page-enter {
+  animation: pageFadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-@keyframes slow-spin {
+@keyframes pageFadeIn {
   from {
-    transform: rotate(0deg);
+    opacity: 0;
+    transform: translateY(10px);
   }
 
   to {
-    transform: rotate(360deg);
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
-.animate-slow-spin {
-  animation: slow-spin 12s linear infinite;
+/* Chart Styles - Soft SVG */
+.chart-path {
+  fill: none;
+  stroke: var(--color-royal-blue);
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
-/* Custom Scrollbar - Refined */
-::-webkit-scrollbar {
-  width: 6px;
-}
-
-::-webkit-scrollbar-track {
-  background: var(--color-bg-deep);
-}
-
-::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
-  border-radius: 10px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: var(--color-primary-indigo);
+.chart-area {
+  fill: url(#chartGradient);
+  opacity: 0.1;
 }

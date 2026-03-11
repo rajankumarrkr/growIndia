@@ -21,44 +21,36 @@ const Register = () => {
     };
 
     return (
-        <div className="min-h-screen bg-bg-deep flex flex-col items-center justify-center p-6 py-20 relative overflow-hidden selection:bg-primary-indigo/10">
-            {/* Soft Ambient Background - Ultra Blue Registration */}
-            <div className="fixed top-[-10%] right-[-10%] w-[80%] h-[80%] bg-glow-blue rounded-full blur-[140px] pointer-events-none animate-pulse"></div>
-            <div className="fixed bottom-[-10%] left-[-10%] w-[80%] h-[80%] bg-glow-azure rounded-full blur-[140px] pointer-events-none animate-pulse" style={{ animationDelay: '2s' }}></div>
-            <div className="fixed top-[40%] left-[-10%] w-[50%] h-[50%] bg-glow-indigo rounded-full blur-[120px] pointer-events-none animate-pulse" style={{ animationDelay: '4s' }}></div>
+        <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center p-6 py-20 relative overflow-hidden">
+            {/* Ambient Background Elements */}
+            <div className="absolute top-[-10%] right-[-10%] w-96 h-96 bg-royal-blue/5 rounded-full blur-[100px]" />
+            <div className="absolute bottom-[-10%] left-[-10%] w-96 h-96 bg-royal-blue/5 rounded-full blur-[100px]" />
 
-            <div className="w-full max-w-md relative z-10">
-                <div className="text-center mb-12">
-                    <div className="inline-flex relative group mb-10">
-                        <div className="absolute inset-[-10%] bg-gradient-to-tr from-royal-blue via-primary-indigo to-deep-sapphire blur-3xl opacity-30 group-hover:opacity-50 transition-opacity duration-1000"></div>
-                        <div className="glass-card-blue !rounded-[3rem] p-8 relative z-10 transition-all duration-700 hover:scale-110 !bg-white border-blue-50 shadow-2xl group-hover:-rotate-6">
-                            <div className="absolute inset-0 bg-gradient-to-br from-royal-blue/5 to-transparent rounded-[3rem]"></div>
-                            <Cpu className="text-royal-blue relative z-10" size={56} />
-                        </div>
-                        <div className="absolute -top-2 -right-2 w-10 h-10 bg-primary-indigo rounded-2xl border-4 border-white shadow-lg flex items-center justify-center animate-bounce">
-                            <Sparkles size={20} className="text-white" />
-                        </div>
+            <div className="w-full max-w-sm relative z-10">
+                <div className="text-center mb-10">
+                    <div className="w-20 h-20 bg-white border border-slate-100 rounded-[2rem] flex items-center justify-center text-royal-blue shadow-sm mx-auto mb-8">
+                        <Cpu size={40} />
                     </div>
-                    <h2 className="text-5xl font-black text-text-bright tracking-tight mb-3 uppercase">Join the <span className="premium-gradient-text">Registry</span></h2>
-                    <p className="text-[11px] font-black text-royal-blue/40 tracking-[0.4em] uppercase">Initialize Unified Member Node</p>
+                    <h1 className="text-3xl font-black text-slate-900 tracking-tight uppercase">Create Node</h1>
+                    <p className="text-[10px] font-black text-slate-400 tracking-[0.4em] uppercase mt-2">Unified Member Directory</p>
                 </div>
 
-                <div className="glass-card-blue p-10 relative !bg-white border-blue-50 shadow-2xl !rounded-[2.5rem]">
+                <div className="fintech-card !p-8">
                     {error && (
-                        <div className="bg-danger-rose/5 border border-danger-rose/10 text-danger-rose p-4 rounded-xl mb-8 text-center font-bold text-xs tracking-wide">
+                        <div className="bg-red-50 border border-red-100 text-red-500 p-4 rounded-xl mb-6 text-center text-[10px] font-black uppercase tracking-widest animate-pulse">
                             {error}
                         </div>
                     )}
 
                     <form onSubmit={handleSubmit} className="space-y-5">
                         <div className="space-y-2">
-                            <label className="text-[10px] font-bold uppercase text-text-muted ml-4 tracking-widest">Full Name</label>
+                            <label className="text-[9px] font-black uppercase text-slate-400 ml-4 tracking-[0.2em]">Identity Name</label>
                             <div className="relative">
-                                <User className="absolute left-6 top-1/2 -translate-y-1/2 text-royal-blue/40 group-focus-within:text-royal-blue transition-colors" size={18} />
+                                <User className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-300" size={16} />
                                 <input
                                     type="text"
-                                    placeholder="Enter your full name"
-                                    className="w-full bg-blue-50/30 border border-blue-50/50 rounded-2xl py-4 pl-14 pr-6 focus:border-royal-blue/30 outline-none text-base font-black text-text-bright transition-all placeholder:text-royal-blue/20"
+                                    placeholder="Full name"
+                                    className="w-full h-15 bg-slate-50 border border-slate-100 rounded-2xl pl-14 pr-6 text-sm font-black text-slate-900 focus:bg-white focus:border-royal-blue/30 transition-all outline-none"
                                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                                     required
                                 />
@@ -66,13 +58,13 @@ const Register = () => {
                         </div>
 
                         <div className="space-y-2">
-                            <label className="text-[10px] font-bold uppercase text-text-muted ml-4 tracking-widest">Mobile ID</label>
+                            <label className="text-[9px] font-black uppercase text-slate-400 ml-4 tracking-[0.2em]">Mobile ID</label>
                             <div className="relative">
-                                <Phone className="absolute left-6 top-1/2 -translate-y-1/2 text-royal-blue/40 group-focus-within:text-royal-blue transition-colors" size={18} />
+                                <Phone className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-300" size={16} />
                                 <input
                                     type="text"
-                                    placeholder="10-digit mobile ID"
-                                    className="w-full bg-blue-50/30 border border-blue-50/50 rounded-2xl py-4 pl-14 pr-6 focus:border-royal-blue/30 outline-none text-base font-black text-text-bright transition-all placeholder:text-royal-blue/20"
+                                    placeholder="10-digit mobile"
+                                    className="w-full h-15 bg-slate-50 border border-slate-100 rounded-2xl pl-14 pr-6 text-sm font-black text-slate-900 focus:bg-white focus:border-royal-blue/30 transition-all outline-none"
                                     onChange={(e) => setFormData({ ...formData, mobile: e.target.value })}
                                     required
                                 />
@@ -81,21 +73,21 @@ const Register = () => {
 
                         <div className="grid grid-cols-2 gap-4">
                             <div className="space-y-2">
-                                <label className="text-[10px] font-bold uppercase text-text-muted ml-4 tracking-widest">Password</label>
+                                <label className="text-[9px] font-black uppercase text-slate-400 ml-4 tracking-[0.2em]">Key</label>
                                 <input
                                     type="password"
                                     placeholder="••••"
-                                    className="w-full bg-blue-50/30 border border-blue-50/50 rounded-2xl py-4 px-6 focus:border-royal-blue/30 outline-none text-base font-black text-royal-blue transition-all placeholder:text-royal-blue/10"
+                                    className="w-full h-15 bg-slate-50 border border-slate-100 rounded-2xl px-6 text-sm font-black text-royal-blue focus:bg-white focus:border-royal-blue/30 transition-all outline-none"
                                     onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                                     required
                                 />
                             </div>
                             <div className="space-y-2">
-                                <label className="text-[10px] font-bold uppercase text-text-muted ml-4 tracking-widest">Confirm</label>
+                                <label className="text-[9px] font-black uppercase text-slate-400 ml-4 tracking-[0.2em]">Confirm</label>
                                 <input
                                     type="password"
                                     placeholder="••••"
-                                    className="w-full bg-blue-50/30 border border-blue-50/50 rounded-2xl py-4 px-6 focus:border-royal-blue/30 outline-none text-base font-black text-royal-blue transition-all placeholder:text-royal-blue/10"
+                                    className="w-full h-15 bg-slate-50 border border-slate-100 rounded-2xl px-6 text-sm font-black text-royal-blue focus:bg-white focus:border-royal-blue/30 transition-all outline-none"
                                     onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
                                     required
                                 />
@@ -103,13 +95,13 @@ const Register = () => {
                         </div>
 
                         <div className="space-y-2">
-                            <label className="text-[10px] font-bold uppercase text-text-muted ml-4 tracking-widest">Referral Code (Optional)</label>
+                            <label className="text-[9px] font-black uppercase text-slate-400 ml-4 tracking-[0.2em]">Referral Hash (Optional)</label>
                             <div className="relative">
-                                <Hash className="absolute left-6 top-1/2 -translate-y-1/2 text-text-muted" size={18} />
+                                <Hash className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-300" size={16} />
                                 <input
                                     type="text"
-                                    placeholder="Optional referral hash"
-                                    className="w-full bg-blue-50/30 border border-blue-50/50 rounded-2xl py-4 pl-14 pr-6 focus:border-royal-blue/30 outline-none text-base font-mono font-black text-royal-blue uppercase tracking-widest transition-all placeholder:text-royal-blue/10"
+                                    placeholder="Optional code"
+                                    className="w-full h-15 bg-slate-50 border border-slate-100 rounded-2xl pl-14 pr-6 text-sm font-black text-royal-blue font-mono tracking-widest focus:bg-white focus:border-royal-blue/30 transition-all outline-none"
                                     onChange={(e) => setFormData({ ...formData, referralCode: e.target.value })}
                                 />
                             </div>
@@ -117,21 +109,22 @@ const Register = () => {
 
                         <button
                             type="submit"
-                            className="btn-primary w-full py-6 text-base font-black uppercase tracking-[0.3em] mt-8 shadow-2xl !bg-gradient-to-r from-royal-blue via-primary-indigo to-deep-sapphire bg-[length:200%_auto] hover:bg-right transition-all duration-[1s] hover:scale-[1.02] border-none"
+                            className="btn-fintech btn-fintech-primary w-full py-5 text-xs font-black uppercase tracking-[0.2em] flex items-center justify-center gap-3 mt-4"
                         >
-                            AUTHORIZE HUB CREATION <Sparkles size={20} className="ml-2" />
+                            Establish Node <Sparkles size={16} />
                         </button>
                     </form>
 
-                    <div className="mt-10 text-center">
-                        <p className="text-text-muted text-xs font-medium">
-                            Already a member? <Link to="/login" className="text-royal-blue hover:text-deep-sapphire transition-colors font-black ml-1 uppercase underline decoration-2 underline-offset-4">Log In</Link>
+                    <div className="mt-8 text-center">
+                        <p className="text-slate-400 text-[10px] font-bold uppercase tracking-widest">
+                            Already a Member? <Link to="/login" className="text-royal-blue font-black border-b border-royal-blue/20 pb-0.5 ml-1">Authorize Entry</Link>
                         </p>
                     </div>
                 </div>
 
-                <p className="mt-8 text-[9px] text-text-muted text-center font-medium uppercase tracking-widest opacity-40 leading-relaxed">
-                    By joining, you agree to the <br /> Grow India Network Protocols & Terms
+                <p className="mt-8 text-[9px] text-slate-300 text-center font-black uppercase tracking-widest leading-relaxed">
+                    By initializing, you agree to the <br />
+                    <span className="text-slate-400">Network Protocols & Terms</span>
                 </p>
             </div>
         </div>
