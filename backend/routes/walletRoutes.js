@@ -2,18 +2,34 @@ const express = require('express');
 const { auth } = require('../middleware/auth');
 const Transaction = require('../models/Transaction');
 const User = require('../models/User');
+const AdminSettings = require('../models/AdminSettings');
 const router = express.Router();
+
+// Recharge Request
+// Get Deposit Info (Public or Auth, using Auth here since user needs to be logged in to deposit)
+router.get('/deposit-info', auth, async (req, res) => {
+    try {
+        let settings = await AdminSettings.findOne();
+        if (!settings) {
+            settings = { upiId: 'Not Set', qrCode: '' };
+        }
+        res.json({ upiId: settings.upiId, qrCode: settings.qrCode });
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+});
 
 // Recharge Request
 router.post('/recharge', auth, async (req, res) => {
     try {
-        const { amount, utr } = req.body;
+        const { amount, utr, screenshot } = req.body;
         if (amount < 300) return res.status(400).json({ message: 'Minimum recharge is 300 INR' });
 
         const recharge = new Transaction({
             userId: req.user.id,
             amount,
             utr,
+            screenshot,
             type: 'recharge',
             status: 'pending'
         });

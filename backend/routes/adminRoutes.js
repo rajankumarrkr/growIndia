@@ -2,6 +2,7 @@ const express = require('express');
 const { auth, admin } = require('../middleware/auth');
 const User = require('../models/User');
 const Transaction = require('../models/Transaction');
+const AdminSettings = require('../models/AdminSettings');
 const router = express.Router();
 
 // Get Admin Stats
@@ -32,6 +33,47 @@ router.get('/users', auth, admin, async (req, res) => {
     try {
         const users = await User.find({ role: 'user' }).select('-password');
         res.json(users);
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+});
+
+// Admin Settings (UPI & QR)
+router.get('/settings', auth, admin, async (req, res) => {
+    try {
+        let settings = await AdminSettings.findOne();
+        if (!settings) {
+            settings = await AdminSettings.create({});
+        }
+        res.json(settings);
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+});
+
+router.put('/settings', auth, admin, async (req, res) => {
+    try {
+        const { upiId, qrCode } = req.body;
+        let settings = await AdminSettings.findOne();
+        if (!settings) {
+            settings = new AdminSettings({ upiId, qrCode });
+        } else {
+            if (upiId !== undefined) settings.upiId = upiId;
+            if (qrCode !== undefined) settings.qrCode = qrCode;
+        }
+        await settings.save();
+        res.json({ message: 'Settings updated successfully', settings });
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+});
+
+// Get Pending Recharges
+router.get('/recharges/pending', auth, admin, async (req, res) => {
+    try {
+        // Fetch pending recharges and populate user details (name, mobile) to display in the admin dashboard
+        const recharges = await Transaction.find({ type: 'recharge', status: 'pending' }).populate('userId', 'name mobile');
+        res.json(recharges);
     } catch (err) {
         res.status(500).json({ message: err.message });
     }

@@ -8,7 +8,8 @@ dotenv.config();
 
 const app = express();
 app.use(cors());
-app.use(express.json());
+app.use(express.json({ limit: '10mb' })); // Increased limit for Base64 image uploads
+app.use(express.urlencoded({ limit: '10mb', extended: true })); // Added urlencoded limit as well
 
 // Routes
 app.use('/api/auth', require('./routes/authRoutes'));
@@ -38,8 +39,18 @@ const bootstrapAdmin = async () => {
 // Database Connection and Server Start
 const startServer = async () => {
     try {
+        const uri = process.env.MONGODB_URI;
+        if (!uri) {
+            console.error('ERROR: MONGODB_URI is not defined in environment variables');
+            process.exit(1);
+        }
+
         console.log('Connecting to MongoDB...');
-        await mongoose.connect(process.env.MONGODB_URI);
+        // Reduced timeout for faster error feedback in production
+        await mongoose.connect(uri, {
+            serverSelectionTimeoutMS: 5000, 
+            connectTimeoutMS: 10000,
+        });
         console.log('MongoDB Connected successfully');
 
         await bootstrapAdmin();

@@ -1,6 +1,6 @@
 import React, { useContext, useState } from 'react';
 import { AuthContext } from '../context/AuthContext';
-import { Wallet, ArrowDownRight, ArrowUpRight, TrendingUp, ShieldCheck, ChevronRight, Zap, Target, Globe, CreditCard, Activity, ArrowRight, PieChart, Layers } from 'lucide-react';
+import { Wallet, ArrowDownRight, ArrowUpRight, TrendingUp, ShieldCheck, ChevronRight, Zap, Target, Globe, CreditCard, Activity, ArrowRight, PieChart, Layers, CheckCircle } from 'lucide-react';
 import api from '../api/axios';
 import Layout from '../components/Layout';
 
@@ -9,14 +9,54 @@ const Home = () => {
     const [showRecharge, setShowRecharge] = useState(false);
     const [amount, setAmount] = useState('');
     const [utr, setUtr] = useState('');
+    const [screenshot, setScreenshot] = useState('');
     const [msg, setMsg] = useState('');
+    const [depositInfo, setDepositInfo] = useState({ upiId: 'Loading...', qrCode: '' });
+
+    React.useEffect(() => {
+        if (showRecharge) {
+            const fetchDepositInfo = async () => {
+                try {
+                    const res = await api.get('/wallet/deposit-info');
+                    setDepositInfo(res.data);
+                } catch (err) { }
+            };
+            fetchDepositInfo();
+        }
+    }, [showRecharge]);
+
+    const handleScreenshotUpload = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onloadend = () => setScreenshot(reader.result);
+            reader.readAsDataURL(file);
+        }
+    };
+
+    const handleCopyUpi = () => {
+        navigator.clipboard.writeText(depositInfo.upiId);
+        setMsg('UPI ID Copied!');
+        setTimeout(() => setMsg(''), 2000);
+    };
 
     const handleRecharge = async (e) => {
         e.preventDefault();
+        if (!screenshot) {
+            setMsg('Please upload payment screenshot');
+            setTimeout(() => setMsg(''), 2000);
+            return;
+        }
         try {
-            await api.post('/wallet/recharge', { amount, utr });
+            await api.post('/wallet/recharge', { amount, utr, screenshot });
             setMsg('Transaction Initiated');
-            setTimeout(() => { setShowRecharge(false); setMsg(''); }, 2000);
+            setTimeout(() => { 
+                setShowRecharge(false); 
+                setMsg(''); 
+                setAmount('');
+                setUtr('');
+                setScreenshot('');
+            }, 2000);
         } catch (err) {
             setMsg(err.response?.data?.message || 'Transaction Failed');
         }
@@ -167,17 +207,27 @@ const Home = () => {
                             </button>
                         </div>
 
-                        <div className="mb-10 p-4 bg-slate-50 border border-slate-100 rounded-2xl flex items-center justify-between group">
-                            <div className="flex items-center gap-3">
-                                <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-royal-blue shadow-sm">
-                                    <CreditCard size={18} />
+                        <div className="mb-10 space-y-4">
+                            <div className="p-4 bg-slate-50 border border-slate-100 rounded-2xl flex items-center justify-between group">
+                                <div className="flex items-center gap-3">
+                                    <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-royal-blue shadow-sm">
+                                        <CreditCard size={18} />
+                                    </div>
+                                    <div>
+                                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Gateway UPI</p>
+                                        <p className="text-sm font-black text-slate-800 font-mono tracking-wider">{depositInfo.upiId}</p>
+                                    </div>
                                 </div>
-                                <div>
-                                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Gateway UPI</p>
-                                    <p className="text-sm font-black text-slate-800 font-mono tracking-wider">growindia@upi</p>
-                                </div>
+                                <button type="button" onClick={handleCopyUpi} className="px-4 py-2 bg-white rounded-xl text-[10px] font-black text-royal-blue border border-slate-100 shadow-sm active:scale-95">COPY</button>
                             </div>
-                            <button className="px-4 py-2 bg-white rounded-xl text-[10px] font-black text-royal-blue border border-slate-100 shadow-sm active:scale-95">COPY</button>
+                            {depositInfo.qrCode && (
+                                <div className="flex flex-col items-center justify-center p-6 bg-slate-50 border border-slate-100 rounded-2xl">
+                                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-4">Scan to Pay</p>
+                                    <div className="w-32 h-32 bg-white rounded-xl p-2 shadow-sm border border-slate-200">
+                                        <img src={depositInfo.qrCode} alt="QR Code" className="w-full h-full object-contain" />
+                                    </div>
+                                </div>
+                            )}
                         </div>
 
                         <form onSubmit={handleRecharge} className="space-y-6">
@@ -202,6 +252,33 @@ const Home = () => {
                                     onChange={(e) => setUtr(e.target.value)}
                                     required
                                 />
+                            </div>
+                            <div className="space-y-2">
+                                <label className="text-label ml-2">Payment Screenshot</label>
+                                <div className="relative w-full h-18 bg-slate-50 border border-slate-100 rounded-2xl flex items-center px-4 hover:border-royal-blue/30 transition-all overflow-hidden">
+                                    <input 
+                                        type="file" 
+                                        accept="image/*" 
+                                        onChange={handleScreenshotUpload}
+                                        className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" 
+                                        required={!screenshot} 
+                                    />
+                                    <div className="flex items-center gap-3 pointer-events-none">
+                                        <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-slate-400 shadow-sm">
+                                            {screenshot ? <CheckCircle size={18} className="text-emerald-500" /> : <Layers size={18} />}
+                                        </div>
+                                        <div>
+                                            {screenshot ? (
+                                                <p className="text-xs font-black text-emerald-600 uppercase tracking-widest">Image Attached</p>
+                                            ) : (
+                                                <>
+                                                    <p className="text-xs font-black text-slate-600">Select Proof Image</p>
+                                                    <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">JPEG/PNG/HEIC</p>
+                                                </>
+                                            )}
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
 
                             {msg && (
