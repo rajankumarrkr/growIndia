@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head><title>Generate Icons</title></head>
+<body>
+<canvas id="c192" width="192" height="192"></canvas>
+<canvas id="c512" width="512" height="512"></canvas>
+<script>
+function drawIcon(canvas, size) {
+  const ctx = canvas.getContext('2d');
+  const r = size * 0.22;
+  
+  // Background
+  const grad = ctx.createLinearGradient(0, 0, size, size);
+  grad.addColorStop(0, '#1e3a8a');
+  grad.addColorStop(1, '#2563eb');
+  ctx.fillStyle = grad;
+  ctx.beginPath();
+  ctx.roundRect(0, 0, size, size, r);
+  ctx.fill();
+  
+  // "G" letter
+  ctx.fillStyle = 'white';
+  ctx.font = `bold ${size * 0.55}px Arial`;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText('G', size/2, size/2 + size*0.03);
+}
+
+const c192 = document.getElementById('c192');
+const c512 = document.getElementById('c512');
+drawIcon(c192, 192);
+drawIcon(c512, 512);
+
+console.log('192:', c192.toDataURL());
+console.log('512:', c512.toDataURL());
+</script>
+</body>
+</html>
