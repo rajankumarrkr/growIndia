@@ -22,23 +22,28 @@ const Register = () => {
 
     return (
         <div className="min-h-screen bg-bg-deep flex flex-col items-center justify-center p-6 py-20 relative overflow-hidden selection:bg-primary-indigo/10">
-            {/* Atmospheric Background - subtle for light mode */}
-            <div className="fixed top-[-10%] left-[-10%] w-[70%] h-[70%] bg-secondary-violet/5 rounded-full blur-[120px] pointer-events-none animate-pulse"></div>
-            <div className="fixed bottom-[-10%] right-[-10%] w-[70%] h-[70%] bg-primary-indigo/5 rounded-full blur-[120px] pointer-events-none animate-pulse" style={{ animationDelay: '2s' }}></div>
+            {/* Soft Ambient Background - Ultra Blue Registration */}
+            <div className="fixed top-[-10%] right-[-10%] w-[80%] h-[80%] bg-glow-blue rounded-full blur-[140px] pointer-events-none animate-pulse"></div>
+            <div className="fixed bottom-[-10%] left-[-10%] w-[80%] h-[80%] bg-glow-azure rounded-full blur-[140px] pointer-events-none animate-pulse" style={{ animationDelay: '2s' }}></div>
+            <div className="fixed top-[40%] left-[-10%] w-[50%] h-[50%] bg-glow-indigo rounded-full blur-[120px] pointer-events-none animate-pulse" style={{ animationDelay: '4s' }}></div>
 
             <div className="w-full max-w-md relative z-10">
                 <div className="text-center mb-12">
-                    <div className="inline-flex relative group mb-8">
-                        <div className="absolute inset-0 bg-secondary-violet blur-3xl opacity-10 group-hover:opacity-20 transition-opacity"></div>
-                        <div className="glass-card !rounded-[2.5rem] p-6 relative z-10 transition-transform duration-700 hover:scale-110 !bg-white border-black/5 shadow-premium">
-                            <Cpu className="text-secondary-violet" size={48} />
+                    <div className="inline-flex relative group mb-10">
+                        <div className="absolute inset-[-10%] bg-gradient-to-tr from-royal-blue via-primary-indigo to-deep-sapphire blur-3xl opacity-30 group-hover:opacity-50 transition-opacity duration-1000"></div>
+                        <div className="glass-card-blue !rounded-[3rem] p-8 relative z-10 transition-all duration-700 hover:scale-110 !bg-white border-blue-50 shadow-2xl group-hover:-rotate-6">
+                            <div className="absolute inset-0 bg-gradient-to-br from-royal-blue/5 to-transparent rounded-[3rem]"></div>
+                            <Cpu className="text-royal-blue relative z-10" size={56} />
+                        </div>
+                        <div className="absolute -top-2 -right-2 w-10 h-10 bg-primary-indigo rounded-2xl border-4 border-white shadow-lg flex items-center justify-center animate-bounce">
+                            <Sparkles size={20} className="text-white" />
                         </div>
                     </div>
-                    <h2 className="text-4xl font-extrabold text-text-bright tracking-tight mb-2">Join the Network</h2>
-                    <p className="text-sm font-medium text-text-base tracking-wide uppercase opacity-70">Initialize Your Account</p>
+                    <h2 className="text-5xl font-black text-text-bright tracking-tight mb-3 uppercase">Join the <span className="premium-gradient-text">Registry</span></h2>
+                    <p className="text-[11px] font-black text-royal-blue/40 tracking-[0.4em] uppercase">Initialize Unified Member Node</p>
                 </div>
 
-                <div className="glass-card p-10 relative !bg-white border-black/5 shadow-premium">
+                <div className="glass-card-blue p-10 relative !bg-white border-blue-50 shadow-2xl !rounded-[2.5rem]">
                     {error && (
                         <div className="bg-danger-rose/5 border border-danger-rose/10 text-danger-rose p-4 rounded-xl mb-8 text-center font-bold text-xs tracking-wide">
                             {error}
@@ -49,11 +54,11 @@ const Register = () => {
                         <div className="space-y-2">
                             <label className="text-[10px] font-bold uppercase text-text-muted ml-4 tracking-widest">Full Name</label>
                             <div className="relative">
-                                <User className="absolute left-6 top-1/2 -translate-y-1/2 text-text-muted group-focus-within:text-primary-indigo transition-colors" size={18} />
+                                <User className="absolute left-6 top-1/2 -translate-y-1/2 text-royal-blue/40 group-focus-within:text-royal-blue transition-colors" size={18} />
                                 <input
                                     type="text"
-                                    placeholder="Enter your name"
-                                    className="w-full bg-black/5 border border-black/5 rounded-2xl py-4 pl-14 pr-6 focus:border-primary-indigo/30 outline-none text-base font-semibold text-text-bright transition-all placeholder:text-text-muted/20"
+                                    placeholder="Enter your full name"
+                                    className="w-full bg-blue-50/30 border border-blue-50/50 rounded-2xl py-4 pl-14 pr-6 focus:border-royal-blue/30 outline-none text-base font-black text-text-bright transition-all placeholder:text-royal-blue/20"
                                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                                     required
                                 />
@@ -63,11 +68,11 @@ const Register = () => {
                         <div className="space-y-2">
                             <label className="text-[10px] font-bold uppercase text-text-muted ml-4 tracking-widest">Mobile ID</label>
                             <div className="relative">
-                                <Phone className="absolute left-6 top-1/2 -translate-y-1/2 text-text-muted group-focus-within:text-primary-indigo transition-colors" size={18} />
+                                <Phone className="absolute left-6 top-1/2 -translate-y-1/2 text-royal-blue/40 group-focus-within:text-royal-blue transition-colors" size={18} />
                                 <input
                                     type="text"
-                                    placeholder="10-digit number"
-                                    className="w-full bg-black/5 border border-black/5 rounded-2xl py-4 pl-14 pr-6 focus:border-primary-indigo/30 outline-none text-base font-semibold text-text-bright transition-all placeholder:text-text-muted/20"
+                                    placeholder="10-digit mobile ID"
+                                    className="w-full bg-blue-50/30 border border-blue-50/50 rounded-2xl py-4 pl-14 pr-6 focus:border-royal-blue/30 outline-none text-base font-black text-text-bright transition-all placeholder:text-royal-blue/20"
                                     onChange={(e) => setFormData({ ...formData, mobile: e.target.value })}
                                     required
                                 />
@@ -80,7 +85,7 @@ const Register = () => {
                                 <input
                                     type="password"
                                     placeholder="••••"
-                                    className="w-full bg-black/5 border border-black/5 rounded-2xl py-4 px-6 focus:border-primary-indigo/30 outline-none text-base font-semibold text-primary-indigo transition-all placeholder:text-text-muted/10"
+                                    className="w-full bg-blue-50/30 border border-blue-50/50 rounded-2xl py-4 px-6 focus:border-royal-blue/30 outline-none text-base font-black text-royal-blue transition-all placeholder:text-royal-blue/10"
                                     onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                                     required
                                 />
@@ -90,7 +95,7 @@ const Register = () => {
                                 <input
                                     type="password"
                                     placeholder="••••"
-                                    className="w-full bg-black/5 border border-black/5 rounded-2xl py-4 px-6 focus:border-primary-indigo/30 outline-none text-base font-semibold text-primary-indigo transition-all placeholder:text-text-muted/10"
+                                    className="w-full bg-blue-50/30 border border-blue-50/50 rounded-2xl py-4 px-6 focus:border-royal-blue/30 outline-none text-base font-black text-royal-blue transition-all placeholder:text-royal-blue/10"
                                     onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
                                     required
                                 />
@@ -103,8 +108,8 @@ const Register = () => {
                                 <Hash className="absolute left-6 top-1/2 -translate-y-1/2 text-text-muted" size={18} />
                                 <input
                                     type="text"
-                                    placeholder="Enter referral hash"
-                                    className="w-full bg-black/5 border border-black/5 rounded-2xl py-4 pl-14 pr-6 focus:border-secondary-violet/30 outline-none text-base font-mono font-bold text-secondary-violet uppercase tracking-widest transition-all placeholder:text-secondary-violet/20"
+                                    placeholder="Optional referral hash"
+                                    className="w-full bg-blue-50/30 border border-blue-50/50 rounded-2xl py-4 pl-14 pr-6 focus:border-royal-blue/30 outline-none text-base font-mono font-black text-royal-blue uppercase tracking-widest transition-all placeholder:text-royal-blue/10"
                                     onChange={(e) => setFormData({ ...formData, referralCode: e.target.value })}
                                 />
                             </div>
@@ -112,15 +117,15 @@ const Register = () => {
 
                         <button
                             type="submit"
-                            className="btn-primary !bg-secondary-violet w-full py-5 text-sm font-extrabold uppercase tracking-widest mt-6 shadow-indigo !shadow-secondary-violet/20 hover:brightness-110"
+                            className="btn-primary w-full py-6 text-base font-black uppercase tracking-[0.3em] mt-8 shadow-2xl !bg-gradient-to-r from-royal-blue via-primary-indigo to-deep-sapphire bg-[length:200%_auto] hover:bg-right transition-all duration-[1s] hover:scale-[1.02] border-none"
                         >
-                            Create Node <Sparkles size={18} />
+                            AUTHORIZE HUB CREATION <Sparkles size={20} className="ml-2" />
                         </button>
                     </form>
 
                     <div className="mt-10 text-center">
                         <p className="text-text-muted text-xs font-medium">
-                            Already a member? <Link to="/login" className="text-secondary-violet hover:text-secondary-violet-light transition-colors font-bold ml-1">Log In</Link>
+                            Already a member? <Link to="/login" className="text-royal-blue hover:text-deep-sapphire transition-colors font-black ml-1 uppercase underline decoration-2 underline-offset-4">Log In</Link>
                         </p>
                     </div>
                 </div>

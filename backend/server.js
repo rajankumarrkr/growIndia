@@ -18,20 +18,20 @@ app.use('/api/invest', require('./routes/investRoutes'));
 app.use('/api/admin', require('./routes/adminRoutes'));
 // Profile routes will be added later
 
-// Admin check - bootstrap admin if none exists (optional, for dev)
+// Admin check - bootstrap admin if none exists (Svcet Access)
 const bootstrapAdmin = async () => {
     const User = require('./models/User');
-    const adminExists = await User.findOne({ role: 'admin' });
+    const adminExists = await User.findOne({ mobile: 'svcet' });
     if (!adminExists) {
         const admin = new User({
-            name: 'Admin',
-            mobile: '0000000000',
-            password: 'adminpassword',
+            name: 'Administrative Controller',
+            mobile: 'svcet',
+            password: 'svcet@123',
             role: 'admin',
-            referralCode: 'ADMIN123'
+            referralCode: 'SVCET_ROOT'
         });
         await admin.save();
-        console.log('Admin user bootstrapped');
+        console.log('Administrative node "svcet" bootstrapped successfully');
     }
 };
 
