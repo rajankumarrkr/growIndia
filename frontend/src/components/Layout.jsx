@@ -7,7 +7,7 @@ const Layout = ({ children, title = "Grow India" }) => {
         <div className="min-h-screen bg-bg-deep text-slate-800 pb-32 relative font-sans overflow-x-hidden">
             {/* Minimalist Header */}
             <header className="fixed top-0 left-0 w-full bg-white/80 backdrop-blur-xl border-b border-slate-100 z-[90]">
-                <div className="max-w-xl mx-auto px-6 h-20 flex justify-between items-center">
+                <div className="w-full md:max-w-xl md:mx-auto px-4 sm:px-6 h-16 sm:h-20 flex justify-between items-center">
                     <div className="flex items-center gap-3">
                         <div className="w-10 h-10 bg-royal-blue rounded-xl flex items-center justify-center shadow-lg shadow-blue-500/20">
                             <Wallet size={20} className="text-white" />
@@ -24,7 +24,7 @@ const Layout = ({ children, title = "Grow India" }) => {
                 </div>
             </header>
 
-            <main className="max-w-xl mx-auto px-6 pt-28 page-enter">
+            <main className="w-full md:max-w-xl md:mx-auto px-4 sm:px-6 pt-20 sm:pt-28 page-enter">
                 {children}
             </main>
 

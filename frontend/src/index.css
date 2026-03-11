@@ -49,6 +49,15 @@
   body {
     @apply m-0 font-sans selection:bg-royal-blue/10 selection:text-royal-blue;
     touch-action: manipulation;
+    width: 100%;
+    max-width: 100vw;
+    overflow-x: hidden;
+  }
+
+  html {
+    width: 100%;
+    max-width: 100vw;
+    overflow-x: hidden;
   }
 
   h1,
@@ -107,11 +116,18 @@
 
   /* Navigation Base */
   .mobile-nav-shell {
-    @apply fixed bottom-0 left-0 w-full px-6 pb-8 z-[100];
+    @apply fixed bottom-0 left-0 w-full z-[100];
+    padding: 0 12px 20px 12px;
+  }
+
+  @media (min-width: 640px) {
+    .mobile-nav-shell {
+      padding: 0 24px 32px 24px;
+    }
   }
 
   .mobile-nav-core {
-    @apply bg-white/95 backdrop-blur-3xl border border-slate-100/80 rounded-[2.5rem] shadow-nav h-20 flex items-center justify-between px-8;
+    @apply bg-white/95 backdrop-blur-3xl border border-slate-100/80 rounded-[2.5rem] shadow-nav h-16 sm:h-20 flex items-center justify-between px-4 sm:px-8;
   }
 
   /* Typography Utilities */
