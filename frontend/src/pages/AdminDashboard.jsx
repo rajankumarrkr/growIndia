@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import api from '../api/axios';
-import { Users, CreditCard, CheckCircle, XCircle, Settings, ShieldCheck, ArrowRight, User as UserIcon, LogOut, Activity, Landmark, PieChart, ShieldAlert, Cpu, Zap } from 'lucide-react';
+import { Users, CreditCard, CheckCircle, XCircle, Settings, ShieldCheck, ArrowRight, User as UserIcon, LogOut, Activity, Landmark, PieChart, ShieldAlert, Cpu, Zap, LayoutDashboard, Database, BarChart3, Search, Filter } from 'lucide-react';
 
 const AdminDashboard = () => {
     const [stats, setStats] = useState({ totalUsers: 0, totalDeposits: 0, totalWithdrawals: 0 });
@@ -23,114 +23,139 @@ const AdminDashboard = () => {
     };
 
     return (
-        <div className="min-h-screen bg-bg-deep text-text-bright p-8 pb-32 overflow-x-hidden relative">
-            {/* Background Matrix */}
-            <div className="fixed inset-0 opacity-5 pointer-events-none">
-                <div className="absolute top-0 left-0 w-full h-[1px] bg-primary-neon animate-infinite-scroll"></div>
-                <div className="absolute top-0 left-0 w-[1px] h-full bg-secondary-neon animate-infinite-scroll [animation-delay:3s]"></div>
-            </div>
+        <div className="min-h-screen bg-bg-deep text-text-base p-6 relative overflow-hidden selection:bg-primary-indigo/10">
+            {/* Atmospheric Background - Subtle for Light Mode */}
+            <div className="fixed top-[-10%] right-[-10%] w-[70%] h-[70%] bg-primary-indigo/5 rounded-full blur-[120px] pointer-events-none animate-pulse"></div>
+            <div className="fixed bottom-[-10%] left-[-10%] w-[70%] h-[70%] bg-secondary-violet/5 rounded-full blur-[120px] pointer-events-none animate-pulse" style={{ animationDelay: '2s' }}></div>
 
-            <header className="max-w-6xl mx-auto flex justify-between items-center mb-20 relative z-10">
-                <div className="flex items-center gap-6">
-                    <div className="relative group">
-                        <div className="absolute inset-0 bg-primary-neon blur-2xl opacity-20 group-hover:opacity-40 transition-opacity"></div>
-                        <div className="bg-bg-card p-6 rounded-[2.5rem] border border-white/10 text-primary-neon shadow-2xl relative z-10 animate-liquid">
-                            <ShieldAlert size={40} />
-                        </div>
+            <header className="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 mb-12 relative z-10">
+                <div className="flex items-center gap-5">
+                    <div className="glass-card !rounded-2xl p-4 text-primary-indigo !bg-white border-black/5 shadow-premium">
+                        <ShieldAlert size={32} />
                     </div>
                     <div>
-                        <h1 className="text-5xl font-black tracking-tighter text-white italic uppercase underline decoration-primary-neon/20 decoration-8 underline-offset-8">Terminal</h1>
-                        <p className="text-[11px] font-black text-primary-neon tracking-[0.5em] mt-3 uppercase italic opacity-70">Privileged_Control_v6.4</p>
+                        <h1 className="text-3xl font-extrabold tracking-tight text-text-bright">Management Console</h1>
+                        <div className="flex items-center gap-2 mt-1">
+                            <span className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span>
+                            <p className="text-[10px] font-bold text-text-muted uppercase tracking-widest opacity-60">System Operational • v2.4.0</p>
+                        </div>
                     </div>
                 </div>
 
-                <div className="flex items-center gap-4">
-                    <div className="hidden md:flex flex-col items-end mr-6">
-                        <p className="text-[10px] font-black text-text-dim uppercase tracking-widest">Sys_Health</p>
-                        <div className="flex gap-1 mt-1">
-                            <div className="w-4 h-1 bg-success-neon"></div>
-                            <div className="w-4 h-1 bg-success-neon"></div>
-                            <div className="w-1 h-1 bg-white/10"></div>
+                <div className="flex items-center gap-4 w-full sm:w-auto">
+                    <div className="glass-card !rounded-xl px-5 py-2.5 !bg-white border-black/5 shadow-premium hidden md:flex items-center gap-3">
+                        <div className="text-right">
+                            <p className="text-[9px] font-bold text-text-muted uppercase tracking-widest leading-none mb-1">Health Score</p>
+                            <p className="text-sm font-extrabold text-emerald-600 leading-none">99.8%</p>
                         </div>
                     </div>
-                    <button className="bg-bg-card border border-white/10 p-5 rounded-[1.8rem] hover:bg-red-500/10 hover:border-red-500/30 transition-all text-red-500 shadow-2xl active:scale-95 group">
-                        <LogOut size={28} className="group-hover:rotate-12 transition-transform" />
+                    <button className="glass-card !rounded-xl p-3 text-danger-rose hover:bg-danger-rose/5 border-black/5 !bg-white shadow-premium transition-all ml-auto sm:ml-0">
+                        <LogOut size={24} />
                     </button>
                 </div>
             </header>
 
-            <div className="max-w-6xl mx-auto relative z-10">
-                {/* Intelligence Matrix */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-20">
+            <main className="max-w-7xl mx-auto relative z-10">
+                {/* Core Metrics Grid */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
                     {[
-                        { label: 'Network_Nodes', value: stats.totalUsers, icon: <Users />, color: 'primary-neon' },
-                        { label: 'Asset_Inflow', value: `₹${stats.totalDeposits.toLocaleString()}`, icon: <Landmark />, color: 'success-neon' },
-                        { label: 'Outflow_Drain', value: `₹${stats.totalWithdrawals.toLocaleString()}`, icon: <Activity />, color: 'secondary-neon' }
+                        { label: 'Total Base Nodes', value: stats.totalUsers, icon: <Users size={24} />, color: 'primary-indigo', trend: '+12% This Week' },
+                        { label: 'Cumulative Inflow', value: `₹${stats.totalDeposits.toLocaleString()}`, icon: <Landmark size={24} />, color: 'emerald-500', trend: '+5.4% vs Last Session' },
+                        { label: 'Operation Drain', value: `₹${stats.totalWithdrawals.toLocaleString()}`, icon: <Activity size={24} />, color: 'danger-rose', trend: 'Regulated Activity' }
                     ].map((card, i) => (
-                        <div key={i} className="bg-bg-card rounded-[3.5rem] p-10 border border-white/5 shadow-2xl group hover:-translate-y-2 transition-all relative overflow-hidden">
-                            <div className={`absolute top-0 right-0 w-32 h-32 bg-${card.color}/5 rounded-full blur-3xl`}></div>
-                            <div className={`w-16 h-16 rounded-2xl flex items-center justify-center mb-8 border border-white/5 text-${card.color} shadow-2xl group-hover:rotate-12 transition-transform`}>
-                                {card.icon}
+                        <div key={i} className="glass-card p-8 group transition-all duration-300 hover:border-black/10 !bg-white shadow-premium">
+                            <div className="flex justify-between items-start mb-6">
+                                <div className={`w-14 h-14 rounded-2xl flex items-center justify-center bg-black/5 border border-black/5 text-${card.color} group-hover:scale-110 transition-transform`}>
+                                    {card.icon}
+                                </div>
+                                <div className="text-[9px] font-bold text-text-muted bg-black/5 px-2 py-1 rounded-md uppercase tracking-wider">
+                                    {card.trend}
+                                </div>
                             </div>
-                            <p className="text-[11px] font-black text-text-dim uppercase tracking-[0.3em] mb-2">{card.label}</p>
-                            <h2 className={`text-4xl font-black text-white tracking-tighter italic`}>{card.value}</h2>
-                            <div className={`h-1 w-12 bg-${card.color} mt-6 opacity-30`}></div>
+                            <p className="text-[10px] font-bold text-text-muted uppercase tracking-widest mb-1.5 opacity-60">{card.label}</p>
+                            <h2 className="text-3xl font-extrabold text-text-bright tracking-tight mb-4">{card.value}</h2>
+                            <div className={`h-1 w-full bg-black/5 rounded-full overflow-hidden`}>
+                                <div className="h-full bg-primary-indigo w-[70%]" style={{ backgroundColor: card.color === 'primary-indigo' ? 'var(--primary-indigo)' : card.color === 'emerald-500' ? '#059669' : '#e11d48' }}></div>
+                            </div>
                         </div>
                     ))}
                 </div>
 
-                {/* Central Ops Unit */}
-                <div className="bg-bg-card rounded-[4rem] p-1 p-md-10 border border-white/5 shadow-[0_50px_100px_rgba(0,0,0,0.6)] overflow-hidden">
-                    <div className="flex flex-wrap gap-4 p-8 border-b border-white/5">
-                        {[
-                            { id: 'users', label: 'Unit_Directory', icon: <Users size={14} /> },
-                            { id: 'recharges', label: 'Inflow_Verification', icon: <Cpu size={14} /> },
-                            { id: 'withdrawals', label: 'Drain_Requests', icon: <Zap size={14} /> }
-                        ].map(tab => (
-                            <button
-                                key={tab.id}
-                                onClick={() => setActiveTab(tab.id)}
-                                className={`flex items-center gap-3 px-8 py-5 rounded-2xl font-black text-[11px] uppercase tracking-[0.3em] transition-all relative overflow-hidden ${activeTab === tab.id
-                                        ? 'bg-white text-bg-deep shadow-2xl shadow-white/5'
-                                        : 'text-text-dim hover:text-white hover:bg-white/5'
-                                    }`}
-                            >
-                                {tab.icon} {tab.label}
-                                {activeTab === tab.id && <div className="absolute bottom-0 left-0 w-full h-1 bg-primary-neon"></div>}
+                {/* Operations Center */}
+                <div className="glass-card !rounded-[2.5rem] border-black/5 !bg-white shadow-premium overflow-hidden mb-12">
+                    <div className="flex flex-wrap items-center justify-between p-6 border-b border-black/5 gap-6">
+                        <div className="flex flex-wrap gap-2">
+                            {[
+                                { id: 'users', label: 'User Registry', icon: <Database size={14} /> },
+                                { id: 'recharges', label: 'Verification Queue', icon: <Cpu size={14} /> },
+                                { id: 'withdrawals', label: 'Withdrawal Hub', icon: <Zap size={14} /> }
+                            ].map(tab => (
+                                <button
+                                    key={tab.id}
+                                    onClick={() => setActiveTab(tab.id)}
+                                    className={`flex items-center gap-2.5 px-6 py-3.5 rounded-xl font-bold text-[10px] uppercase tracking-widest transition-all ${activeTab === tab.id
+                                        ? 'bg-primary-indigo text-white shadow-indigo'
+                                        : 'text-text-muted hover:text-text-bright hover:bg-black/5'
+                                        }`}
+                                >
+                                    {tab.icon} {tab.label}
+                                </button>
+                            ))}
+                        </div>
+                        <div className="flex items-center gap-3 w-full lg:w-auto">
+                            <div className="relative flex-1 lg:w-64">
+                                <Search size={14} className="absolute left-4 top-1/2 -translate-y-1/2 text-text-muted" />
+                                <input
+                                    type="text"
+                                    placeholder="Search nodes..."
+                                    className="w-full bg-black/5 border border-black/5 rounded-xl py-2.5 pl-11 pr-4 text-xs font-bold text-text-bright outline-none focus:border-primary-indigo/30 transition-all placeholder:text-text-muted/20"
+                                />
+                            </div>
+                            <button className="glass-card p-2.5 text-text-muted hover:text-text-bright border-black/5 !bg-white shadow-premium">
+                                <Filter size={14} />
                             </button>
-                        ))}
+                        </div>
                     </div>
 
-                    <div className="p-8">
+                    <div className="p-0">
                         {activeTab === 'users' ? (
                             <div className="overflow-x-auto">
                                 <table className="w-full text-left">
                                     <thead>
-                                        <tr className="text-[11px] font-black uppercase text-text-dim border-b border-white/5">
-                                            <th className="pb-8 px-8 tracking-[0.2em]">Partner_Alias</th>
-                                            <th className="pb-8 px-8 tracking-[0.2em]">Node_Mobile</th>
-                                            <th className="pb-8 px-8 tracking-[0.2em]">Asset_Value</th>
-                                            <th className="pb-8 px-8 tracking-[0.2em]">Status</th>
-                                            <th className="pb-8 px-8 text-right tracking-[0.2em]">Action_Port</th>
+                                        <tr className="text-[10px] font-bold uppercase text-text-muted border-b border-black/5">
+                                            <th className="py-6 px-8 tracking-widest">Node Alias</th>
+                                            <th className="py-6 px-8 tracking-widest">Mobile Hash</th>
+                                            <th className="py-6 px-8 tracking-widest">Asset Value</th>
+                                            <th className="py-6 px-8 tracking-widest">Connectivity</th>
+                                            <th className="py-6 px-8 text-right tracking-widest">Management</th>
                                         </tr>
                                     </thead>
-                                    <tbody className="divide-y divide-white/5">
+                                    <tbody className="divide-y divide-black/5">
                                         {users.map(u => (
-                                            <tr key={u._id} className="hover:bg-white/5 transition-all group">
-                                                <td className="py-10 px-8 font-black text-white italic tracking-tight">{u.name}</td>
-                                                <td className="py-10 px-8 font-mono text-text-dim tracking-widest">{u.mobile}</td>
-                                                <td className="py-10 px-8 font-black text-primary-neon text-lg tracking-tighter">₹{u.walletBalance.toLocaleString()}</td>
-                                                <td className="py-10 px-8">
+                                            <tr key={u._id} className="hover:bg-black/[0.01] transition-colors group">
+                                                <td className="py-8 px-8">
                                                     <div className="flex items-center gap-3">
-                                                        <div className={`w-2 h-2 rounded-full animate-pulse ${u.status === 'active' ? 'bg-success-neon shadow-[0_0_8px_#10b981]' : 'bg-red-500'}`}></div>
-                                                        <span className={`text-[10px] font-black uppercase tracking-widest ${u.status === 'active' ? 'text-success-neon' : 'text-red-500'}`}>
+                                                        <div className="w-10 h-10 rounded-xl bg-primary-indigo/5 flex items-center justify-center text-primary-indigo text-xs font-extrabold border border-primary-indigo/10">
+                                                            {u.name.substring(0, 2).toUpperCase()}
+                                                        </div>
+                                                        <span className="font-extrabold text-text-bright tracking-tight">{u.name}</span>
+                                                    </div>
+                                                </td>
+                                                <td className="py-8 px-8 font-mono text-text-muted text-xs tracking-wider">{u.mobile}</td>
+                                                <td className="py-8 px-8">
+                                                    <span className="text-sm font-extrabold text-text-bright">₹{u.walletBalance.toLocaleString()}</span>
+                                                </td>
+                                                <td className="py-8 px-8">
+                                                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-black/5 border border-black/5">
+                                                        <div className={`w-1.5 h-1.5 rounded-full ${u.status === 'active' ? 'bg-emerald-500 shadow-sm' : 'bg-danger-rose'}`}></div>
+                                                        <span className={`text-[9px] font-bold uppercase tracking-widest ${u.status === 'active' ? 'text-emerald-600' : 'text-danger-rose'}`}>
                                                             {u.status}
                                                         </span>
                                                     </div>
                                                 </td>
-                                                <td className="py-10 px-8 text-right">
-                                                    <button className="bg-white/5 border border-white/10 px-6 py-3 rounded-2xl text-[10px] font-black uppercase tracking-[0.3em] hover:bg-white hover:text-bg-deep transition-all shadow-2xl active:scale-95">
-                                                        Inspect_Unit
+                                                <td className="py-8 px-8 text-right">
+                                                    <button className="glass-card !rounded-xl px-4 py-2 text-[9px] font-bold uppercase tracking-widest hover:bg-primary-indigo hover:text-white transition-all border-black/5 !bg-white shadow-premium">
+                                                        Inspect
                                                     </button>
                                                 </td>
                                             </tr>
@@ -139,18 +164,17 @@ const AdminDashboard = () => {
                                 </table>
                             </div>
                         ) : (
-                            <div className="text-center py-32 bg-white/[0.02] rounded-[3.5rem] border border-dashed border-white/10 relative group">
-                                <div className="absolute inset-0 bg-primary-neon/5 opacity-0 group-hover:opacity-100 transition-opacity rounded-[3.5rem]"></div>
-                                <div className="w-24 h-24 bg-bg-card border border-white/10 rounded-full flex items-center justify-center mx-auto mb-10 text-white shadow-2xl animate-spin-slow">
-                                    <Cpu size={40} />
+                            <div className="flex flex-col items-center justify-center py-40 px-8 text-center bg-black/[0.01]">
+                                <div className="w-20 h-20 bg-black/5 border border-black/10 rounded-3xl flex items-center justify-center mb-8 text-text-muted/30">
+                                    <Database size={40} className="animate-pulse" />
                                 </div>
-                                <h3 className="text-3xl font-black text-white tracking-tighter uppercase italic">Data_Sink_Void</h3>
-                                <p className="text-[11px] font-black text-text-dim uppercase tracking-[0.5em] mt-4 opacity-70 italic">Buffer empty: No active packets for {activeTab}</p>
+                                <h3 className="text-xl font-extrabold text-text-bright mb-2">Protocol Queue Vacant</h3>
+                                <p className="text-[10px] font-bold text-text-muted uppercase tracking-[0.3em] opacity-40 max-w-xs">No active {activeTab} sequences detected in the current buffer.</p>
                             </div>
                         )}
                     </div>
                 </div>
-            </div>
+            </main>
         </div>
     );
 };
