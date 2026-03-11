@@ -80,11 +80,32 @@ const Home = () => {
     ];
 
     return (
-        <Layout title="Dashboard">
-            {/* Header Overrides */}
-            <div style={{ display: 'none' }}>
-                {/* This is a hack to bypass the default layout title if needed, 
-                    but we'll just style our own header here for exact match */}
+        <Layout title="Dashboard" hideHeader={true}>
+            {/* Custom Header matching screenshot */}
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                    <div style={{
+                        width: '44px', height: '44px', borderRadius: '12px',
+                        background: '#2563eb', color: 'white',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        boxShadow: '0 8px 16px rgba(37,99,235,0.2)'
+                    }}>
+                        <Wallet size={20} />
+                    </div>
+                    <div>
+                        <h1 style={{ fontSize: '18px', fontWeight: 900, color: '#0f172a', lineHeight: 1 }}>Dashboard</h1>
+                        <p style={{ fontSize: '10px', fontWeight: 800, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.1em', marginTop: '2px' }}>OFFICIAL HUB</p>
+                    </div>
+                </div>
+                <button style={{
+                    width: '44px', height: '44px', borderRadius: '12px',
+                    background: '#f8fafc', border: '1.5px solid #f1f5f9',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    color: '#64748b', position: 'relative'
+                }}>
+                    <Bell size={20} />
+                    <div style={{ position: 'absolute', top: '10px', right: '10px', width: '8px', height: '8px', background: '#ef4444', borderRadius: '50%', border: '2px solid white' }} />
+                </button>
             </div>
 
             {/* Greeting */}
