@@ -44,29 +44,36 @@ router.post('/recharge', auth, async (req, res) => {
 // Withdrawal Request
 router.post('/withdraw', auth, async (req, res) => {
     try {
-        const { amount } = req.body;
+        const { amount, method, name, accountNumber, ifsc, upiId } = req.body;
         if (amount < 300) return res.status(400).json({ message: 'Minimum withdrawal is 300 INR' });
 
         const user = await User.findById(req.user.id);
         if (user.walletBalance < amount) return res.status(400).json({ message: 'Insufficient balance' });
 
-        if (!user.bankDetails?.accountNumber) {
-            return res.status(400).json({ message: 'Please add bank details first' });
+        if (!method) {
+            return res.status(400).json({ message: 'Please provide withdrawal method (bank or upi)' });
+        }
+        if (method === 'bank' && (!accountNumber || !ifsc || !name)) {
+            return res.status(400).json({ message: 'Please provide full bank details' });
+        }
+        if (method === 'upi' && !upiId) {
+            return res.status(400).json({ message: 'Please provide UPI ID' });
         }
 
         const withdrawal = new Transaction({
             userId: req.user.id,
             amount,
             type: 'withdrawal',
-            status: 'pending'
+            status: 'pending',
+            accountDetails: { method, name, accountNumber, ifsc, upiId }
         });
 
-        // Deduct balance immediately
+        // Deduct balance immediately (refunded if rejected)
         user.walletBalance -= amount;
         await user.save();
         await withdrawal.save();
 
-        res.json({ message: 'Withdrawal request submitted' });
+        res.json({ message: 'Withdrawal request submitted. Admin will process within 24 hours.' });
     } catch (err) {
         res.status(500).json({ message: err.message });
     }

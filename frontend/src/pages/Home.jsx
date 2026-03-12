@@ -3,7 +3,8 @@ import { AuthContext } from '../context/AuthContext';
 import { 
     ArrowDownRight, ArrowUpRight, Target, CreditCard, CheckCircle, 
     Layers, X, TrendingUp, ShieldCheck, Users, Zap, ArrowRight, 
-    History, Bell, Wallet, BarChart3, Globe2, Cpu, LineChart
+    History, Bell, Wallet, BarChart3, Globe2, Cpu, LineChart,
+    Image as ImageIcon
 } from 'lucide-react';
 import api from '../api/axios';
 import Layout from '../components/Layout';
@@ -285,129 +286,169 @@ const Home = () => {
             {/* ... keeping the Deposit Modal logic same as before ... */}
             {showRecharge && (
                 <div style={{
-                    position: 'fixed', inset: 0, background: 'rgba(15,23,42,0.6)',
-                    backdropFilter: 'blur(8px)', zIndex: 200,
-                    display: 'flex', alignItems: 'flex-end', justifyContent: 'center',
+                    position: 'fixed', inset: 0, background: 'rgba(15,23,42,0.4)',
+                    backdropFilter: 'blur(12px)', zIndex: 200,
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    padding: '20px'
                 }}>
                     <div style={{
-                        background: 'white', width: '100%', maxWidth: '520px',
-                        borderRadius: '32px 32px 0 0', padding: '28px 24px 40px',
+                        background: 'white', width: '100%', maxWidth: '440px',
+                        borderRadius: '32px', padding: '32px',
+                        boxShadow: '0 30px 60px -12px rgba(15,23,42,0.3)',
                         maxHeight: '90vh', overflowY: 'auto',
+                        position: 'relative'
                     }}>
-                        {/* Handle */}
-                        <div style={{ width: '48px', height: '5px', background: '#e2e8f0', borderRadius: '99px', margin: '0 auto 24px' }} />
+                        <button
+                            onClick={() => setShowRecharge(false)}
+                            style={{
+                                position: 'absolute', top: '24px', right: '24px',
+                                width: '36px', height: '36px', borderRadius: '50%',
+                                background: '#f8fafc', border: 'none', cursor: 'pointer',
+                                display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#64748b',
+                                transition: 'all 0.2s'
+                            }}
+                        >
+                            <X size={18} />
+                        </button>
 
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
-                            <div>
-                                <h2 style={{ fontSize: '22px', fontWeight: 900, color: '#0f172a' }}>Add Funds</h2>
-                                <p style={{ fontSize: '11px', fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.1em', marginTop: '4px' }}>UPI Deposit Gateway</p>
-                            </div>
-                            <button
-                                onClick={() => setShowRecharge(false)}
-                                style={{
-                                    width: '38px', height: '38px', borderRadius: '50%',
-                                    background: '#f1f5f9', border: 'none', cursor: 'pointer',
-                                    display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#64748b',
-                                }}
-                            >
-                                <X size={18} />
-                            </button>
+                        <div style={{ marginBottom: '32px' }}>
+                            <h2 style={{ fontSize: '24px', fontWeight: 900, color: '#0f172a', letterSpacing: '-0.5px' }}>Deposit Assets</h2>
+                            <p style={{ fontSize: '11px', fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.15em', marginTop: '6px' }}>Secure Payment Gateway</p>
                         </div>
 
-                        {/* UPI Info */}
-                        <div style={{ background: '#f8fafc', borderRadius: '16px', padding: '14px', marginBottom: '16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                                <div style={{ width: '40px', height: '40px', borderRadius: '12px', background: 'white', boxShadow: '0 2px 8px rgba(0,0,0,0.06)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#2563eb' }}>
-                                    <CreditCard size={18} />
+                        {/* Payment Card */}
+                        <div style={{
+                            background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)',
+                            borderRadius: '24px', padding: '24px', marginBottom: '28px',
+                            color: 'white', position: 'relative', overflow: 'hidden'
+                        }}>
+                            {/* Decorative elements */}
+                            <div style={{ position: 'absolute', top: '-10px', right: '-10px', width: '100px', height: '100px', background: 'rgba(59,130,246,0.1)', borderRadius: '50%', blur: '40px' }} />
+                            
+                            <div style={{ position: 'relative', zIndex: 1 }}>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '24px' }}>
+                                    <div style={{ width: '44px', height: '32px', background: 'rgba(255,255,255,0.1)', borderRadius: '6px', border: '1px solid rgba(255,255,255,0.2)' }} />
+                                    <span style={{ fontSize: '12px', fontWeight: 800, color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase' }}>Grow India Pay</span>
                                 </div>
-                                <div>
-                                    <p style={{ fontSize: '9px', fontWeight: 800, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Pay to UPI</p>
-                                    <p style={{ fontSize: '14px', fontWeight: 800, color: '#1e293b', fontFamily: 'monospace' }}>{depositInfo.upiId}</p>
+
+                                <div style={{ marginBottom: '24px' }}>
+                                    <p style={{ fontSize: '9px', fontWeight: 700, color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '6px' }}>OFFICIAL UPI ID</p>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                                        <p style={{ fontSize: '18px', fontWeight: 700, letterSpacing: '0.5px', fontFamily: 'monospace' }}>{depositInfo.upiId}</p>
+                                        <button 
+                                            onClick={handleCopyUpi}
+                                            style={{ background: 'rgba(255,255,255,0.1)', border: 'none', borderRadius: '8px', padding: '6px 12px', color: 'white', fontSize: '10px', fontWeight: 800, cursor: 'pointer' }}
+                                        >
+                                            COPY
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
+                                    <div>
+                                        <p style={{ fontSize: '9px', fontWeight: 700, color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '4px' }}>VALID FOR</p>
+                                        <p style={{ fontSize: '13px', fontWeight: 700 }}>EVERYONE</p>
+                                    </div>
+                                    <div style={{ background: 'white', padding: '8px', borderRadius: '12px', width: '80px', height: '80px' }}>
+                                        {depositInfo.qrCode ? (
+                                            <img src={depositInfo.qrCode} alt="QR" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+                                        ) : (
+                                            <div style={{ width: '100%', height: '100%', background: '#f1f5f9', borderRadius: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                                <Zap size={20} color="#cbd5e1" />
+                                            </div>
+                                        )}
+                                    </div>
                                 </div>
                             </div>
-                            <button
-                                onClick={handleCopyUpi}
-                                style={{ padding: '8px 14px', background: '#eff6ff', borderRadius: '10px', border: 'none', cursor: 'pointer', fontSize: '11px', fontWeight: 800, color: '#2563eb' }}
-                            >
-                                COPY
-                            </button>
                         </div>
 
-                        {depositInfo.qrCode && (
-                            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', background: '#f8fafc', borderRadius: '16px', padding: '20px', marginBottom: '16px' }}>
-                                <p style={{ fontSize: '10px', fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '12px' }}>Scan to Pay</p>
-                                <div style={{ width: '130px', height: '130px', background: 'white', borderRadius: '12px', padding: '8px', boxShadow: '0 2px 8px rgba(0,0,0,0.08)' }}>
-                                    <img src={depositInfo.qrCode} alt="QR Code" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+                        <form onSubmit={handleRecharge} style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}>
+                            <div className="form-group">
+                                <label style={{ fontSize: '11px', fontWeight: 800, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.1em', display: 'block', marginBottom: '8px', marginLeft: '4px' }}>Amount to Deposit</label>
+                                <div style={{ position: 'relative' }}>
+                                    <span style={{ position: 'absolute', left: '20px', top: '50%', transform: 'translateY(-50%)', fontSize: '20px', fontWeight: 900, color: '#94a3b8' }}>₹</span>
+                                    <input
+                                        type="number" placeholder="0.00"
+                                        value={amount} onChange={e => setAmount(e.target.value)} required
+                                        style={{
+                                            width: '100%', height: '64px', background: '#f8fafc',
+                                            border: '2px solid #f1f5f9', borderRadius: '18px',
+                                            padding: '0 20px 0 45px', fontSize: '24px', fontWeight: 900,
+                                            color: '#0f172a', outline: 'none', boxSizing: 'border-box',
+                                            transition: 'all 0.2s'
+                                        }}
+                                    />
                                 </div>
                             </div>
-                        )}
 
-                        <form onSubmit={handleRecharge} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
-                            <div>
-                                <label style={{ fontSize: '10px', fontWeight: 800, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.1em', display: 'block', marginBottom: '8px', marginLeft: '4px' }}>Amount (&#8377;)</label>
+                            <div className="form-group">
+                                <label style={{ fontSize: '11px', fontWeight: 800, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.1em', display: 'block', marginBottom: '8px', marginLeft: '4px' }}>Transaction ID (UTR)</label>
                                 <input
-                                    type="number" placeholder="Min ₹300"
-                                    value={amount} onChange={e => setAmount(e.target.value)} required
-                                    style={{
-                                        width: '100%', height: '56px', background: '#f8fafc',
-                                        border: '1px solid #e2e8f0', borderRadius: '16px',
-                                        padding: '0 20px', fontSize: '22px', fontWeight: 900,
-                                        color: '#0f172a', outline: 'none', boxSizing: 'border-box',
-                                    }}
-                                />
-                            </div>
-                            <div>
-                                <label style={{ fontSize: '10px', fontWeight: 800, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.1em', display: 'block', marginBottom: '8px', marginLeft: '4px' }}>UTR / Transaction ID</label>
-                                <input
-                                    type="text" placeholder="12-digit transaction ID"
+                                    type="text" placeholder="Enter 12-digit UTR number"
                                     value={utr} onChange={e => setUtr(e.target.value)} required
                                     style={{
-                                        width: '100%', height: '52px', background: '#f8fafc',
-                                        border: '1px solid #e2e8f0', borderRadius: '16px',
+                                        width: '100%', height: '56px', background: '#f8fafc',
+                                        border: '2px solid #f1f5f9', borderRadius: '18px',
                                         padding: '0 20px', fontSize: '15px', fontWeight: 700,
                                         color: '#0f172a', outline: 'none', boxSizing: 'border-box',
                                     }}
                                 />
                             </div>
-                            <div>
-                                <label style={{ fontSize: '10px', fontWeight: 800, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.1em', display: 'block', marginBottom: '8px', marginLeft: '4px' }}>Payment Screenshot</label>
-                                <div style={{ position: 'relative', height: '56px', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '16px', display: 'flex', alignItems: 'center', padding: '0 16px', overflow: 'hidden' }}>
-                                    <input type="file" accept="image/*" onChange={handleScreenshotUpload} required={!screenshot}
-                                        style={{ position: 'absolute', inset: 0, opacity: 0, cursor: 'pointer', zIndex: 1 }} />
-                                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px', pointerEvents: 'none' }}>
-                                        <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: 'white', boxShadow: '0 2px 6px rgba(0,0,0,0.06)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: screenshot ? '#22c55e' : '#94a3b8' }}>
-                                            {screenshot ? <CheckCircle size={18} /> : <Layers size={18} />}
-                                        </div>
-                                        <p style={{ fontSize: '13px', fontWeight: 700, color: screenshot ? '#15803d' : '#64748b' }}>
-                                            {screenshot ? 'Screenshot Attached ✓' : 'Upload Payment Proof'}
-                                        </p>
+
+                            <div className="form-group">
+                                <label style={{ fontSize: '11px', fontWeight: 800, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.1em', display: 'block', marginBottom: '8px', marginLeft: '4px' }}>Proof of Payment</label>
+                                <label style={{ 
+                                    display: 'flex', alignItems: 'center', gap: '16px', 
+                                    padding: '16px 20px', background: '#f8fafc', 
+                                    border: '2px dashed #e2e8f0', borderRadius: '18px',
+                                    cursor: 'pointer', transition: 'all 0.2s'
+                                }}>
+                                    <input type="file" accept="image/*" onChange={handleScreenshotUpload} required={!screenshot} style={{ display: 'none' }} />
+                                    <div style={{ 
+                                        width: '44px', height: '44px', borderRadius: '14px', 
+                                        background: screenshot ? '#f0fdf4' : 'white', 
+                                        color: screenshot ? '#22c55e' : '#94a3b8',
+                                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                        boxShadow: '0 4px 12px rgba(0,0,0,0.03)'
+                                    }}>
+                                        {screenshot ? <CheckCircle size={22} /> : <ImageIcon size={22} />}
                                     </div>
-                                </div>
+                                    <div style={{ flex: 1 }}>
+                                        <p style={{ fontSize: '13px', fontWeight: 800, color: screenshot ? '#15803d' : '#475569' }}>
+                                            {screenshot ? 'Screenshot Attached ✓' : 'Upload Receipt'}
+                                        </p>
+                                        <p style={{ fontSize: '10px', fontWeight: 600, color: '#94a3b8' }}>PNG, JPG or JPEG allowed</p>
+                                    </div>
+                                </label>
                             </div>
 
                             {msg && (
                                 <div style={{
-                                    padding: '12px 16px', borderRadius: '12px', fontSize: '12px',
+                                    padding: '14px', borderRadius: '16px', fontSize: '11px',
                                     fontWeight: 800, textAlign: 'center', textTransform: 'uppercase', letterSpacing: '0.08em',
                                     background: msg.includes('Failed') || msg.includes('Please') ? '#fef2f2' : '#f0fdf4',
                                     color: msg.includes('Failed') || msg.includes('Please') ? '#dc2626' : '#15803d',
+                                    border: `1px solid ${msg.includes('Failed') || msg.includes('Please') ? '#fecaca' : '#bbf7d0'}`,
+                                    animation: 'slideUp 0.3s ease-out'
                                 }}>
                                     {msg}
                                 </div>
                             )}
 
                             <button type="submit" style={{
-                                width: '100%', height: '54px', background: 'linear-gradient(135deg, #1e3a8a, #2563eb)',
-                                border: 'none', borderRadius: '16px', color: 'white', fontWeight: 900,
-                                fontSize: '13px', letterSpacing: '0.1em', textTransform: 'uppercase',
-                                cursor: 'pointer', boxShadow: '0 8px 24px rgba(37,99,235,0.4)',
+                                width: '100%', height: '60px', background: 'linear-gradient(135deg, #2563eb, #1d4ed8)',
+                                border: 'none', borderRadius: '20px', color: 'white', fontWeight: 900,
+                                fontSize: '14px', letterSpacing: '0.12em', textTransform: 'uppercase',
+                                cursor: 'pointer', boxShadow: '0 12px 24px rgba(37,99,235,0.3)',
+                                marginTop: '10px', transition: 'transform 0.2s, box-shadow 0.2s'
                             }}>
-                                Confirm Deposit
+                                Confirm & Submit
                             </button>
                         </form>
                     </div>
                 </div>
             )}
+
         </Layout>
     );
 };

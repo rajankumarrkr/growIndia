@@ -3,6 +3,7 @@ const { auth, admin } = require('../middleware/auth');
 const User = require('../models/User');
 const Transaction = require('../models/Transaction');
 const AdminSettings = require('../models/AdminSettings');
+const Plan = require('../models/Plan');
 const router = express.Router();
 
 // Get Admin Stats
@@ -79,6 +80,16 @@ router.get('/recharges/pending', auth, admin, async (req, res) => {
     }
 });
 
+// Get Pending Withdrawals
+router.get('/withdrawals/pending', auth, admin, async (req, res) => {
+    try {
+        const withdrawals = await Transaction.find({ type: 'withdrawal', status: 'pending' }).populate('userId', 'name mobile');
+        res.json(withdrawals);
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+});
+
 // Approve Recharge & Referral Commission
 router.patch('/recharge/:id', auth, admin, async (req, res) => {
     try {
@@ -147,4 +158,53 @@ router.patch('/user/:id/balance', auth, admin, async (req, res) => {
     }
 });
 
+// ─── Plan Management ───────────────────────────────────────────────────────
+
+// Get all plans (admin sees all including inactive)
+router.get('/plans', auth, admin, async (req, res) => {
+    try {
+        const plans = await Plan.find().sort({ tier: 1, amount: 1 });
+        res.json(plans);
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+});
+
+// Create new plan
+router.post('/plans', auth, admin, async (req, res) => {
+    try {
+        const { name, amount, daily, tier } = req.body;
+        if (!name || !amount || !daily || !tier) {
+            return res.status(400).json({ message: 'All fields required: name, amount, daily, tier' });
+        }
+        const plan = new Plan({ name, amount, daily, tier });
+        await plan.save();
+        res.json({ message: 'Plan created', plan });
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+});
+
+// Update plan
+router.patch('/plans/:id', auth, admin, async (req, res) => {
+    try {
+        const plan = await Plan.findByIdAndUpdate(req.params.id, req.body, { new: true });
+        if (!plan) return res.status(404).json({ message: 'Plan not found' });
+        res.json({ message: 'Plan updated', plan });
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+});
+
+// Delete plan
+router.delete('/plans/:id', auth, admin, async (req, res) => {
+    try {
+        await Plan.findByIdAndDelete(req.params.id);
+        res.json({ message: 'Plan deleted' });
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+});
+
 module.exports = router;
+
