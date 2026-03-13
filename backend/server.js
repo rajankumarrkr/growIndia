@@ -17,6 +17,7 @@ app.use('/api/user', require('./routes/userRoutes'));
 app.use('/api/wallet', require('./routes/walletRoutes'));
 app.use('/api/invest', require('./routes/investRoutes'));
 app.use('/api/admin', require('./routes/adminRoutes'));
+app.use('/api/team', require('./routes/teamRoutes'));
 // Profile routes will be added later
 
 // Admin check - bootstrap admin if none exists (Svcet Access)

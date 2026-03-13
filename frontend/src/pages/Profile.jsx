@@ -45,135 +45,169 @@ const Profile = () => {
 
     return (
         <Layout title="Account Command">
-            <div className="mb-10 px-2">
-                <div className="flex items-center justify-between mb-8">
-                    <div className="flex items-center gap-4">
-                        <div className="w-16 h-16 bg-slate-50 border border-slate-100 rounded-[2rem] flex items-center justify-center text-slate-300 relative">
-                            <User size={32} />
-                            <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-royal-blue rounded-xl border-4 border-white shadow-sm flex items-center justify-center">
-                                <ShieldCheck size={10} className="text-white" />
+            <div className="mb-8">
+                {/* Header Identity Core */}
+                <div className="px-4 flex items-center justify-between mb-8">
+                    <div className="flex items-center gap-5 group">
+                        <div className="w-16 h-16 bg-gradient-to-tr from-royal-blue to-electric-azure border-2 border-blue-200 rounded-3xl flex items-center justify-center text-white relative shadow-glow transition-all group-hover:scale-105">
+                            <User size={30} className="text-white shadow-sm" />
+                            <div className="absolute -bottom-2 -right-2 w-7 h-7 bg-white rounded-xl border-4 border-slate-50 shadow-sm flex items-center justify-center text-royal-blue">
+                                <ShieldCheck size={12} />
                             </div>
                         </div>
                         <div>
                             <h1 className="text-2xl font-black text-slate-900 tracking-tight">{user?.name}</h1>
-                            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{user?.mobile}</p>
+                            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2 mt-1">
+                                <Smartphone size={10} /> {user?.mobile}
+                            </p>
                         </div>
+                    </div>
+                    <div className="w-10 h-10 bg-slate-50 rounded-2xl flex items-center justify-center text-slate-400">
+                        <Settings size={18} />
                     </div>
                 </div>
 
-                <div className="fintech-card bg-slate-900 !p-8 relative overflow-hidden group">
-                    <div className="absolute top-0 right-0 w-32 h-32 bg-royal-blue/20 rounded-full blur-3xl" />
-                    <div className="relative z-10 flex flex-col gap-6">
-                        <div>
-                            <p className="text-[9px] font-bold text-white/30 uppercase tracking-[0.3em] mb-1">Liquid Balance</p>
-                            <h2 className="text-3xl font-black text-white tracking-tight">₹{user?.walletBalance?.toLocaleString()}</h2>
+                {/* Liquid Balance Card */}
+                <div className="mx-4 fintech-card bg-gradient-to-br from-royal-blue to-primary-indigo !p-8 relative overflow-hidden group border-none !rounded-[2.5rem] shadow-primary">
+                    <div className="absolute top-0 right-0 w-48 h-48 bg-white/20 rounded-full blur-[3rem] -translate-y-1/2 translate-x-1/2 transition-all duration-700 group-hover:bg-white/30 group-hover:scale-110" />
+                    <div className="absolute bottom-0 left-0 w-32 h-32 bg-blue-300/20 rounded-full blur-[2.5rem] translate-y-1/2 -translate-x-1/2" />
+                    
+                    <div className="relative z-10 flex flex-col gap-8">
+                        <div className="px-2">
+                            <p className="text-[9px] font-bold text-white/70 uppercase tracking-[0.3em] mb-2 flex items-center gap-2">
+                                <Activity size={12} className="text-white/80" />
+                                Liquid Balance
+                            </p>
+                            <h2 className="text-4xl font-black text-white tracking-tight">₹{user?.walletBalance?.toLocaleString()}</h2>
                         </div>
-                        <div className="flex items-center gap-2 px-3 py-1 bg-white/5 rounded-lg w-fit border border-white/5">
-                            <Activity size={10} className="text-royal-blue" />
-                            <span className="text-[9px] font-bold text-white/40 uppercase tracking-widest">Protocol Version 4.2.1 Stable</span>
+                        <div className="flex items-center gap-3 px-2">
+                            <div className="px-3 py-1.5 bg-white/10 rounded-lg border border-white/20 backdrop-blur-md">
+                                <span className="text-[9px] font-bold text-white/90 uppercase tracking-widest">Protocol 4.2.1 Stable</span>
+                            </div>
+                            <div className="px-3 py-1.5 bg-black/10 rounded-lg border border-black/20 backdrop-blur-md flex items-center gap-1.5">
+                                <Shield size={10} className="text-white/90" />
+                                <span className="text-[9px] font-bold text-white/90 uppercase tracking-widest">Secured Node</span>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
 
             {/* Navigation Sections */}
-            {menuSections.map((section, idx) => (
-                <div key={idx} className="mb-8 overflow-hidden">
-                    <h4 className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-300 ml-4 mb-4">{section.title}</h4>
-                    <div className="fintech-card !p-0 overflow-hidden divide-y divide-slate-50">
-                        {section.items.map((item, i) => {
-                            const Content = () => (
-                                <div className="flex items-center justify-between p-5 group">
-                                    <div className="flex items-center gap-4">
-                                        <div className="w-10 h-10 bg-slate-50 rounded-xl flex items-center justify-center group-hover:bg-blue-50 group-hover:text-royal-blue transition-all">
-                                            {item.icon}
+            <div className="px-4 space-y-8 pb-8">
+                {menuSections.map((section, idx) => (
+                    <div key={idx} className="overflow-hidden">
+                        <h4 className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 ml-4 mb-4 flex items-center gap-2">
+                            <div className="w-1.5 h-1.5 rounded-full bg-royal-blue"></div>
+                            {section.title}
+                        </h4>
+                        <div className="fintech-card !p-0 overflow-hidden divide-y divide-slate-50 border-slate-100 shadow-sm bg-white/80 backdrop-blur-xl">
+                            {section.items.map((item, i) => {
+                                const Content = () => (
+                                    <div className="flex items-center justify-between p-5 px-6 group transition-colors hover:bg-slate-50/50">
+                                        <div className="flex items-center gap-5">
+                                            <div className="w-11 h-11 bg-slate-50 rounded-2xl flex items-center justify-center group-hover:bg-blue-50 group-hover:text-royal-blue transition-all group-hover:scale-110">
+                                                {item.icon}
+                                            </div>
+                                            <span className="text-[13px] font-black text-slate-700 tracking-wide">{item.name}</span>
                                         </div>
-                                        <span className="text-sm font-black text-slate-700">{item.name}</span>
+                                        <div className="w-8 h-8 rounded-full flex items-center justify-center group-hover:bg-white group-hover:shadow-sm transition-all">
+                                            <ChevronRight size={16} className="text-slate-300 group-hover:text-royal-blue group-hover:translate-x-0.5 transition-all" />
+                                        </div>
                                     </div>
-                                    <ChevronRight size={16} className="text-slate-200 group-hover:text-royal-blue group-hover:translate-x-1 transition-all" />
-                                </div>
-                            );
+                                );
 
-                            return item.action ? (
-                                <button key={i} onClick={item.action} className="w-full text-left">
-                                    <Content />
-                                </button>
-                            ) : item.external ? (
-                                <a key={i} href={item.path} target="_blank" rel="noopener noreferrer">
-                                    <Content />
-                                </a>
-                            ) : (
-                                <Link key={i} to={item.path}>
-                                    <Content />
-                                </Link>
-                            );
-                        })}
+                                return item.action ? (
+                                    <button key={i} onClick={item.action} className="w-full text-left outline-none focus:bg-slate-50">
+                                        <Content />
+                                    </button>
+                                ) : item.external ? (
+                                    <a key={i} href={item.path} target="_blank" rel="noopener noreferrer" className="block outline-none focus:bg-slate-50">
+                                        <Content />
+                                    </a>
+                                ) : (
+                                    <Link key={i} to={item.path} className="block outline-none focus:bg-slate-50">
+                                        <Content />
+                                    </Link>
+                                );
+                            })}
+                        </div>
                     </div>
-                </div>
-            ))}
+                ))}
+            </div>
 
-            <button
-                onClick={logout}
-                className="w-full flex items-center justify-center gap-2 p-6 text-[10px] font-black uppercase tracking-[0.25em] text-red-400 hover:text-red-500 transition-colors mb-12"
-            >
-                <LogOut size={16} /> Terminate Current Session
-            </button>
+            <div className="px-4 mt-8 mb-24">
+                <button
+                    onClick={logout}
+                    className="w-full fintech-card !p-5 flex items-center justify-center gap-3 text-[11px] font-black uppercase tracking-[0.2em] text-red-500 bg-red-50/50 border-red-100/50 hover:bg-red-50 hover:border-red-200 transition-all active:scale-[0.98]"
+                >
+                    <LogOut size={16} /> Logout
+                </button>
+            </div>
 
             {/* Bank Repository Modal */}
-            {showBankModal && (
-                <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-[200] flex items-end justify-center">
-                    <div className="bg-white w-full max-w-xl rounded-t-[3rem] p-8 pb-12 shadow-2xl animate-in slide-in-from-bottom duration-500">
-                        <div className="w-12 h-1.5 bg-slate-100 rounded-full mx-auto mb-8" />
+            <div className={`fixed inset-0 z-[200] flex items-end justify-center transition-all duration-500 ${showBankModal ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}>
+                {/* Backdrop overlay */}
+                <div 
+                    className={`absolute inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity duration-500 ${showBankModal ? 'opacity-100' : 'opacity-0'}`}
+                    onClick={() => setShowBankModal(false)}
+                />
+                
+                {/* Modal Content */}
+                <div className={`relative w-full max-w-xl bg-white rounded-t-[2.5rem] p-8 pb-12 shadow-2xl transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${showBankModal ? 'translate-y-0' : 'translate-y-full'}`}>
+                    <div className="w-12 h-1.5 bg-slate-200 rounded-full mx-auto mb-8" />
 
-                        <div className="flex justify-between items-center mb-10">
-                            <div>
-                                <h2 className="text-2xl font-black text-slate-900">Bank Registry</h2>
-                                <p className="text-label mt-1">Settlement node configuration</p>
+                    <div className="flex justify-between items-start mb-8">
+                        <div>
+                            <div className="w-12 h-12 bg-blue-50 rounded-2xl flex items-center justify-center text-royal-blue mb-4">
+                                <Landmark size={24} />
                             </div>
-                            <button onClick={() => setShowBankModal(false)} className="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center text-slate-400">
-                                <X size={20} />
-                            </button>
+                            <h2 className="text-2xl font-black text-slate-900 tracking-tight">Bank Registry</h2>
+                            <p className="text-label mt-2">Settlement node configuration</p>
+                        </div>
+                        <button onClick={() => setShowBankModal(false)} className="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center text-slate-400 hover:bg-slate-100 transition-colors">
+                            <X size={20} />
+                        </button>
+                    </div>
+
+                    <form onSubmit={handleBankUpdate} className="space-y-5">
+                        <div className="space-y-2">
+                            <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Holder Name</label>
+                            <input
+                                placeholder="Enter full name"
+                                className="w-full h-14 bg-slate-50/50 border border-slate-200/60 rounded-2xl px-5 text-sm font-black text-slate-900 focus:bg-white focus:border-royal-blue/50 focus:ring-4 focus:ring-royal-blue/10 transition-all outline-none"
+                                value={bankData.holderName}
+                                onChange={(e) => setBankData({ ...bankData, holderName: e.target.value })}
+                                required
+                            />
+                        </div>
+                        <div className="space-y-2">
+                            <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Account Number</label>
+                            <input
+                                placeholder="Numerical chain"
+                                className="w-full h-14 bg-slate-50/50 border border-slate-200/60 rounded-2xl px-5 text-sm font-black text-royal-blue font-mono tracking-widest focus:bg-white focus:border-royal-blue/50 focus:ring-4 focus:ring-royal-blue/10 transition-all outline-none"
+                                value={bankData.accountNumber}
+                                onChange={(e) => setBankData({ ...bankData, accountNumber: e.target.value })}
+                                required
+                            />
+                        </div>
+                        <div className="space-y-2">
+                            <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">IFSC Routing</label>
+                            <input
+                                placeholder="Network code"
+                                className="w-full h-14 bg-slate-50/50 border border-slate-200/60 rounded-2xl px-5 text-sm font-black text-royal-blue font-mono tracking-widest uppercase focus:bg-white focus:border-royal-blue/50 focus:ring-4 focus:ring-royal-blue/10 transition-all outline-none"
+                                value={bankData.ifsc}
+                                onChange={(e) => setBankData({ ...bankData, ifsc: e.target.value })}
+                                required
+                            />
                         </div>
 
-                        <form onSubmit={handleBankUpdate} className="space-y-6">
-                            <div className="space-y-2">
-                                <label className="text-label ml-2">Holder Name</label>
-                                <input
-                                    placeholder="Enter full name"
-                                    className="w-full h-15 bg-slate-50 border border-slate-100 rounded-2xl px-6 text-sm font-black text-slate-900 focus:bg-white focus:border-royal-blue/30 transition-all outline-none"
-                                    value={bankData.holderName}
-                                    onChange={(e) => setBankData({ ...bankData, holderName: e.target.value })}
-                                    required
-                                />
-                            </div>
-                            <div className="space-y-2">
-                                <label className="text-label ml-2">Account Number</label>
-                                <input
-                                    placeholder="Numerical chain"
-                                    className="w-full h-15 bg-slate-50 border border-slate-100 rounded-2xl px-6 text-sm font-black text-royal-blue font-mono tracking-widest focus:bg-white focus:border-royal-blue/30 transition-all outline-none"
-                                    value={bankData.accountNumber}
-                                    onChange={(e) => setBankData({ ...bankData, accountNumber: e.target.value })}
-                                    required
-                                />
-                            </div>
-                            <div className="space-y-2">
-                                <label className="text-label ml-2">IFSC Routing</label>
-                                <input
-                                    placeholder="Network code"
-                                    className="w-full h-15 bg-slate-50 border border-slate-100 rounded-2xl px-6 text-sm font-black text-royal-blue font-mono tracking-widest uppercase focus:bg-white focus:border-royal-blue/30 transition-all outline-none"
-                                    value={bankData.ifsc}
-                                    onChange={(e) => setBankData({ ...bankData, ifsc: e.target.value })}
-                                    required
-                                />
-                            </div>
-
-                            <button className="btn-fintech btn-fintech-primary w-full mt-4 uppercase tracking-[0.2em] text-xs">
-                                Update Settlement Node
-                            </button>
-                        </form>
-                    </div>
+                        <button className="btn-fintech btn-fintech-primary w-full mt-8 uppercase tracking-[0.2em] text-[11px] font-black h-14 rounded-2xl">
+                            Update Settlement Node
+                        </button>
+                    </form>
                 </div>
-            )}
+            </div>
         </Layout>
     );
 };

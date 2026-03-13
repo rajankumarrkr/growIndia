@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 import { NavLink } from 'react-router-dom';
-import { LayoutDashboard, Target, Activity, Wallet as WalletIcon, User, ShieldAlert } from 'lucide-react';
+import { LayoutDashboard, Target, Activity, Users, User, ShieldAlert } from 'lucide-react';
 import { AuthContext } from '../context/AuthContext';
 
 const Navbar = () => {
@@ -10,7 +10,7 @@ const Navbar = () => {
         { name: 'Home',     path: '/',            icon: LayoutDashboard },
         { name: 'Plans',    path: '/plan',         icon: Target          },
         { name: 'Active',   path: '/investments',  icon: Activity        },
-        { name: 'Wallet',   path: '/wallet',       icon: WalletIcon      },
+        { name: 'Team',     path: '/team',         icon: Users           },
         { name: 'Profile',  path: '/profile',      icon: User            },
     ];
 
