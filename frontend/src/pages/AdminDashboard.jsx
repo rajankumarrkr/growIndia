@@ -118,67 +118,71 @@ const AdminDashboard = () => {
     return (
         <Layout title="Governance Center">
             {/* Header Section */}
-            <div className="mb-10 px-2 flex justify-between items-center">
+            <div className="mb-10 px-2 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6">
                 <div className="flex items-center gap-4">
-                    <div className="w-14 h-14 bg-royal-blue rounded-2xl flex items-center justify-center text-white shadow-lg shadow-blue-500/30">
-                        <Shield size={28} />
+                    <div className="w-12 h-12 sm:w-14 sm:h-14 bg-royal-blue rounded-2xl flex items-center justify-center text-white shadow-lg shadow-blue-500/30 shrink-0">
+                        <Shield size={24} className="sm:hidden" />
+                        <Shield size={28} className="hidden sm:block" />
                     </div>
                     <div>
-                        <h1 className="text-3xl font-black text-slate-900 tracking-tight leading-none">Command Center</h1>
-                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-2 flex items-center gap-2">
-                             System Latency: <span className="text-emerald-500">Normal</span> • {new Date().toLocaleDateString()}
+                        <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight leading-none">Command Center</h1>
+                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-2 flex flex-wrap items-center gap-x-2 gap-y-1">
+                             System Latency: <span className="text-emerald-500">Normal</span> <span className="hidden sm:inline">•</span> <span>{new Date().toLocaleDateString()}</span>
                         </p>
                     </div>
                 </div>
                 <button 
                     onClick={logout} 
-                    className="flex items-center gap-3 px-5 py-3 bg-red-50 text-red-500 rounded-2xl font-black text-[10px] uppercase tracking-widest hover:bg-red-500 hover:text-white transition-all group"
+                    className="flex items-center gap-3 px-5 py-3 bg-red-50 text-red-500 rounded-2xl font-black text-[10px] uppercase tracking-widest hover:bg-red-500 hover:text-white transition-all group w-full sm:w-auto justify-center"
                 >
                     Termination <LogOut size={16} />
                 </button>
             </div>
 
             {/* Admin Stats Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
-                <div className="fintech-card relative overflow-hidden group">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 mb-10 px-2 sm:px-0">
+                <div className="fintech-card relative overflow-hidden group !p-5 sm:!p-6">
                     <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
                         <Users size={80} />
                     </div>
-                    <div className="w-12 h-12 bg-blue-50 text-royal-blue rounded-xl flex items-center justify-center mb-6">
-                        <UserPlus size={22} />
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-blue-50 text-royal-blue rounded-xl flex items-center justify-center mb-6">
+                        <UserPlus size={20} className="sm:hidden" />
+                        <UserPlus size={22} className="hidden sm:block" />
                     </div>
-                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Active Neural Nodes</p>
+                    <p className="text-[9px] sm:text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Active Neural Nodes</p>
                     <div className="flex items-baseline gap-2">
-                        <h2 className="text-4xl font-black text-slate-900 leading-tight">{stats.totalUsers.toLocaleString()}</h2>
-                        <span className="text-[10px] font-black text-emerald-500 bg-emerald-50 px-2 py-0.5 rounded-full">+4.2%</span>
+                        <h2 className="text-3xl sm:text-4xl font-black text-slate-900 leading-tight">{stats.totalUsers.toLocaleString()}</h2>
+                        <span className="text-[9px] sm:text-[10px] font-black text-emerald-500 bg-emerald-50 px-2 py-0.5 rounded-full">+4.2%</span>
                     </div>
                 </div>
 
-                <div className="fintech-card relative overflow-hidden group">
+                <div className="fintech-card relative overflow-hidden group !p-5 sm:!p-6">
                     <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
                         <ArrowRightLeft size={80} />
                     </div>
-                    <div className="w-12 h-12 bg-emerald-50 text-emerald-500 rounded-xl flex items-center justify-center mb-6">
-                        <BarChart2 size={22} />
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-emerald-50 text-emerald-500 rounded-xl flex items-center justify-center mb-6">
+                        <BarChart2 size={20} className="sm:hidden" />
+                        <BarChart2 size={22} className="hidden sm:block" />
                     </div>
-                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Cumulative Inflow</p>
+                    <p className="text-[9px] sm:text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Cumulative Inflow</p>
                     <div className="flex items-baseline gap-1">
-                        <span className="text-lg font-black text-slate-400">₹</span>
-                        <h2 className="text-4xl font-black text-slate-900 leading-tight">{stats.totalDeposits.toLocaleString()}</h2>
+                        <span className="text-base sm:text-lg font-black text-slate-400">₹</span>
+                        <h2 className="text-3xl sm:text-4xl font-black text-slate-900 leading-tight">{stats.totalDeposits.toLocaleString()}</h2>
                     </div>
                 </div>
 
-                <div className="fintech-card relative overflow-hidden group">
+                <div className="fintech-card relative overflow-hidden group !p-5 sm:!p-6">
                     <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
                         <Zap size={80} />
                     </div>
-                    <div className="w-12 h-12 bg-amber-50 text-amber-600 rounded-xl flex items-center justify-center mb-6">
-                        <Wallet size={22} />
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-amber-50 text-amber-600 rounded-xl flex items-center justify-center mb-6">
+                        <Wallet size={20} className="sm:hidden" />
+                        <Wallet size={22} className="hidden sm:block" />
                     </div>
-                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Withdrawal Volume</p>
+                    <p className="text-[9px] sm:text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Withdrawal Volume</p>
                     <div className="flex items-baseline gap-1">
-                        <span className="text-lg font-black text-slate-400">₹</span>
-                        <h2 className="text-4xl font-black text-slate-900 leading-tight">{stats.totalWithdrawals.toLocaleString()}</h2>
+                        <span className="text-base sm:text-lg font-black text-slate-400">₹</span>
+                        <h2 className="text-3xl sm:text-4xl font-black text-slate-900 leading-tight">{stats.totalWithdrawals.toLocaleString()}</h2>
                     </div>
                 </div>
             </div>
@@ -186,8 +190,8 @@ const AdminDashboard = () => {
             {/* Management Hub */}
             <div className="fintech-card !p-0 overflow-hidden border border-slate-100 shadow-xl mb-20">
                 {/* Navigation Menu */}
-                <div className="bg-slate-50/50 p-6 border-b border-slate-100 flex flex-wrap items-center justify-between gap-6">
-                    <div className="flex bg-white p-1.5 rounded-2xl shadow-sm border border-slate-100 gap-1 overflow-x-auto hide-scrollbar">
+                <div className="bg-slate-50/50 p-4 sm:p-6 border-b border-slate-100 flex flex-col lg:flex-row lg:items-center justify-between gap-4 sm:gap-6">
+                    <div className="flex bg-white p-1 sm:p-1.5 rounded-2xl shadow-sm border border-slate-100 gap-1 overflow-x-auto hide-scrollbar w-full lg:w-auto">
                         {[
                             { id: 'users', label: 'Identity', icon: <Globe /> },
                             { id: 'recharges', label: 'Verify', icon: <ShieldCheck /> },
@@ -198,27 +202,27 @@ const AdminDashboard = () => {
                             <button
                                 key={tab.id}
                                 onClick={() => setActiveTab(tab.id)}
-                                className={`px-6 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest flex items-center gap-2.5 transition-all whitespace-nowrap ${activeTab === tab.id ? 'bg-royal-blue text-white shadow-lg shadow-blue-500/20' : 'text-slate-400 hover:bg-slate-50 hover:text-slate-600'}`}
+                                className={`px-4 sm:px-6 py-2 sm:py-2.5 rounded-xl text-[9px] sm:text-[10px] font-black uppercase tracking-widest flex items-center gap-2 transition-all whitespace-nowrap ${activeTab === tab.id ? 'bg-royal-blue text-white shadow-lg shadow-blue-500/20' : 'text-slate-400 hover:bg-slate-50 hover:text-slate-600'}`}
                             >
                                 {React.cloneElement(tab.icon, { size: 14 })}
                                 {tab.label}
                             </button>
                         ))}
                     </div>
-                    <div className="relative flex-1 max-w-sm">
+                    <div className="relative w-full lg:max-w-xs">
                         <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300" size={14} />
                         <input
                             type="text"
                             placeholder="Universal Search..."
-                            className="w-full bg-white border border-slate-100 rounded-xl py-3 pl-12 pr-4 text-[10px] font-black text-slate-900 outline-none focus:border-royal-blue/30 transition-all shadow-sm"
+                            className="w-full bg-white border border-slate-100 rounded-xl py-2.5 sm:py-3 pl-12 pr-4 text-[10px] font-black text-slate-900 outline-none focus:border-royal-blue/30 transition-all shadow-sm"
                         />
                     </div>
                 </div>
 
                 <div className="min-h-[400px]">
                     {activeTab === 'users' ? (
-                        <div className="overflow-x-auto">
-                            <table className="w-full border-collapse">
+                        <div className="overflow-x-auto w-full">
+                            <table className="w-full border-collapse min-w-[800px]">
                                 <thead>
                                     <tr className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 border-b border-slate-50">
                                         <th className="py-6 px-8 text-left">Identity Profile</th>
@@ -263,8 +267,8 @@ const AdminDashboard = () => {
                             </table>
                         </div>
                     ) : activeTab === 'recharges' ? (
-                        <div className="overflow-x-auto">
-                            <table className="w-full border-collapse">
+                        <div className="overflow-x-auto w-full">
+                            <table className="w-full border-collapse min-w-[800px]">
                                 <thead>
                                     <tr className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 border-b border-slate-50">
                                         <th className="py-6 px-8 text-left">Source Node</th>
@@ -335,7 +339,7 @@ const AdminDashboard = () => {
                                         <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Standard or VIP</p>
                                     </div>
                                 </div>
-                                <form onSubmit={handleCreatePlan} className="grid grid-cols-2 md:grid-cols-5 gap-4">
+                                <form onSubmit={handleCreatePlan} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
                                     {[
                                         { label: 'Plan Name', key: 'name', placeholder: 'e.g. Plan 5000', type: 'text' },
                                         { label: 'Investment (₹)', key: 'amount', placeholder: '5000', type: 'number' },
@@ -363,7 +367,7 @@ const AdminDashboard = () => {
                                         </select>
                                     </div>
                                     <div className="flex flex-col gap-2">
-                                        <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest">&nbsp;</label>
+                                        <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest sm:block hidden">&nbsp;</label>
                                         <button type="submit" className="h-12 bg-royal-blue text-white rounded-xl text-[10px] font-black uppercase tracking-widest flex items-center justify-center gap-2 hover:opacity-90 transition-all shadow-md shadow-blue-500/20">
                                             <Plus size={14} /> Create
                                         </button>
@@ -386,7 +390,7 @@ const AdminDashboard = () => {
                                         {plans.filter(p => p.tier === tier).map(plan => (
                                             <div key={plan._id} className={`rounded-2xl border ${plan.isActive ? 'border-slate-100 bg-slate-50/50' : 'border-dashed border-slate-200 bg-white opacity-60'} p-5`}>
                                                 {editingPlan?._id === plan._id ? (
-                                                    <div className="grid grid-cols-2 md:grid-cols-5 gap-3 items-end">
+                                                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 items-end">
                                                         {[
                                                             { label: 'Name', key: 'name', type: 'text' },
                                                             { label: 'Investment (₹)', key: 'amount', type: 'number' },
@@ -398,7 +402,7 @@ const AdminDashboard = () => {
                                                                     type={f.type}
                                                                     value={editingPlan[f.key]}
                                                                     onChange={e => setEditingPlan({ ...editingPlan, [f.key]: e.target.value })}
-                                                                    className="w-full h-10 bg-white border border-slate-200 rounded-xl px-3 text-sm font-black text-slate-900 outline-none focus:border-royal-blue/40"
+                                                                    className="w-full h-11 bg-white border border-slate-200 rounded-xl px-3 text-sm font-black text-slate-900 outline-none focus:border-royal-blue/40 transition-all"
                                                                 />
                                                             </div>
                                                         ))}
@@ -407,15 +411,15 @@ const AdminDashboard = () => {
                                                             <select
                                                                 value={editingPlan.tier}
                                                                 onChange={e => setEditingPlan({ ...editingPlan, tier: e.target.value })}
-                                                                className="w-full h-10 bg-white border border-slate-200 rounded-xl px-3 text-sm font-black text-slate-900 outline-none"
+                                                                className="w-full h-11 bg-white border border-slate-200 rounded-xl px-3 text-sm font-black text-slate-900 outline-none transition-all"
                                                             >
                                                                 <option value="standard">⭐ Standard</option>
                                                                 <option value="vip">👑 VIP</option>
                                                             </select>
                                                         </div>
                                                         <div className="flex gap-2">
-                                                            <button onClick={() => handleUpdatePlan(plan._id)} className="flex-1 h-10 bg-emerald-500 text-white rounded-xl text-[10px] font-black uppercase tracking-widest flex items-center justify-center"><Check size={14} /></button>
-                                                            <button onClick={() => setEditingPlan(null)} className="h-10 w-10 bg-slate-100 text-slate-400 rounded-xl flex items-center justify-center"><X size={14} /></button>
+                                                            <button onClick={() => handleUpdatePlan(plan._id)} className="flex-1 h-11 bg-emerald-500 text-white rounded-xl text-[10px] font-black uppercase tracking-widest flex items-center justify-center transition-all"><Check size={14} /></button>
+                                                            <button onClick={() => setEditingPlan(null)} className="h-11 w-11 bg-slate-100 text-slate-400 rounded-xl flex items-center justify-center transition-all shrink-0"><X size={14} /></button>
                                                         </div>
                                                     </div>
                                                 ) : (
@@ -458,8 +462,8 @@ const AdminDashboard = () => {
                             ))}
                         </div>
                     ) : activeTab === 'withdrawals' ? (
-                        <div className="overflow-x-auto">
-                            <table className="w-full border-collapse">
+                        <div className="overflow-x-auto w-full">
+                            <table className="w-full border-collapse min-w-[800px]">
                                 <thead>
                                     <tr className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 border-b border-slate-50">
                                         <th className="py-6 px-8 text-left">User</th>
@@ -522,14 +526,14 @@ const AdminDashboard = () => {
                             </table>
                         </div>
                     ) : activeTab === 'settings' ? (
-                        <div className="p-10 max-w-3xl mx-auto">
-                            <div className="mb-10 text-center">
-                                <h3 className="text-2xl font-black text-slate-900 tracking-tight">Financial Protocols</h3>
+                        <div className="p-4 sm:p-10 max-w-3xl mx-auto">
+                            <div className="mb-8 sm:mb-10 text-center">
+                                <h3 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">Financial Protocols</h3>
                                 <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-1">Configure global deposit parameters</p>
                             </div>
 
-                            <form onSubmit={handleUpdateSettings} className="space-y-10">
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            <form onSubmit={handleUpdateSettings} className="space-y-8 sm:space-y-10">
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
                                     <div className="space-y-3">
                                         <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
                                             <CreditCard size={14} className="text-royal-blue" /> Merchant UPI ID
@@ -538,7 +542,7 @@ const AdminDashboard = () => {
                                             type="text" 
                                             value={settings.upiId} 
                                             onChange={(e) => setSettings({...settings, upiId: e.target.value})} 
-                                            className="w-full h-15 bg-slate-50 border border-slate-100 rounded-2xl px-6 text-sm font-black text-slate-900 focus:bg-white focus:border-royal-blue/30 outline-none transition-all shadow-inner" 
+                                            className="w-full h-14 sm:h-15 bg-slate-50 border border-slate-100 rounded-2xl px-6 text-sm font-black text-slate-900 focus:bg-white focus:border-royal-blue/30 outline-none transition-all shadow-inner" 
                                             placeholder="Enter Gateway UPI ID"
                                             required 
                                         />
@@ -555,7 +559,7 @@ const AdminDashboard = () => {
                                                 onChange={handleQrUpload} 
                                                 className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" 
                                             />
-                                            <div className="w-full h-15 bg-slate-50 border border-slate-100 rounded-2xl px-6 flex items-center justify-between text-[11px] font-black text-slate-400 uppercase tracking-widest shadow-inner">
+                                            <div className="w-full h-14 sm:h-15 bg-slate-50 border border-slate-100 rounded-2xl px-6 flex items-center justify-between text-[11px] font-black text-slate-400 uppercase tracking-widest shadow-inner">
                                                 <span>{settings.qrCode ? 'Change QR Image' : 'Upload QR Image'}</span>
                                                 <ArrowRightLeft size={16} />
                                             </div>
@@ -566,7 +570,7 @@ const AdminDashboard = () => {
                                 {settings.qrCode && (
                                     <div className="flex flex-col items-center">
                                         <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4">Preview Configuration</p>
-                                        <div className="w-48 h-48 bg-white border-4 border-slate-50 rounded-3xl p-4 shadow-xl mb-4 group relative overflow-hidden">
+                                        <div className="w-40 h-40 sm:w-48 sm:h-48 bg-white border-4 border-slate-50 rounded-3xl p-4 shadow-xl mb-4 group relative overflow-hidden">
                                             <img src={settings.qrCode} alt="QR Code" className="w-full h-full object-contain" />
                                             <div className="absolute inset-0 bg-royal-blue/10 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                                                 <Zap size={32} className="text-royal-blue" />
@@ -578,7 +582,7 @@ const AdminDashboard = () => {
                                 <div className="pt-6 border-t border-slate-50">
                                     <button 
                                         type="submit" 
-                                        className="w-full h-16 bg-royal-blue text-white rounded-2xl text-[11px] font-black uppercase tracking-[0.2em] shadow-xl shadow-blue-500/20 hover:scale-[1.01] active:scale-[0.99] transition-all flex items-center justify-center gap-3"
+                                        className="w-full h-14 sm:h-16 bg-royal-blue text-white rounded-2xl text-[11px] font-black uppercase tracking-[0.2em] shadow-xl shadow-blue-500/20 hover:scale-[1.01] active:scale-[0.99] transition-all flex items-center justify-center gap-3"
                                     >
                                         Deploy Protocol Changes <ShieldCheck size={18} />
                                     </button>
@@ -595,9 +599,9 @@ const AdminDashboard = () => {
             </div>
 
             {/* System Status Banner */}
-            <div className="bg-slate-900 rounded-2xl p-6 flex flex-wrap items-center justify-between gap-6 overflow-hidden relative">
+            <div className="bg-slate-900 rounded-2xl p-6 flex flex-col sm:flex-row items-center sm:justify-between gap-8 sm:gap-6 overflow-hidden relative text-center sm:text-left">
                 <div className="absolute top-0 right-0 w-32 h-32 bg-royal-blue/20 rounded-full blur-3xl -mr-16 -mt-16" />
-                <div className="flex items-center gap-6 relative z-10">
+                <div className="flex flex-col sm:flex-row items-center gap-6 relative z-10 w-full sm:w-auto">
                     <div className="flex -space-x-3">
                         {[1, 2, 3].map(i => (
                             <div key={i} className={`w-10 h-10 rounded-full border-2 border-slate-900 bg-slate-800 flex items-center justify-center text-[10px] font-black text-royal-blue overflow-hidden`}>
@@ -607,18 +611,18 @@ const AdminDashboard = () => {
                     </div>
                     <div>
                         <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Live Observers</p>
-                        <p className="text-xs font-bold text-white">3 Administrators active on neural network</p>
+                        <p className="text-xs font-bold text-white max-w-[200px] sm:max-w-none">3 Administrators active on network</p>
                     </div>
                 </div>
-                <div className="flex gap-4 relative z-10">
-                    <div className="text-right">
-                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Compute Power</p>
-                        <p className="text-xs font-bold text-white">99.9% Up-time</p>
+                <div className="flex items-center justify-around sm:justify-end gap-6 sm:gap-8 relative z-10 w-full sm:w-auto border-t border-slate-800 pt-6 sm:pt-0 sm:border-0">
+                    <div className="text-center sm:text-right">
+                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Up-time</p>
+                        <p className="text-xs font-bold text-white">99.9%</p>
                     </div>
-                    <div className="w-px h-10 bg-slate-800" />
-                    <div className="text-right">
-                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Security Level</p>
-                        <p className="text-xs font-bold text-emerald-500 uppercase">Maximum</p>
+                    <div className="w-px h-10 bg-slate-800 hidden sm:block" />
+                    <div className="text-center sm:text-right">
+                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Security</p>
+                        <p className="text-xs font-bold text-emerald-500 uppercase">Max</p>
                     </div>
                 </div>
             </div>

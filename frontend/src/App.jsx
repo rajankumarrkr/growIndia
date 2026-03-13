@@ -10,6 +10,7 @@ const Profile = lazy(() => import('./pages/Profile'));
 const Login = lazy(() => import('./pages/Login'));
 const Register = lazy(() => import('./pages/Register'));
 const AdminDashboard = lazy(() => import('./pages/AdminDashboard'));
+const AdminLogin = lazy(() => import('./pages/AdminLogin'));
 const Investments = lazy(() => import('./pages/Investments'));
 const Wallet = lazy(() => import('./pages/Wallet'));
 const History = lazy(() => import('./pages/History'));
@@ -25,7 +26,7 @@ const SyncScreen = () => (
 const PrivateRoute = ({ children, adminOnly = false }) => {
     const { user, loading } = useContext(AuthContext);
     if (loading) return <SyncScreen />;
-    if (!user) return <Navigate to="/login" />;
+    if (!user) return <Navigate to={adminOnly ? "/admin/login" : "/login"} />;
     if (adminOnly && user.role !== 'admin') return <Navigate to="/" />;
     return children;
 };
@@ -38,6 +39,7 @@ function App() {
                     <Routes>
                         <Route path="/login" element={<Login />} />
                         <Route path="/register" element={<Register />} />
+                        <Route path="/admin/login" element={<AdminLogin />} />
 
                         <Route path="/" element={<PrivateRoute><Home /></PrivateRoute>} />
                         <Route path="/plan" element={<PrivateRoute><Plan /></PrivateRoute>} />
