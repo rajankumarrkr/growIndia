@@ -312,7 +312,7 @@ const Home = () => {
                         </button>
 
                         <div style={{ marginBottom: '32px' }}>
-                            <h2 style={{ fontSize: '24px', fontWeight: 900, color: '#0f172a', letterSpacing: '-0.5px' }}>Deposit Assets</h2>
+                            <h2 style={{ fontSize: '24px', fontWeight: 900, color: '#0f172a', letterSpacing: '-0.5px' }}>Deposit</h2>
                             <p style={{ fontSize: '11px', fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.15em', marginTop: '6px' }}>Secure Payment Gateway</p>
                         </div>
 

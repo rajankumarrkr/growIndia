@@ -21,7 +21,7 @@ const Investments = () => {
     };
 
     return (
-        <Layout title="Active Nodes">
+        <Layout title="Active Plan">
             <div className="mb-10 px-2">
                 <h1 className="text-3xl font-black text-slate-900 tracking-tight">Active Portfolio</h1>
                 <p className="text-label mt-1">Real-time status of your staked assets</p>
@@ -38,7 +38,7 @@ const Investments = () => {
                     <div className="w-16 h-16 bg-slate-50 rounded-2xl flex items-center justify-center text-slate-300 mb-6">
                         <Layers size={32} />
                     </div>
-                    <h3 className="text-xl font-black text-slate-900 mb-2">No Active Nodes</h3>
+                    <h3 className="text-xl font-black text-slate-900 mb-2">No Active Plan</h3>
                     <p className="text-label mb-8">You haven't activated any investment protocols yet.</p>
                     <a href="/plan" className="btn-fintech btn-fintech-primary px-8 py-3 text-xs uppercase tracking-widest inline-flex items-center gap-2">
                         Get Started <ArrowRight size={14} />

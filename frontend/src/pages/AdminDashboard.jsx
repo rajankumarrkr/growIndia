@@ -175,7 +175,7 @@ const AdminDashboard = () => {
                     <div className="w-12 h-12 bg-amber-50 text-amber-600 rounded-xl flex items-center justify-center mb-6">
                         <Wallet size={22} />
                     </div>
-                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Settlement Volume</p>
+                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Withdrawal Volume</p>
                     <div className="flex items-baseline gap-1">
                         <span className="text-lg font-black text-slate-400">₹</span>
                         <h2 className="text-4xl font-black text-slate-900 leading-tight">{stats.totalWithdrawals.toLocaleString()}</h2>

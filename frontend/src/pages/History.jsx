@@ -70,7 +70,7 @@ const History = () => {
                                 </div>
                                 <div>
                                     <h4 className="text-sm font-black text-slate-800 uppercase tracking-tight">
-                                        {tx.type === 'recharge' ? 'Asset Injection' : 'Liquid Settlement'}
+                                        {tx.type === 'recharge' ? 'Deposit' : 'Withdrawal'}
                                     </h4>
                                     <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">
                                         {new Date(tx.timestamp).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })} • {new Date(tx.timestamp).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })}

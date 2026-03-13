@@ -9,7 +9,7 @@ const Navbar = () => {
     const navItems = [
         { name: 'Home',     path: '/',            icon: LayoutDashboard },
         { name: 'Plans',    path: '/plan',         icon: Target          },
-        { name: 'Active',   path: '/investments',  icon: Activity        },
+        { name: 'Active Plan', path: '/investments',  icon: Activity        },
         { name: 'Team',     path: '/team',         icon: Users           },
         { name: 'Profile',  path: '/profile',      icon: User            },
     ];

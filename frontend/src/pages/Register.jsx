@@ -8,20 +8,26 @@ const Register = () => {
     const [error, setError] = useState('');
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
     const { register } = useContext(AuthContext);
     const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        if (isSubmitting) return; // Prevent double registration
+
         setError('');
         if (formData.password !== formData.confirmPassword) return setError('Passwords do not match');
         if (formData.mobile.length !== 10) return setError('Mobile number must be 10 digits');
+        if (formData.name.trim().length < 2) return setError('Please enter a valid name');
         
+        setIsSubmitting(true);
         try {
             await register(formData);
             navigate('/');
         } catch (err) {
             setError(err.response?.data?.message || 'Registration failed. Please try again.');
+            setIsSubmitting(false); // Re-enable on failure
         }
     };
 
@@ -89,14 +95,16 @@ const Register = () => {
                                 <input
                                     type="text" placeholder="Enter full name"
                                     onChange={(e) => setFormData({ ...formData, name: e.target.value })} required
+                                    disabled={isSubmitting}
                                     style={{
-                                        width: '100%', height: '54px', background: 'white',
+                                        width: '100%', height: '54px', background: isSubmitting ? '#f8fafc' : 'white',
                                         border: '1.5px solid #f1f5f9', borderRadius: '14px',
                                         paddingLeft: '48px', paddingRight: '16px',
                                         fontSize: '14px', fontWeight: 600, color: '#0f172a',
                                         outline: 'none', boxSizing: 'border-box',
                                         boxShadow: '0 2px 8px rgba(37,99,235,0.03)',
                                         transition: 'all 0.2s',
+                                        opacity: isSubmitting ? 0.7 : 1,
                                     }}
                                     onFocus={e => { e.target.style.borderColor = '#2563eb'; e.target.style.boxShadow = '0 0 0 4px rgba(37,99,235,0.1)'; }}
                                     onBlur={e => { e.target.style.borderColor = '#f1f5f9'; e.target.style.boxShadow = '0 2px 8px rgba(37,99,235,0.03)'; }}
@@ -122,14 +130,16 @@ const Register = () => {
                                 <input
                                     type="text" placeholder="Enter 10-digit mobile number"
                                     onChange={(e) => setFormData({ ...formData, mobile: e.target.value })} required
+                                    disabled={isSubmitting}
                                     style={{
-                                        width: '100%', height: '54px', background: 'white',
+                                        width: '100%', height: '54px', background: isSubmitting ? '#f8fafc' : 'white',
                                         border: '1.5px solid #f1f5f9', borderRadius: '14px',
                                         paddingLeft: '68px', paddingRight: '16px',
                                         fontSize: '14px', fontWeight: 600, color: '#0f172a',
                                         outline: 'none', boxSizing: 'border-box',
                                         boxShadow: '0 2px 8px rgba(37,99,235,0.03)',
                                         transition: 'all 0.2s',
+                                        opacity: isSubmitting ? 0.7 : 1,
                                     }}
                                     onFocus={e => { e.target.style.borderColor = '#2563eb'; e.target.style.boxShadow = '0 0 0 4px rgba(37,99,235,0.1)'; }}
                                     onBlur={e => { e.target.style.borderColor = '#f1f5f9'; e.target.style.boxShadow = '0 2px 8px rgba(37,99,235,0.03)'; }}
@@ -248,19 +258,23 @@ const Register = () => {
 
                         <button
                             type="submit"
+                            disabled={isSubmitting}
                             style={{
                                 width: '100%', height: '56px', marginTop: '10px',
-                                background: 'linear-gradient(135deg, #1e3a8a, #2563eb)',
-                                border: 'none', borderRadius: '99px', cursor: 'pointer',
+                                background: isSubmitting ? '#94a3b8' : 'linear-gradient(135deg, #1e3a8a, #2563eb)',
+                                border: 'none', borderRadius: '99px', cursor: isSubmitting ? 'not-allowed' : 'pointer',
                                 color: 'white', fontWeight: 900, fontSize: '15px',
                                 display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
-                                boxShadow: '0 12px 30px rgba(37,99,235,0.3)',
+                                boxShadow: isSubmitting ? 'none' : '0 12px 30px rgba(37,99,235,0.3)',
                                 transition: 'all 0.2s',
+                                opacity: isSubmitting ? 0.9 : 1,
                             }}
-                            onMouseDown={e => e.currentTarget.style.transform = 'scale(0.98)'}
-                            onMouseUp={e => e.currentTarget.style.transform = 'scale(1)'}
                         >
-                            Initialize Node <Sparkles size={18} />
+                            {isSubmitting ? (
+                                <>Initializing Consortium...</>
+                            ) : (
+                                <>Initialize Node <Sparkles size={18} /></>
+                            )}
                         </button>
                     </form>
 

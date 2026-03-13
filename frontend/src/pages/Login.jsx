@@ -34,17 +34,30 @@ const Login = () => {
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     const [dismissed, setDismissed] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
     const { login } = useContext(AuthContext);
     const navigate = useNavigate();
     const { canInstall, install } = usePwaInstall();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        if (isSubmitting) return; // Prevent multiple submissions
+        
+        setError('');
+        
+        // Basic mobile validation
+        if (mobile.length < 10) {
+            setError('Please enter a valid 10-digit mobile number');
+            return;
+        }
+
+        setIsSubmitting(true);
         try {
             const res = await login(mobile, password);
             navigate(res.user.role === 'admin' ? '/admin' : '/');
         } catch (err) {
             setError(err.response?.data?.message || 'Access Denied: Invalid Credentials');
+            setIsSubmitting(false); // Re-enable on error
         }
     };
 
@@ -164,13 +177,15 @@ const Login = () => {
                                 <input
                                     type="text" placeholder="Enter your mobile"
                                     value={mobile} onChange={e => setMobile(e.target.value)} required
+                                    disabled={isSubmitting}
                                     style={{
-                                        width: '100%', height: '52px', background: '#f8fafc',
+                                        width: '100%', height: '52px', background: isSubmitting ? '#f1f5f9' : '#f8fafc',
                                         border: '1px solid #e2e8f0', borderRadius: '16px',
                                         paddingLeft: '46px', paddingRight: '16px',
                                         fontSize: '15px', fontWeight: 700, color: '#0f172a',
                                         outline: 'none', boxSizing: 'border-box',
                                         transition: 'border-color 0.2s',
+                                        opacity: isSubmitting ? 0.7 : 1,
                                     }}
                                     onFocus={e => e.target.style.borderColor = '#2563eb'}
                                     onBlur={e => e.target.style.borderColor = '#e2e8f0'}
@@ -188,13 +203,15 @@ const Login = () => {
                                 <input
                                     type="password" placeholder="Enter your password"
                                     value={password} onChange={e => setPassword(e.target.value)} required
+                                    disabled={isSubmitting}
                                     style={{
-                                        width: '100%', height: '52px', background: '#f8fafc',
+                                        width: '100%', height: '52px', background: isSubmitting ? '#f1f5f9' : '#f8fafc',
                                         border: '1px solid #e2e8f0', borderRadius: '16px',
                                         paddingLeft: '46px', paddingRight: '16px',
                                         fontSize: '15px', fontWeight: 700, color: '#0f172a',
                                         outline: 'none', boxSizing: 'border-box',
                                         transition: 'border-color 0.2s',
+                                        opacity: isSubmitting ? 0.7 : 1,
                                     }}
                                     onFocus={e => e.target.style.borderColor = '#2563eb'}
                                     onBlur={e => e.target.style.borderColor = '#e2e8f0'}
@@ -204,20 +221,24 @@ const Login = () => {
 
                         <button
                             type="submit"
+                            disabled={isSubmitting}
                             style={{
                                 width: '100%', height: '54px', marginTop: '6px',
-                                background: 'linear-gradient(135deg, #1e3a8a, #2563eb)',
-                                border: 'none', borderRadius: '16px', cursor: 'pointer',
+                                background: isSubmitting ? '#94a3b8' : 'linear-gradient(135deg, #1e3a8a, #2563eb)',
+                                border: 'none', borderRadius: '16px', cursor: isSubmitting ? 'not-allowed' : 'pointer',
                                 color: 'white', fontWeight: 900, fontSize: '13px',
                                 letterSpacing: '0.1em', textTransform: 'uppercase',
                                 display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px',
-                                boxShadow: '0 8px 24px rgba(37,99,235,0.4)',
-                                transition: 'transform 0.15s, box-shadow 0.15s',
+                                boxShadow: isSubmitting ? 'none' : '0 8px 24px rgba(37,99,235,0.4)',
+                                transition: 'all 0.15s',
+                                opacity: isSubmitting ? 0.8 : 1,
                             }}
-                            onTouchStart={e => e.currentTarget.style.transform = 'scale(0.97)'}
-                            onTouchEnd={e => e.currentTarget.style.transform = 'scale(1)'}
                         >
-                            Sign In <LogIn size={16} />
+                            {isSubmitting ? (
+                                <>Processing Request...</>
+                            ) : (
+                                <>Sign In <LogIn size={16} /></>
+                            )}
                         </button>
                     </form>
 

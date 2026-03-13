@@ -7,7 +7,7 @@ const router = express.Router();
 // Get profile & stats
 router.get('/profile', auth, async (req, res) => {
     try {
-        const user = await User.findById(req.user.id).select('-password');
+        const user = await User.findById(req.user.id).select('-password').lean();
         res.json(user);
     } catch (err) {
         res.status(500).json({ message: err.message });

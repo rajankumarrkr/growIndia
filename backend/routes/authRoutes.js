@@ -26,7 +26,15 @@ router.post('/register', async (req, res) => {
         await user.save();
 
         const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET);
-        res.json({ token, user: { id: user._id, name: user.name, mobile: user.mobile, role: user.role } });
+        res.status(201).json({ 
+            token, 
+            user: { 
+                id: user._id, 
+                name: user.name, 
+                mobile: user.mobile, 
+                role: user.role 
+            } 
+        });
     } catch (err) {
         res.status(500).json({ message: err.message });
     }
@@ -36,13 +44,27 @@ router.post('/register', async (req, res) => {
 router.post('/login', async (req, res) => {
     try {
         const { mobile, password } = req.body;
-        const user = await User.findOne({ mobile });
+        // Use .lean() for faster query performance and projection to return only necessary fields
+        const user = await User.findOne({ mobile }).select('password role name mobile status');
+        
         if (!user || !(await user.comparePassword(password))) {
-            return res.status(400).json({ message: 'Invalid credentials' });
+            return res.status(401).json({ message: 'Invalid credentials' });
+        }
+
+        if (user.status === 'blocked') {
+            return res.status(403).json({ message: 'Account suspended. Contact support.' });
         }
 
         const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET);
-        res.json({ token, user: { id: user._id, name: user.name, mobile: user.mobile, role: user.role } });
+        res.json({ 
+            token, 
+            user: { 
+                id: user._id, 
+                name: user.name, 
+                mobile: user.mobile, 
+                role: user.role 
+            } 
+        });
     } catch (err) {
         res.status(500).json({ message: err.message });
     }

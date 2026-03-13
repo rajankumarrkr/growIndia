@@ -28,9 +28,9 @@ const Profile = () => {
         {
             title: 'Financial Modules',
             items: [
-                { name: 'Active Nodes', icon: <Activity className="text-royal-blue" />, path: '/investments' },
+                { name: 'Active Plan', icon: <Activity className="text-royal-blue" />, path: '/investments' },
                 { name: 'Wallet Hub', icon: <Wallet className="text-slate-600" />, path: '/wallet' },
-                { name: 'Activity Log', icon: <History className="text-slate-400" />, path: '/history' },
+                { name: 'History', icon: <History className="text-slate-400" />, path: '/history' },
                 { name: 'Bank Registry', icon: <Landmark className="text-royal-blue" />, action: () => setShowBankModal(true) },
             ]
         },
@@ -163,7 +163,7 @@ const Profile = () => {
                                 <Landmark size={24} />
                             </div>
                             <h2 className="text-2xl font-black text-slate-900 tracking-tight">Bank Registry</h2>
-                            <p className="text-label mt-2">Settlement node configuration</p>
+                            <p className="text-label mt-2">Withdrawal configuration</p>
                         </div>
                         <button onClick={() => setShowBankModal(false)} className="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center text-slate-400 hover:bg-slate-100 transition-colors">
                             <X size={20} />
@@ -203,7 +203,7 @@ const Profile = () => {
                         </div>
 
                         <button className="btn-fintech btn-fintech-primary w-full mt-8 uppercase tracking-[0.2em] text-[11px] font-black h-14 rounded-2xl">
-                            Update Settlement Node
+                            Update Withdrawal Info
                         </button>
                     </form>
                 </div>
