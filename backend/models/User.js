@@ -3,10 +3,10 @@ const bcrypt = require('bcryptjs');
 
 const userSchema = new mongoose.Schema({
   name: { type: String, required: true },
-  mobile: { type: String, required: true, unique: true },
+  mobile: { type: String, required: true, unique: true, index: true },
   password: { type: String, required: true },
   walletBalance: { type: Number, default: 0 },
-  referralCode: { type: String, unique: true },
+  referralCode: { type: String, unique: true, index: true },
   referredBy: { type: String },
   bankDetails: {
     holderName: String,

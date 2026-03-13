@@ -1,8 +1,7 @@
-import React, { useContext, lazy, Suspense } from 'react';
+import React, { useContext, lazy, Suspense, useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, AuthContext } from './context/AuthContext';
-
-// Lazy-loaded pages — only downloaded when the user navigates to them
+import { PageSkeleton, HomeSkeleton } from './components/SkeletonLoader';
 const Home = lazy(() => import('./pages/Home'));
 const Plan = lazy(() => import('./pages/Plan'));
 const Team = lazy(() => import('./pages/Team'));
@@ -17,9 +16,13 @@ const History = lazy(() => import('./pages/History'));
 
 const SyncScreen = () => (
     <div style={{ width: '100vw', height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#f8fafc' }}>
-        <span style={{ fontWeight: 900, color: '#2563eb', letterSpacing: '0.2em', fontSize: '10px', textTransform: 'uppercase', animation: 'pulse 1.5s ease-in-out infinite' }}>
-            Synchronizing...
-        </span>
+        <div style={{ textAlign: 'center' }}>
+            <div style={{ width: '40px', height: '40px', border: '3px solid #e2e8f0', borderTop: '3px solid #2563eb', borderRadius: '50%', animation: 'spin 1s linear infinite', margin: '0 auto 16px' }} />
+            <span style={{ fontWeight: 900, color: '#2563eb', letterSpacing: '0.2em', fontSize: '10px', textTransform: 'uppercase' }}>
+                Initializing...
+            </span>
+        </div>
+        <style>{`@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }`}</style>
     </div>
 );
 
@@ -32,25 +35,45 @@ const PrivateRoute = ({ children, adminOnly = false }) => {
 };
 
 function App() {
+    // Proactively prefetch auth routes on mount
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            import('./pages/Login');
+            import('./pages/Register');
+        }, 1000);
+        return () => clearTimeout(timer);
+    }, []);
+
     return (
         <AuthProvider>
             <BrowserRouter>
-                <Suspense fallback={<SyncScreen />}>
-                    <Routes>
-                        <Route path="/login" element={<Login />} />
-                        <Route path="/register" element={<Register />} />
-                        <Route path="/admin/login" element={<AdminLogin />} />
+                <Routes>
+                    <Route path="/login" element={
+                        <Suspense fallback={<PageSkeleton />}>
+                            <Login />
+                        </Suspense>
+                    } />
+                    <Route path="/register" element={
+                        <Suspense fallback={<PageSkeleton />}>
+                            <Register />
+                        </Suspense>
+                    } />
+                    <Route path="/admin/login" element={
+                        <Suspense fallback={<SyncScreen />}>
+                            <AdminLogin />
+                        </Suspense>
+                    } />
 
-                        <Route path="/" element={<PrivateRoute><Home /></PrivateRoute>} />
-                        <Route path="/plan" element={<PrivateRoute><Plan /></PrivateRoute>} />
-                        <Route path="/investments" element={<PrivateRoute><Investments /></PrivateRoute>} />
-                        <Route path="/wallet" element={<PrivateRoute><Wallet /></PrivateRoute>} />
-                        <Route path="/history" element={<PrivateRoute><History /></PrivateRoute>} />
-                        <Route path="/team" element={<PrivateRoute><Team /></PrivateRoute>} />
-                        <Route path="/profile" element={<PrivateRoute><Profile /></PrivateRoute>} />
-                        <Route path="/admin" element={<PrivateRoute adminOnly={true}><AdminDashboard /></PrivateRoute>} />
-                    </Routes>
-                </Suspense>
+                    {/* All other routes wrapped in PrivateRoute and granular Suspense */}
+                    <Route path="/" element={<PrivateRoute><Suspense fallback={<SyncScreen />}><Home /></Suspense></PrivateRoute>} />
+                    <Route path="/plan" element={<PrivateRoute><Suspense fallback={<SyncScreen />}><Plan /></Suspense></PrivateRoute>} />
+                    <Route path="/investments" element={<PrivateRoute><Suspense fallback={<SyncScreen />}><Investments /></Suspense></PrivateRoute>} />
+                    <Route path="/wallet" element={<PrivateRoute><Suspense fallback={<SyncScreen />}><Wallet /></Suspense></PrivateRoute>} />
+                    <Route path="/history" element={<PrivateRoute><Suspense fallback={<SyncScreen />}><History /></Suspense></PrivateRoute>} />
+                    <Route path="/team" element={<PrivateRoute><Suspense fallback={<SyncScreen />}><Team /></Suspense></PrivateRoute>} />
+                    <Route path="/profile" element={<PrivateRoute><Suspense fallback={<SyncScreen />}><Profile /></Suspense></PrivateRoute>} />
+                    <Route path="/admin" element={<PrivateRoute adminOnly={true}><Suspense fallback={<SyncScreen />}><AdminDashboard /></Suspense></PrivateRoute>} />
+                </Routes>
             </BrowserRouter>
         </AuthProvider>
     );
