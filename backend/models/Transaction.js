@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const transactionSchema = new mongoose.Schema({
     userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
     amount: { type: Number, required: true },
-    type: { type: String, enum: ['recharge', 'withdrawal'], required: true },
+    type: { type: String, enum: ['recharge', 'withdrawal', 'roi'], required: true },
     utr: { type: String }, // Required for recharges
     screenshot: { type: String }, // Base64 string for deposit proof
     accountDetails: {

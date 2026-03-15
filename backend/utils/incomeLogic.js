@@ -1,5 +1,6 @@
 const Investment = require('../models/Investment');
 const User = require('../models/User');
+const Transaction = require('../models/Transaction');
 
 /**
  * Processes daily ROI for all active investments.
@@ -15,6 +16,14 @@ const processDailyIncome = async () => {
             // Credit ROI to user wallet
             await User.findByIdAndUpdate(inv.userId, {
                 $inc: { walletBalance: inv.dailyReturn }
+            });
+
+            // Record ROI Transaction
+            await Transaction.create({
+                userId: inv.userId,
+                amount: inv.dailyReturn,
+                type: 'roi',
+                status: 'approved'
             });
 
             // Update Investment record
