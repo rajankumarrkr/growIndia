@@ -4,6 +4,7 @@ const User = require('../models/User');
 const Transaction = require('../models/Transaction');
 const AdminSettings = require('../models/AdminSettings');
 const Plan = require('../models/Plan');
+const { processDailyIncome } = require('../utils/incomeLogic');
 const router = express.Router();
 
 // Get Admin Stats
@@ -201,6 +202,20 @@ router.delete('/plans/:id', auth, admin, async (req, res) => {
     try {
         await Plan.findByIdAndDelete(req.params.id);
         res.json({ message: 'Plan deleted' });
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+});
+
+// Generate Daily Income Manually
+router.post('/generate-income', auth, admin, async (req, res) => {
+    try {
+        const result = await processDailyIncome();
+        if (result.success) {
+            res.json({ message: `Successfully processed ROI for ${result.processedCount} investments.`, count: result.processedCount });
+        } else {
+            res.status(500).json({ message: result.error });
+        }
     } catch (err) {
         res.status(500).json({ message: err.message });
     }

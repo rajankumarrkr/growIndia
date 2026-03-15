@@ -1,6 +1,6 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { AuthContext } from '../context/AuthContext';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { UserPlus, Phone, Lock, User, Hash, Sparkles, ShieldCheck, Cpu, Eye, EyeOff } from 'lucide-react';
 
 const Register = () => {
@@ -11,6 +11,15 @@ const Register = () => {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const { register } = useContext(AuthContext);
     const navigate = useNavigate();
+    const location = useLocation();
+
+    useEffect(() => {
+        const params = new URLSearchParams(location.search);
+        const ref = params.get('ref');
+        if (ref) {
+            setFormData(prev => ({ ...prev, referralCode: ref }));
+        }
+    }, [location]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -218,6 +227,7 @@ const Register = () => {
                                 <Hash size={18} color="#94a3b8" style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)' }} />
                                 <input
                                     type="text" placeholder="Enter optional hash/code"
+                                    value={formData.referralCode}
                                     onChange={(e) => setFormData({ ...formData, referralCode: e.target.value })}
                                     style={{
                                         width: '100%', height: '54px', background: 'white',

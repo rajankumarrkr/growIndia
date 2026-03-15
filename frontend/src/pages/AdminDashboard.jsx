@@ -23,6 +23,8 @@ const AdminDashboard = () => {
     const [newPlan, setNewPlan] = useState({ name: '', amount: '', daily: '', tier: 'standard' });
     const [editingPlan, setEditingPlan] = useState(null);
     const [planMsg, setPlanMsg] = useState('');
+    const [isProcessingIncome, setIsProcessingIncome] = useState(false);
+    const [incomeResult, setIncomeResult] = useState(null);
 
     useEffect(() => {
         fetchAdminData();
@@ -115,6 +117,23 @@ const AdminDashboard = () => {
         }
     };
 
+    const handleGenerateIncome = async () => {
+        if (!window.confirm('Distribute daily ROI to all active investments? This should only be done once per day.')) return;
+        
+        setIsProcessingIncome(true);
+        setIncomeResult(null);
+        try {
+            const res = await api.post('/admin/generate-income');
+            setIncomeResult({ success: true, message: res.data.message });
+            fetchAdminData();
+        } catch (err) {
+            setIncomeResult({ success: false, message: err.response?.data?.message || 'Processing failed' });
+        } finally {
+            setIsProcessingIncome(false);
+            setTimeout(() => setIncomeResult(null), 5000);
+        }
+    };
+
     return (
         <Layout title="Governance Center">
             {/* Header Section */}
@@ -131,13 +150,29 @@ const AdminDashboard = () => {
                         </p>
                     </div>
                 </div>
-                <button 
-                    onClick={logout} 
-                    className="flex items-center gap-3 px-5 py-3 bg-red-50 text-red-500 rounded-2xl font-black text-[10px] uppercase tracking-widest hover:bg-red-500 hover:text-white transition-all group w-full sm:w-auto justify-center"
-                >
-                    Termination <LogOut size={16} />
-                </button>
+                <div className="flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto">
+                    <button 
+                        onClick={handleGenerateIncome} 
+                        disabled={isProcessingIncome}
+                        className={`flex items-center gap-3 px-5 py-3 rounded-2xl font-black text-[10px] uppercase tracking-widest transition-all group w-full justify-center ${isProcessingIncome ? 'bg-slate-100 text-slate-400 cursor-not-allowed' : 'bg-emerald-50 text-emerald-600 hover:bg-emerald-500 hover:text-white'}`}
+                    >
+                        {isProcessingIncome ? 'Processing ROI...' : 'Distribute ROI'} <Zap size={16} className={isProcessingIncome ? '' : 'animate-pulse'} />
+                    </button>
+                    <button 
+                        onClick={logout} 
+                        className="flex items-center gap-3 px-5 py-3 bg-red-50 text-red-500 rounded-2xl font-black text-[10px] uppercase tracking-widest hover:bg-red-500 hover:text-white transition-all group w-full justify-center"
+                    >
+                        Termination <LogOut size={16} />
+                    </button>
+                </div>
             </div>
+
+            {incomeResult && (
+                <div className={`mb-6 p-4 rounded-2xl border flex items-center gap-3 animate-in fade-in slide-in-from-top-4 duration-300 ${incomeResult.success ? 'bg-emerald-50 border-emerald-100 text-emerald-700' : 'bg-red-50 border-red-100 text-red-700'}`}>
+                    {incomeResult.success ? <CheckCircle size={20} /> : <ShieldAlert size={20} />}
+                    <p className="text-xs font-black uppercase tracking-widest">{incomeResult.message}</p>
+                </div>
+            )}
 
             {/* Admin Stats Grid */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 mb-10 px-2 sm:px-0">

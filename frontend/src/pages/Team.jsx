@@ -20,11 +20,24 @@ const Team = () => {
         } catch (err) { }
     };
 
-    const copyLink = () => {
-        const link = `${window.location.origin}/register?ref=${user?.referralCode}`;
-        navigator.clipboard.writeText(link);
-        setCopied(true);
-        setTimeout(() => setCopied(false), 2000);
+    const handleShare = async () => {
+        const shareData = {
+            title: 'Join Grow India',
+            text: `Join me on Grow India! Use my referral code: ${user?.referralCode}`,
+            url: `${window.location.origin}/register?ref=${user?.referralCode}`
+        };
+
+        try {
+            if (navigator.share) {
+                await navigator.share(shareData);
+            } else {
+                await navigator.clipboard.writeText(shareData.url);
+                setCopied(true);
+                setTimeout(() => setCopied(false), 2000);
+            }
+        } catch (err) {
+            console.error('Error sharing:', err);
+        }
     };
 
     return (
@@ -86,13 +99,13 @@ const Team = () => {
                                 <span className="text-3xl sm:text-4xl font-black text-white tracking-[0.2em] font-mono group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-white group-hover:to-white/50 transition-colors">
                                     {user?.referralCode}
                                 </span>
-                                <button onClick={copyLink} className={`w-12 h-12 rounded-xl flex items-center justify-center transition-all ${copied ? 'bg-emerald-500/80 text-white' : 'bg-white/10 text-white hover:bg-white/20 border border-white/20'}`}>
-                                    {copied ? <Check size={20} /> : <Copy size={20} />}
+                                <button onClick={handleShare} className={`w-12 h-12 rounded-xl flex items-center justify-center transition-all ${copied ? 'bg-emerald-500/80 text-white' : 'bg-white/10 text-white hover:bg-white/20 border border-white/20'}`}>
+                                    {copied ? <Check size={20} /> : <Share2 size={20} />}
                                 </button>
                             </div>
                         </div>
 
-                        <button onClick={copyLink} className="btn-fintech btn-fintech-primary bg-white text-royal-blue shadow-none hover:bg-slate-50 w-full py-5 text-[11px] font-black uppercase tracking-[0.25em] flex items-center justify-center gap-3">
+                        <button onClick={handleShare} className="btn-fintech btn-fintech-primary bg-white text-royal-blue shadow-none hover:bg-slate-50 w-full py-5 text-[11px] font-black uppercase tracking-[0.25em] flex items-center justify-center gap-3">
                             <Share2 size={16} /> Broadcast Invite
                         </button>
                     </div>
