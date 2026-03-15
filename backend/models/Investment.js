@@ -12,4 +12,7 @@ const investmentSchema = new mongoose.Schema({
     createdAt: { type: Date, default: Date.now }
 });
 
+investmentSchema.index({ userId: 1 });
+investmentSchema.index({ status: 1 });
+
 module.exports = mongoose.model('Investment', investmentSchema);

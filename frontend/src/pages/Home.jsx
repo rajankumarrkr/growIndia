@@ -60,25 +60,25 @@ const Home = () => {
         return 'Good Evening';
     };
 
-    const quickActions = [
+    const quickActions = React.useMemo(() => [
         { label: 'Deposit', icon: <ArrowDownRight size={22} />, color: '#2563eb', bg: '#eff6ff', onClick: () => setShowRecharge(true) },
         { label: 'Withdraw', icon: <ArrowUpRight size={22} />, color: '#7c3aed', bg: '#f5f3ff', onClick: () => navigate('/wallet') },
         { label: 'Invest', icon: <Target size={22} />, color: '#059669', bg: '#f0fdf4', onClick: () => navigate('/plan') },
         { label: 'History', icon: <History size={22} />, color: '#d97706', bg: '#fffbeb', onClick: () => navigate('/history') },
-    ];
+    ], [navigate]);
 
-    const benefits = [
+    const benefits = React.useMemo(() => [
         { title: 'Daily Returns', sub: 'Earn every 24 hours', icon: <BarChart3 size={24} />, color: '#2563eb', bg: '#eff6ff', img: '📊' },
         { title: 'Secure Vault', sub: 'Bank-grade security', icon: <ShieldCheck size={24} />, color: '#059669', bg: '#f0fdf4', img: '🛡️' },
         { title: 'Referral Bonus', sub: 'Invite & earn more', icon: <Users size={24} />, color: '#7c3aed', bg: '#f5f3ff', img: '👥' },
         { title: 'Instant Credit', sub: 'Auto ROI daily', icon: <Zap size={24} />, color: '#d97706', bg: '#fffbeb', img: '⚡' },
-    ];
+    ], []);
 
-    const tradingBanners = [
+    const tradingBanners = React.useMemo(() => [
         { title: 'Global Markets', sub: '24/7 Monitoring', icon: <Globe2 size={24} />, color: '#3b82f6' },
         { title: 'AI Optimized', sub: 'Quantum Algorithms', icon: <Cpu size={24} />, color: '#8b5cf6' },
         { title: 'Market Trends', sub: 'Real-time Analytics', icon: <LineChart size={24} />, color: '#10b981' },
-    ];
+    ], []);
 
     return (
         <Layout title="Dashboard">

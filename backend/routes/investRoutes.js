@@ -27,7 +27,7 @@ seedDefaultPlans();
 // Get Plans (returns standard first, then vip — so frontend index-based split still works)
 router.get('/plans', async (req, res) => {
     try {
-        const plans = await Plan.find({ isActive: true }).sort({ tier: 1, amount: 1 });
+        const plans = await Plan.find({ isActive: true }).sort({ tier: 1, amount: 1 }).lean();
         res.json(plans);
     } catch (err) {
         res.status(500).json({ message: err.message });
@@ -77,7 +77,7 @@ router.post('/purchase', auth, async (req, res) => {
 // My Investments
 router.get('/my-investments', auth, async (req, res) => {
     try {
-        const investments = await Investment.find({ userId: req.user.id }).sort({ createdAt: -1 });
+        const investments = await Investment.find({ userId: req.user.id }).sort({ createdAt: -1 }).lean();
         res.json(investments);
     } catch (err) {
         res.status(500).json({ message: err.message });

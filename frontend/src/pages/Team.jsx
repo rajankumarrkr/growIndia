@@ -118,11 +118,11 @@ const Team = () => {
                     <div className="w-1 h-3 bg-royal-blue rounded-full"></div> Protocol Steps
                 </h4>
                 <div className="space-y-6">
-                    {[
+                    {React.useMemo(() => [
                         { text: "Broadcast unique link to prospect nodes", icon: <Share2 /> },
                         { text: "Monitor integration status in real-time hub", icon: <Activity /> },
                         { text: "Receive automated 10% deposit royalties", icon: <TrendingUp /> }
-                    ].map((step, idx) => (
+                    ], []).map((step, idx) => (
                         <div key={idx} className="flex gap-5 items-center group">
                             <div className="w-12 h-12 bg-white rounded-[1.25rem] border border-slate-100 shadow-sm flex items-center justify-center text-slate-400 group-hover:bg-slate-900 group-hover:text-white group-hover:border-slate-800 transition-all shrink-0">
                                 {React.cloneElement(step.icon, { size: 18 })}

@@ -5,10 +5,10 @@ const User = require('../models/User');
 
 router.get('/data', auth, async (req, res) => {
     try {
-        const user = await User.findById(req.user.id);
+        const user = await User.findById(req.user.id).lean();
         
         // Find all users who were referred by the current user
-        const teamMembers = await User.find({ referredBy: user.referralCode });
+        const teamMembers = await User.find({ referredBy: user.referralCode }).lean();
         const teamSize = teamMembers.length;
         
         // Return 0 commission for now as it's not implemented yet

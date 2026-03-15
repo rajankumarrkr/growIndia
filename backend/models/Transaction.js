@@ -17,5 +17,9 @@ const transactionSchema = new mongoose.Schema({
     timestamp: { type: Date, default: Date.now }
 });
 
+transactionSchema.index({ userId: 1 });
+transactionSchema.index({ type: 1 });
+transactionSchema.index({ timestamp: -1 });
+
 module.exports = mongoose.model('Transaction', transactionSchema);
 

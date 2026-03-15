@@ -33,7 +33,7 @@ router.get('/stats', auth, admin, async (req, res) => {
 // Manage Users
 router.get('/users', auth, admin, async (req, res) => {
     try {
-        const users = await User.find({ role: 'user' }).select('-password');
+        const users = await User.find({ role: 'user' }).select('-password').lean();
         res.json(users);
     } catch (err) {
         res.status(500).json({ message: err.message });
@@ -74,7 +74,7 @@ router.put('/settings', auth, admin, async (req, res) => {
 router.get('/recharges/pending', auth, admin, async (req, res) => {
     try {
         // Fetch pending recharges and populate user details (name, mobile) to display in the admin dashboard
-        const recharges = await Transaction.find({ type: 'recharge', status: 'pending' }).populate('userId', 'name mobile');
+        const recharges = await Transaction.find({ type: 'recharge', status: 'pending' }).populate('userId', 'name mobile').lean();
         res.json(recharges);
     } catch (err) {
         res.status(500).json({ message: err.message });
@@ -84,7 +84,7 @@ router.get('/recharges/pending', auth, admin, async (req, res) => {
 // Get Pending Withdrawals
 router.get('/withdrawals/pending', auth, admin, async (req, res) => {
     try {
-        const withdrawals = await Transaction.find({ type: 'withdrawal', status: 'pending' }).populate('userId', 'name mobile');
+        const withdrawals = await Transaction.find({ type: 'withdrawal', status: 'pending' }).populate('userId', 'name mobile').lean();
         res.json(withdrawals);
     } catch (err) {
         res.status(500).json({ message: err.message });
@@ -164,7 +164,7 @@ router.patch('/user/:id/balance', auth, admin, async (req, res) => {
 // Get all plans (admin sees all including inactive)
 router.get('/plans', auth, admin, async (req, res) => {
     try {
-        const plans = await Plan.find().sort({ tier: 1, amount: 1 });
+        const plans = await Plan.find().sort({ tier: 1, amount: 1 }).lean();
         res.json(plans);
     } catch (err) {
         res.status(500).json({ message: err.message });
