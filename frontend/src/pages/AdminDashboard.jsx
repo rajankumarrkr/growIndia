@@ -438,12 +438,23 @@ const AdminDashboard = () => {
                                                 </td>
                                                 <td className="py-4 px-5">
                                                     {r.screenshot ? (
-                                                        <button
-                                                            onClick={() => window.open(r.screenshot, '_blank')}
-                                                            className="w-12 h-12 rounded-xl border-2 border-slate-200 overflow-hidden hover:border-blue-400 transition-all"
-                                                        >
-                                                            <img src={r.screenshot} alt="Proof" className="w-full h-full object-cover" />
-                                                        </button>
+                                                        <div className="flex items-center gap-2">
+                                                            <button
+                                                                onClick={() => window.open(r.screenshot, '_blank')}
+                                                                className="w-12 h-12 rounded-xl border-2 border-slate-200 overflow-hidden hover:border-blue-400 transition-all"
+                                                                title="View full size"
+                                                            >
+                                                                <img src={r.screenshot} alt="Proof" className="w-full h-full object-cover" />
+                                                            </button>
+                                                            <a
+                                                                href={r.screenshot}
+                                                                download={`deposit_${r.userId?.name || 'user'}_${r.utr || Date.now()}.jpg`}
+                                                                className="w-8 h-8 flex items-center justify-center bg-slate-100 text-slate-500 rounded-lg hover:bg-blue-500 hover:text-white transition-all shadow-sm"
+                                                                title="Download Receipt"
+                                                            >
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                                                            </a>
+                                                        </div>
                                                     ) : (
                                                         <span className="text-xs text-red-400 font-semibold">No proof</span>
                                                     )}
