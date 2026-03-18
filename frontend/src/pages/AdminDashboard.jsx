@@ -1,15 +1,68 @@
 import React, { useState, useEffect, useContext } from 'react';
 import api from '../api/axios';
-import { 
-    Users, CreditCard, CheckCircle, XCircle, LogOut, Activity, 
-    Landmark, Database, Zap, Search, Filter, ShieldAlert, 
-    TrendingUp, ShieldCheck, Settings, ImageIcon, Check, X, 
-    LayoutGrid, UserPlus, ArrowRightLeft, Shield, Globe, 
-    Server, Cpu, Wallet, Bell, BarChart2, Plus, Pencil, Trash2, Star, Crown
+import {
+    Users, CreditCard, TrendingDown, LogOut, Zap,
+    Search, ShieldAlert, CheckCircle, XCircle,
+    ImageIcon, Check, X, LayoutGrid, Settings,
+    Star, Crown, Plus, Pencil, Trash2, ArrowUpCircle,
+    ArrowDownCircle, RefreshCw, BarChart3, ShieldCheck,
+    Bell, ChevronRight, Clock, IndianRupee, UserCheck,
+    Wallet, FileText
 } from 'lucide-react';
 import Layout from '../components/Layout';
 import { AuthContext } from '../context/AuthContext';
 
+/* ─── tiny helpers ─────────────────────────────────────────────── */
+const fmt = (n) => Number(n || 0).toLocaleString('en-IN');
+
+const Badge = ({ color, label }) => {
+    const map = {
+        green: 'bg-green-100 text-green-700',
+        red: 'bg-red-100 text-red-600',
+        yellow: 'bg-yellow-100 text-yellow-700',
+        blue: 'bg-blue-100 text-blue-700',
+        purple: 'bg-purple-100 text-purple-700',
+    };
+    return (
+        <span className={`px-2.5 py-1 rounded-full text-xs font-bold ${map[color] || map.blue}`}>
+            {label}
+        </span>
+    );
+};
+
+const EmptyState = ({ icon: Icon, text }) => (
+    <div className="flex flex-col items-center justify-center py-20 text-slate-300">
+        <Icon size={40} className="mb-3" />
+        <p className="text-sm font-semibold text-slate-400">{text}</p>
+    </div>
+);
+
+/* ─── Stat Card ────────────────────────────────────────────────── */
+const StatCard = ({ icon: Icon, label, value, prefix = '', color, sub }) => {
+    const colors = {
+        blue: { bg: 'bg-blue-50', icon: 'text-blue-600', border: 'border-blue-100' },
+        green: { bg: 'bg-green-50', icon: 'text-green-600', border: 'border-green-100' },
+        rose: { bg: 'bg-rose-50', icon: 'text-rose-500', border: 'border-rose-100' },
+        amber: { bg: 'bg-amber-50', icon: 'text-amber-600', border: 'border-amber-100' },
+    };
+    const c = colors[color] || colors.blue;
+    return (
+        <div className={`bg-white rounded-2xl border ${c.border} p-5 flex items-center gap-4 shadow-sm`}>
+            <div className={`w-12 h-12 ${c.bg} ${c.icon} rounded-xl flex items-center justify-center shrink-0`}>
+                <Icon size={22} />
+            </div>
+            <div>
+                <p className="text-xs font-semibold text-slate-400 mb-0.5">{label}</p>
+                <p className="text-2xl font-extrabold text-slate-800 leading-none">
+                    {prefix}{fmt(value)}
+                </p>
+                {sub && <p className="text-[11px] text-slate-400 mt-0.5">{sub}</p>}
+            </div>
+        </div>
+    );
+};
+
+/* ─── Main Component ───────────────────────────────────────────── */
 const AdminDashboard = () => {
     const { logout } = useContext(AuthContext);
     const [stats, setStats] = useState({ totalUsers: 0, totalDeposits: 0, totalWithdrawals: 0 });
@@ -18,17 +71,17 @@ const AdminDashboard = () => {
     const [withdrawals, setWithdrawals] = useState([]);
     const [plans, setPlans] = useState([]);
     const [settings, setSettings] = useState({ upiId: '', qrCode: '' });
-    const [activeTab, setActiveTab] = useState('users');
+    const [activeTab, setActiveTab] = useState('overview');
     const [loading, setLoading] = useState(true);
+    const [search, setSearch] = useState('');
+
     const [newPlan, setNewPlan] = useState({ name: '', amount: '', daily: '', tier: 'standard' });
     const [editingPlan, setEditingPlan] = useState(null);
     const [planMsg, setPlanMsg] = useState('');
     const [isProcessingIncome, setIsProcessingIncome] = useState(false);
     const [incomeResult, setIncomeResult] = useState(null);
 
-    useEffect(() => {
-        fetchAdminData();
-    }, []);
+    useEffect(() => { fetchAdminData(); }, []);
 
     const fetchAdminData = async () => {
         setLoading(true);
@@ -47,15 +100,25 @@ const AdminDashboard = () => {
             setWithdrawals(w.data);
             setSettings(set.data);
             setPlans(pl.data);
-        } catch (err) { }
+        } catch { }
         setLoading(false);
+    };
+
+    const handleRechargeAction = async (id, status) => {
+        try { await api.patch(`/admin/recharge/${id}`, { status }); fetchAdminData(); }
+        catch { alert('Action failed'); }
+    };
+
+    const handleWithdrawAction = async (id, status) => {
+        try { await api.patch(`/admin/withdraw/${id}`, { status }); fetchAdminData(); }
+        catch { alert('Action failed'); }
     };
 
     const handleCreatePlan = async (e) => {
         e.preventDefault();
         try {
             await api.post('/admin/plans', { ...newPlan, amount: Number(newPlan.amount), daily: Number(newPlan.daily) });
-            setPlanMsg('Plan created!');
+            setPlanMsg('✅ Plan created!');
             setNewPlan({ name: '', amount: '', daily: '', tier: 'standard' });
             fetchAdminData();
         } catch (err) { setPlanMsg(err.response?.data?.message || 'Error'); }
@@ -63,602 +126,607 @@ const AdminDashboard = () => {
     };
 
     const handleUpdatePlan = async (id) => {
-        try {
-            await api.patch(`/admin/plans/${id}`, { ...editingPlan, amount: Number(editingPlan.amount), daily: Number(editingPlan.daily) });
-            setEditingPlan(null);
-            fetchAdminData();
-        } catch (err) { alert('Update failed'); }
+        try { await api.patch(`/admin/plans/${id}`, { ...editingPlan, amount: Number(editingPlan.amount), daily: Number(editingPlan.daily) }); setEditingPlan(null); fetchAdminData(); }
+        catch { alert('Update failed'); }
     };
 
     const handleDeletePlan = async (id) => {
         if (!window.confirm('Delete this plan?')) return;
-        try {
-            await api.delete(`/admin/plans/${id}`);
-            fetchAdminData();
-        } catch (err) { alert('Delete failed'); }
+        try { await api.delete(`/admin/plans/${id}`); fetchAdminData(); }
+        catch { alert('Delete failed'); }
     };
 
     const handleUpdateSettings = async (e) => {
         e.preventDefault();
-        try {
-            await api.put('/admin/settings', settings);
-            alert('Settings updated successfully!');
-        } catch(err) {
-            alert('Failed to update settings');
-        }
+        try { await api.put('/admin/settings', settings); alert('Settings updated!'); }
+        catch { alert('Failed to update'); }
     };
 
     const handleQrUpload = (e) => {
         const file = e.target.files[0];
         if (file) {
             const reader = new FileReader();
-            reader.onloadend = () => {
-                setSettings({ ...settings, qrCode: reader.result });
-            };
+            reader.onloadend = () => setSettings({ ...settings, qrCode: reader.result });
             reader.readAsDataURL(file);
         }
     };
 
-    const handleRechargeAction = async (id, status) => {
-        try {
-            await api.patch(`/admin/recharge/${id}`, { status });
-            fetchAdminData();
-        } catch (err) {
-            alert('Action failed');
-        }
-    };
-
-    const handleWithdrawAction = async (id, status) => {
-        try {
-            await api.patch(`/admin/withdraw/${id}`, { status });
-            fetchAdminData();
-        } catch (err) {
-            alert('Action failed');
-        }
-    };
-
     const handleGenerateIncome = async () => {
-        if (!window.confirm('Distribute daily ROI to all active investments? This should only be done once per day.')) return;
-        
-        setIsProcessingIncome(true);
-        setIncomeResult(null);
+        if (!window.confirm('Distribute daily ROI to all active investments?')) return;
+        setIsProcessingIncome(true); setIncomeResult(null);
         try {
             const res = await api.post('/admin/generate-income');
             setIncomeResult({ success: true, message: res.data.message });
             fetchAdminData();
         } catch (err) {
-            setIncomeResult({ success: false, message: err.response?.data?.message || 'Processing failed' });
+            setIncomeResult({ success: false, message: err.response?.data?.message || 'Failed' });
         } finally {
             setIsProcessingIncome(false);
             setTimeout(() => setIncomeResult(null), 5000);
         }
     };
 
+    /* ── tabs config ── */
+    const tabs = [
+        { id: 'overview', label: 'Overview', icon: BarChart3 },
+        { id: 'users', label: 'Users', icon: Users, badge: users.length },
+        { id: 'deposits', label: 'Deposits', icon: ArrowUpCircle, badge: recharges.length, alert: recharges.length > 0 },
+        { id: 'withdrawals', label: 'Withdrawals', icon: ArrowDownCircle, badge: withdrawals.length, alert: withdrawals.length > 0 },
+        { id: 'plans', label: 'Plans', icon: LayoutGrid },
+        { id: 'settings', label: 'Settings', icon: Settings },
+    ];
+
+    /* ── search filter ── */
+    const filteredUsers = users.filter(u =>
+        u.name?.toLowerCase().includes(search.toLowerCase()) ||
+        u.mobile?.includes(search)
+    );
+
     return (
-        <Layout title="Governance Center">
-            {/* Header Section */}
-            <div className="mb-10 px-2 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6">
-                <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 sm:w-14 sm:h-14 bg-royal-blue rounded-2xl flex items-center justify-center text-white shadow-lg shadow-blue-500/30 shrink-0">
-                        <Shield size={24} className="sm:hidden" />
-                        <Shield size={28} className="hidden sm:block" />
-                    </div>
+        <Layout title="Admin Panel" hideNav={true}>
+            <div className="min-h-screen pb-10">
+
+                {/* ── Top Bar ── */}
+                <div className="flex items-center justify-between mb-8 gap-4">
                     <div>
-                        <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight leading-none">Command Center</h1>
-                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-2 flex flex-wrap items-center gap-x-2 gap-y-1">
-                             System Latency: <span className="text-emerald-500">Normal</span> <span className="hidden sm:inline">•</span> <span>{new Date().toLocaleDateString()}</span>
+                        <h1 className="text-2xl font-extrabold text-slate-800">Admin Panel</h1>
+                        <p className="text-sm text-slate-400 mt-0.5">
+                            {new Date().toLocaleDateString('en-IN', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
                         </p>
                     </div>
-                </div>
-                <div className="flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto">
-                    <button 
-                        onClick={handleGenerateIncome} 
-                        disabled={isProcessingIncome}
-                        className={`flex items-center gap-3 px-5 py-3 rounded-2xl font-black text-[10px] uppercase tracking-widest transition-all group w-full justify-center ${isProcessingIncome ? 'bg-slate-100 text-slate-400 cursor-not-allowed' : 'bg-emerald-50 text-emerald-600 hover:bg-emerald-500 hover:text-white'}`}
-                    >
-                        {isProcessingIncome ? 'Processing ROI...' : 'Distribute ROI'} <Zap size={16} className={isProcessingIncome ? '' : 'animate-pulse'} />
-                    </button>
-                    <button 
-                        onClick={logout} 
-                        className="flex items-center gap-3 px-5 py-3 bg-red-50 text-red-500 rounded-2xl font-black text-[10px] uppercase tracking-widest hover:bg-red-500 hover:text-white transition-all group w-full justify-center"
-                    >
-                        Termination <LogOut size={16} />
-                    </button>
-                </div>
-            </div>
-
-            {incomeResult && (
-                <div className={`mb-6 p-4 rounded-2xl border flex items-center gap-3 animate-in fade-in slide-in-from-top-4 duration-300 ${incomeResult.success ? 'bg-emerald-50 border-emerald-100 text-emerald-700' : 'bg-red-50 border-red-100 text-red-700'}`}>
-                    {incomeResult.success ? <CheckCircle size={20} /> : <ShieldAlert size={20} />}
-                    <p className="text-xs font-black uppercase tracking-widest">{incomeResult.message}</p>
-                </div>
-            )}
-
-            {/* Admin Stats Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 mb-10 px-2 sm:px-0">
-                <div className="fintech-card relative overflow-hidden group !p-5 sm:!p-6">
-                    <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
-                        <Users size={80} />
-                    </div>
-                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-blue-50 text-royal-blue rounded-xl flex items-center justify-center mb-6">
-                        <UserPlus size={20} className="sm:hidden" />
-                        <UserPlus size={22} className="hidden sm:block" />
-                    </div>
-                    <p className="text-[9px] sm:text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Active Neural Nodes</p>
-                    <div className="flex items-baseline gap-2">
-                        <h2 className="text-3xl sm:text-4xl font-black text-slate-900 leading-tight">{stats.totalUsers.toLocaleString()}</h2>
-                        <span className="text-[9px] sm:text-[10px] font-black text-emerald-500 bg-emerald-50 px-2 py-0.5 rounded-full">+4.2%</span>
+                    <div className="flex items-center gap-3">
+                        <button
+                            onClick={handleGenerateIncome}
+                            disabled={isProcessingIncome}
+                            className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold transition-all ${isProcessingIncome
+                                ? 'bg-slate-100 text-slate-400 cursor-not-allowed'
+                                : 'bg-green-500 text-white hover:bg-green-600 shadow-md shadow-green-200'}`}
+                        >
+                            <Zap size={16} />
+                            {isProcessingIncome ? 'Processing...' : 'Give Daily ROI'}
+                        </button>
+                        <button
+                            onClick={fetchAdminData}
+                            className="p-2.5 bg-white border border-slate-200 text-slate-500 rounded-xl hover:bg-slate-50 transition-all shadow-sm"
+                            title="Refresh"
+                        >
+                            <RefreshCw size={16} />
+                        </button>
+                        <button
+                            onClick={logout}
+                            className="flex items-center gap-2 px-4 py-2.5 bg-red-50 text-red-500 rounded-xl text-sm font-bold hover:bg-red-500 hover:text-white transition-all"
+                        >
+                            <LogOut size={16} /> Logout
+                        </button>
                     </div>
                 </div>
 
-                <div className="fintech-card relative overflow-hidden group !p-5 sm:!p-6">
-                    <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
-                        <ArrowRightLeft size={80} />
+                {/* ── Income Result Alert ── */}
+                {incomeResult && (
+                    <div className={`mb-6 p-4 rounded-xl border flex items-center gap-3 ${incomeResult.success ? 'bg-green-50 border-green-200 text-green-700' : 'bg-red-50 border-red-200 text-red-600'}`}>
+                        {incomeResult.success ? <CheckCircle size={18} /> : <XCircle size={18} />}
+                        <span className="font-semibold text-sm">{incomeResult.message}</span>
                     </div>
-                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-emerald-50 text-emerald-500 rounded-xl flex items-center justify-center mb-6">
-                        <BarChart2 size={20} className="sm:hidden" />
-                        <BarChart2 size={22} className="hidden sm:block" />
-                    </div>
-                    <p className="text-[9px] sm:text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Cumulative Inflow</p>
-                    <div className="flex items-baseline gap-1">
-                        <span className="text-base sm:text-lg font-black text-slate-400">₹</span>
-                        <h2 className="text-3xl sm:text-4xl font-black text-slate-900 leading-tight">{stats.totalDeposits.toLocaleString()}</h2>
-                    </div>
+                )}
+
+                {/* ── Stat Cards ── */}
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+                    <StatCard icon={Users} label="Total Users" value={stats.totalUsers} color="blue" sub="Registered accounts" />
+                    <StatCard icon={ArrowUpCircle} label="Total Deposits" value={stats.totalDeposits} prefix="₹" color="green" sub="All approved deposits" />
+                    <StatCard icon={Wallet} label="Total Withdrawals" value={stats.totalWithdrawals} prefix="₹" color="rose" sub="All paid withdrawals" />
                 </div>
 
-                <div className="fintech-card relative overflow-hidden group !p-5 sm:!p-6">
-                    <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
-                        <Zap size={80} />
-                    </div>
-                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-amber-50 text-amber-600 rounded-xl flex items-center justify-center mb-6">
-                        <Wallet size={20} className="sm:hidden" />
-                        <Wallet size={22} className="hidden sm:block" />
-                    </div>
-                    <p className="text-[9px] sm:text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Withdrawal Volume</p>
-                    <div className="flex items-baseline gap-1">
-                        <span className="text-base sm:text-lg font-black text-slate-400">₹</span>
-                        <h2 className="text-3xl sm:text-4xl font-black text-slate-900 leading-tight">{stats.totalWithdrawals.toLocaleString()}</h2>
-                    </div>
-                </div>
-            </div>
-
-            {/* Management Hub */}
-            <div className="fintech-card !p-0 overflow-hidden border border-slate-100 shadow-xl mb-20">
-                {/* Navigation Menu */}
-                <div className="bg-slate-50/50 p-4 sm:p-6 border-b border-slate-100 flex flex-col lg:flex-row lg:items-center justify-between gap-4 sm:gap-6">
-                    <div className="flex bg-white p-1 sm:p-1.5 rounded-2xl shadow-sm border border-slate-100 gap-1 overflow-x-auto hide-scrollbar w-full lg:w-auto">
-                        {[
-                            { id: 'users', label: 'Identity', icon: <Globe /> },
-                            { id: 'recharges', label: 'Verify', icon: <ShieldCheck /> },
-                            { id: 'withdrawals', label: 'Settle', icon: <Cpu /> },
-                            { id: 'plans', label: 'Plans', icon: <LayoutGrid /> },
-                            { id: 'settings', label: 'Protocols', icon: <Settings /> }
-                        ].map(tab => (
-                            <button
-                                key={tab.id}
-                                onClick={() => setActiveTab(tab.id)}
-                                className={`px-4 sm:px-6 py-2 sm:py-2.5 rounded-xl text-[9px] sm:text-[10px] font-black uppercase tracking-widest flex items-center gap-2 transition-all whitespace-nowrap ${activeTab === tab.id ? 'bg-royal-blue text-white shadow-lg shadow-blue-500/20' : 'text-slate-400 hover:bg-slate-50 hover:text-slate-600'}`}
-                            >
-                                {React.cloneElement(tab.icon, { size: 14 })}
-                                {tab.label}
+                {/* ── Pending Alerts ── */}
+                {(recharges.length > 0 || withdrawals.length > 0) && (
+                    <div className="flex flex-wrap gap-3 mb-6">
+                        {recharges.length > 0 && (
+                            <button onClick={() => setActiveTab('deposits')} className="flex items-center gap-2 bg-orange-50 text-orange-600 border border-orange-200 px-4 py-2 rounded-xl text-sm font-bold hover:bg-orange-100 transition-all">
+                                <Bell size={15} className="animate-pulse" />
+                                {recharges.length} deposit{recharges.length > 1 ? 's' : ''} pending approval
+                                <ChevronRight size={14} />
                             </button>
-                        ))}
+                        )}
+                        {withdrawals.length > 0 && (
+                            <button onClick={() => setActiveTab('withdrawals')} className="flex items-center gap-2 bg-purple-50 text-purple-600 border border-purple-200 px-4 py-2 rounded-xl text-sm font-bold hover:bg-purple-100 transition-all">
+                                <Bell size={15} className="animate-pulse" />
+                                {withdrawals.length} withdrawal{withdrawals.length > 1 ? 's' : ''} pending payment
+                                <ChevronRight size={14} />
+                            </button>
+                        )}
                     </div>
-                    <div className="relative w-full lg:max-w-xs">
-                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300" size={14} />
-                        <input
-                            type="text"
-                            placeholder="Universal Search..."
-                            className="w-full bg-white border border-slate-100 rounded-xl py-2.5 sm:py-3 pl-12 pr-4 text-[10px] font-black text-slate-900 outline-none focus:border-royal-blue/30 transition-all shadow-sm"
-                        />
-                    </div>
-                </div>
+                )}
 
-                <div className="min-h-[400px]">
-                    {activeTab === 'users' ? (
-                        <div className="overflow-x-auto w-full">
-                            <table className="w-full border-collapse min-w-[800px]">
-                                <thead>
-                                    <tr className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 border-b border-slate-50">
-                                        <th className="py-6 px-8 text-left">Identity Profile</th>
-                                        <th className="py-6 px-8 text-left">Access Token</th>
-                                        <th className="py-6 px-8 text-left">Liquidity</th>
-                                        <th className="py-6 px-8 text-left">Status</th>
-                                        <th className="py-6 px-8 text-right">Ops</th>
-                                    </tr>
-                                </thead>
-                                <tbody className="divide-y divide-slate-50">
-                                    {users.map(u => (
-                                        <tr key={u._id} className="group hover:bg-slate-50/50 transition-colors">
-                                            <td className="py-6 px-8">
-                                                <div className="flex items-center gap-4">
-                                                    <div className="w-11 h-11 bg-gradient-to-br from-slate-50 to-white border border-slate-100 rounded-xl shadow-sm flex items-center justify-center text-sm font-black text-royal-blue">
-                                                        {u.name.substring(0, 2).toUpperCase()}
-                                                    </div>
-                                                    <div>
-                                                        <span className="text-sm font-black text-slate-900 block">{u.name}</span>
-                                                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{u.role} NODE</span>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <td className="py-6 px-8">
-                                                <span className="text-xs font-mono text-slate-400 font-bold">{u.mobile}</span>
-                                            </td>
-                                            <td className="py-6 px-8">
-                                                <span className="text-sm font-black text-royal-blue">₹{u.walletBalance.toLocaleString()}</span>
-                                            </td>
-                                            <td className="py-6 px-8">
-                                                <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest ${u.status === 'active' ? 'bg-emerald-50 text-emerald-500' : 'bg-red-50 text-red-500'}`}>
-                                                    <div className={`w-1.5 h-1.5 rounded-full ${u.status === 'active' ? 'bg-emerald-500 animate-pulse' : 'bg-red-500'}`} />
-                                                    {u.status}
-                                                </div>
-                                            </td>
-                                            <td className="py-6 px-8 text-right">
-                                                <button className="px-4 py-2 bg-slate-50 text-slate-400 rounded-lg text-[10px] font-black uppercase tracking-widest hover:bg-royal-blue hover:text-white transition-all">Configure</button>
-                                            </td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
+                {/* ── Main Content Card ── */}
+                <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+
+                    {/* Tab Navigation */}
+                    <div className="border-b border-slate-100 px-4 pt-4 overflow-x-auto">
+                        <div className="flex gap-1 min-w-max">
+                            {tabs.map(tab => (
+                                <button
+                                    key={tab.id}
+                                    onClick={() => setActiveTab(tab.id)}
+                                    className={`flex items-center gap-2 px-4 py-2.5 rounded-t-xl text-sm font-semibold transition-all relative ${activeTab === tab.id
+                                        ? 'bg-blue-600 text-white shadow-sm'
+                                        : 'text-slate-500 hover:bg-slate-50 hover:text-slate-700'
+                                    }`}
+                                >
+                                    <tab.icon size={15} />
+                                    {tab.label}
+                                    {tab.badge > 0 && (
+                                        <span className={`text-[10px] font-extrabold px-1.5 py-0.5 rounded-full ${activeTab === tab.id ? 'bg-white text-blue-600' : tab.alert ? 'bg-orange-500 text-white' : 'bg-slate-200 text-slate-600'}`}>
+                                            {tab.badge}
+                                        </span>
+                                    )}
+                                </button>
+                            ))}
                         </div>
-                    ) : activeTab === 'recharges' ? (
-                        <div className="overflow-x-auto w-full">
-                            <table className="w-full border-collapse min-w-[800px]">
-                                <thead>
-                                    <tr className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 border-b border-slate-50">
-                                        <th className="py-6 px-8 text-left">Source Node</th>
-                                        <th className="py-6 px-8 text-left">Quantum Value</th>
-                                        <th className="py-6 px-8 text-left">Evidence</th>
-                                        <th className="py-6 px-8 text-right">Authorization</th>
-                                    </tr>
-                                </thead>
-                                <tbody className="divide-y divide-slate-50">
-                                    {recharges.length === 0 ? (
-                                        <tr>
-                                            <td colSpan="4" className="text-center py-24">
-                                                <Zap size={32} className="mx-auto text-slate-200 mb-4" />
-                                                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Buffer Empty • No Pending Streams</p>
-                                            </td>
-                                        </tr>
-                                    ) : recharges.map(r => (
-                                        <tr key={r._id} className="group hover:bg-slate-50/50 transition-colors">
-                                            <td className="py-6 px-8">
-                                                <span className="text-sm font-black text-slate-900 block">{r.userId?.name}</span>
-                                                <span className="text-[10px] font-bold text-slate-400 font-mono italic">REF: {r.userId?.mobile}</span>
-                                            </td>
-                                            <td className="py-6 px-8">
-                                                <span className="text-sm font-black text-emerald-500 block">₹{r.amount.toLocaleString()}</span>
-                                                <span className="text-[9px] font-black text-slate-300 uppercase tracking-widest">UTR: {r.utr}</span>
-                                            </td>
-                                            <td className="py-6 px-8">
-                                                {r.screenshot ? (
-                                                    <div className="relative group/img cursor-pointer w-14 h-14 rounded-xl border border-slate-100 overflow-hidden bg-slate-50 flex items-center justify-center shadow-sm">
-                                                        <img src={r.screenshot} alt="Proof" className="w-full h-full object-cover" />
-                                                        <div className="absolute inset-0 bg-black/60 flex opacity-0 group-hover/img:opacity-100 items-center justify-center text-white backdrop-blur-sm z-10 transition-all rounded-xl" onClick={() => window.open(r.screenshot, '_blank')}>
-                                                            <ImageIcon size={18} />
-                                                        </div>
-                                                    </div>
-                                                ) : (
-                                                    <span className="text-[10px] font-black text-red-300 uppercase tracking-widest">Missing Proof</span>
-                                                )}
-                                            </td>
-                                            <td className="py-6 px-8 text-right">
-                                                <div className="flex items-center justify-end gap-3">
-                                                    <button 
-                                                        onClick={() => handleRechargeAction(r._id, 'approved')} 
-                                                        className="h-10 px-5 rounded-xl bg-emerald-50 text-emerald-500 hover:bg-emerald-500 hover:text-white flex items-center gap-2 text-[10px] font-black uppercase tracking-widest transition-all"
-                                                    >
-                                                        <Check size={16} /> Approve
-                                                    </button>
-                                                    <button 
-                                                        onClick={() => handleRechargeAction(r._id, 'rejected')} 
-                                                        className="h-10 w-10 rounded-xl bg-red-50 text-red-500 hover:bg-red-500 hover:text-white flex items-center justify-center transition-all shadow-sm"
-                                                    >
-                                                        <X size={16} />
-                                                    </button>
-                                                </div>
-                                            </td>
-                                        </tr>
+                    </div>
+
+                    {/* ════ OVERVIEW TAB ════ */}
+                    {activeTab === 'overview' && (
+                        <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div className="bg-slate-50 rounded-xl p-5 border border-slate-100">
+                                <h3 className="font-bold text-slate-700 mb-4 flex items-center gap-2">
+                                    <Clock size={16} className="text-blue-500" /> Quick Summary
+                                </h3>
+                                <div className="space-y-3">
+                                    {[
+                                        { label: 'Total Users', value: fmt(stats.totalUsers), icon: Users, color: 'text-blue-500' },
+                                        { label: 'Total Deposits', value: `₹${fmt(stats.totalDeposits)}`, icon: ArrowUpCircle, color: 'text-green-500' },
+                                        { label: 'Total Withdrawals', value: `₹${fmt(stats.totalWithdrawals)}`, icon: ArrowDownCircle, color: 'text-rose-500' },
+                                        { label: 'Active Plans', value: plans.filter(p => p.isActive).length, icon: LayoutGrid, color: 'text-purple-500' },
+                                    ].map(item => (
+                                        <div key={item.label} className="flex items-center justify-between bg-white p-3 rounded-lg border border-slate-100">
+                                            <div className="flex items-center gap-2">
+                                                <item.icon size={15} className={item.color} />
+                                                <span className="text-sm text-slate-500">{item.label}</span>
+                                            </div>
+                                            <span className="font-bold text-slate-800">{item.value}</span>
+                                        </div>
                                     ))}
-                                </tbody>
-                            </table>
-                        </div>
-                    ) : activeTab === 'plans' ? (
-                        <div className="p-8 space-y-10">
-                            {/* Add New Plan Form */}
-                            <div>
-                                <div className="flex items-center gap-3 mb-6">
-                                    <div className="w-10 h-10 bg-blue-50 text-royal-blue rounded-xl flex items-center justify-center"><Plus size={18} /></div>
-                                    <div>
-                                        <h3 className="text-sm font-black text-slate-900">Add New Plan</h3>
-                                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Standard or VIP</p>
+                                </div>
+                            </div>
+                            <div className="bg-slate-50 rounded-xl p-5 border border-slate-100">
+                                <h3 className="font-bold text-slate-700 mb-4 flex items-center gap-2">
+                                    <Bell size={16} className="text-orange-500" /> Pending Actions
+                                </h3>
+                                <div className="space-y-3">
+                                    <div className="bg-white p-4 rounded-lg border border-orange-100">
+                                        <p className="text-sm text-slate-500 mb-1">Deposit Requests</p>
+                                        <div className="flex items-center justify-between">
+                                            <span className="text-2xl font-extrabold text-orange-500">{recharges.length}</span>
+                                            {recharges.length > 0 && (
+                                                <button onClick={() => setActiveTab('deposits')} className="text-xs font-bold text-orange-500 bg-orange-50 px-3 py-1.5 rounded-lg hover:bg-orange-100">
+                                                    Review →
+                                                </button>
+                                            )}
+                                        </div>
+                                    </div>
+                                    <div className="bg-white p-4 rounded-lg border border-purple-100">
+                                        <p className="text-sm text-slate-500 mb-1">Withdrawal Requests</p>
+                                        <div className="flex items-center justify-between">
+                                            <span className="text-2xl font-extrabold text-purple-500">{withdrawals.length}</span>
+                                            {withdrawals.length > 0 && (
+                                                <button onClick={() => setActiveTab('withdrawals')} className="text-xs font-bold text-purple-500 bg-purple-50 px-3 py-1.5 rounded-lg hover:bg-purple-100">
+                                                    Review →
+                                                </button>
+                                            )}
+                                        </div>
                                     </div>
                                 </div>
-                                <form onSubmit={handleCreatePlan} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+                            </div>
+                        </div>
+                    )}
+
+                    {/* ════ USERS TAB ════ */}
+                    {activeTab === 'users' && (
+                        <div>
+                            <div className="p-4 border-b border-slate-50">
+                                <div className="relative max-w-sm">
+                                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-300" size={16} />
+                                    <input
+                                        type="text"
+                                        placeholder="Search by name or mobile..."
+                                        value={search}
+                                        onChange={e => setSearch(e.target.value)}
+                                        className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2.5 pl-10 pr-4 text-sm text-slate-700 outline-none focus:border-blue-300 focus:bg-white transition-all"
+                                    />
+                                </div>
+                            </div>
+                            <div className="overflow-x-auto">
+                                <table className="w-full min-w-[640px]">
+                                    <thead>
+                                        <tr className="bg-slate-50 text-left text-xs font-bold text-slate-400 uppercase tracking-wider">
+                                            <th className="py-3 px-5">User</th>
+                                            <th className="py-3 px-5">Mobile</th>
+                                            <th className="py-3 px-5">Wallet Balance</th>
+                                            <th className="py-3 px-5">Role</th>
+                                            <th className="py-3 px-5">Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody className="divide-y divide-slate-50">
+                                        {filteredUsers.length === 0 ? (
+                                            <tr><td colSpan={5}><EmptyState icon={Users} text="No users found" /></td></tr>
+                                        ) : filteredUsers.map(u => (
+                                            <tr key={u._id} className="hover:bg-slate-50/70 transition-colors">
+                                                <td className="py-4 px-5">
+                                                    <div className="flex items-center gap-3">
+                                                        <div className="w-9 h-9 bg-blue-100 rounded-xl flex items-center justify-center text-sm font-extrabold text-blue-600">
+                                                            {u.name?.substring(0, 2).toUpperCase()}
+                                                        </div>
+                                                        <span className="font-semibold text-slate-800">{u.name}</span>
+                                                    </div>
+                                                </td>
+                                                <td className="py-4 px-5 text-sm font-mono text-slate-500">{u.mobile}</td>
+                                                <td className="py-4 px-5">
+                                                    <span className="font-bold text-slate-800">₹{fmt(u.walletBalance)}</span>
+                                                </td>
+                                                <td className="py-4 px-5">
+                                                    <Badge color={u.role === 'admin' ? 'purple' : 'blue'} label={u.role === 'admin' ? '👑 Admin' : 'User'} />
+                                                </td>
+                                                <td className="py-4 px-5">
+                                                    <div className="flex items-center gap-1.5">
+                                                        <div className={`w-2 h-2 rounded-full ${u.status === 'active' ? 'bg-green-400 animate-pulse' : 'bg-red-400'}`} />
+                                                        <Badge color={u.status === 'active' ? 'green' : 'red'} label={u.status === 'active' ? 'Active' : 'Blocked'} />
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* ════ DEPOSITS TAB ════ */}
+                    {activeTab === 'deposits' && (
+                        <div>
+                            <div className="p-4 border-b border-slate-50 flex items-center justify-between">
+                                <p className="text-sm font-semibold text-slate-500">
+                                    {recharges.length > 0
+                                        ? <span className="text-orange-600 font-bold">{recharges.length} pending deposit{recharges.length > 1 ? 's' : ''} need your approval</span>
+                                        : 'No pending deposit requests'
+                                    }
+                                </p>
+                            </div>
+                            <div className="overflow-x-auto">
+                                <table className="w-full min-w-[680px]">
+                                    <thead>
+                                        <tr className="bg-slate-50 text-left text-xs font-bold text-slate-400 uppercase tracking-wider">
+                                            <th className="py-3 px-5">User</th>
+                                            <th className="py-3 px-5">Amount</th>
+                                            <th className="py-3 px-5">UTR / Reference</th>
+                                            <th className="py-3 px-5">Screenshot</th>
+                                            <th className="py-3 px-5 text-right">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody className="divide-y divide-slate-50">
+                                        {recharges.length === 0 ? (
+                                            <tr><td colSpan={5}><EmptyState icon={ArrowUpCircle} text="No pending deposit requests 🎉" /></td></tr>
+                                        ) : recharges.map(r => (
+                                            <tr key={r._id} className="hover:bg-slate-50/70 transition-colors">
+                                                <td className="py-4 px-5">
+                                                    <p className="font-semibold text-slate-800">{r.userId?.name}</p>
+                                                    <p className="text-xs text-slate-400 font-mono">{r.userId?.mobile}</p>
+                                                </td>
+                                                <td className="py-4 px-5">
+                                                    <span className="text-lg font-extrabold text-green-600">₹{fmt(r.amount)}</span>
+                                                </td>
+                                                <td className="py-4 px-5">
+                                                    <span className="text-sm font-mono text-slate-500 bg-slate-100 px-2 py-1 rounded-lg">{r.utr || 'N/A'}</span>
+                                                </td>
+                                                <td className="py-4 px-5">
+                                                    {r.screenshot ? (
+                                                        <button
+                                                            onClick={() => window.open(r.screenshot, '_blank')}
+                                                            className="w-12 h-12 rounded-xl border-2 border-slate-200 overflow-hidden hover:border-blue-400 transition-all"
+                                                        >
+                                                            <img src={r.screenshot} alt="Proof" className="w-full h-full object-cover" />
+                                                        </button>
+                                                    ) : (
+                                                        <span className="text-xs text-red-400 font-semibold">No proof</span>
+                                                    )}
+                                                </td>
+                                                <td className="py-4 px-5 text-right">
+                                                    <div className="flex items-center justify-end gap-2">
+                                                        <button
+                                                            onClick={() => handleRechargeAction(r._id, 'approved')}
+                                                            className="flex items-center gap-1.5 px-4 py-2 bg-green-500 text-white rounded-xl text-sm font-bold hover:bg-green-600 transition-all shadow-sm"
+                                                        >
+                                                            <Check size={14} /> Approve
+                                                        </button>
+                                                        <button
+                                                            onClick={() => handleRechargeAction(r._id, 'rejected')}
+                                                            className="flex items-center gap-1.5 px-3 py-2 bg-red-50 text-red-500 rounded-xl text-sm font-bold hover:bg-red-500 hover:text-white transition-all"
+                                                        >
+                                                            <X size={14} /> Reject
+                                                        </button>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* ════ WITHDRAWALS TAB ════ */}
+                    {activeTab === 'withdrawals' && (
+                        <div>
+                            <div className="p-4 border-b border-slate-50">
+                                <p className="text-sm font-semibold text-slate-500">
+                                    {withdrawals.length > 0
+                                        ? <span className="text-purple-600 font-bold">{withdrawals.length} withdrawal request{withdrawals.length > 1 ? 's' : ''} need payment</span>
+                                        : 'No pending withdrawal requests'
+                                    }
+                                </p>
+                            </div>
+                            <div className="overflow-x-auto">
+                                <table className="w-full min-w-[680px]">
+                                    <thead>
+                                        <tr className="bg-slate-50 text-left text-xs font-bold text-slate-400 uppercase tracking-wider">
+                                            <th className="py-3 px-5">User</th>
+                                            <th className="py-3 px-5">Amount</th>
+                                            <th className="py-3 px-5">Payment Details</th>
+                                            <th className="py-3 px-5 text-right">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody className="divide-y divide-slate-50">
+                                        {withdrawals.length === 0 ? (
+                                            <tr><td colSpan={4}><EmptyState icon={ArrowDownCircle} text="No pending withdrawal requests 🎉" /></td></tr>
+                                        ) : withdrawals.map(w => (
+                                            <tr key={w._id} className="hover:bg-slate-50/70 transition-colors">
+                                                <td className="py-4 px-5">
+                                                    <p className="font-semibold text-slate-800">{w.userId?.name}</p>
+                                                    <p className="text-xs text-slate-400 font-mono">{w.userId?.mobile}</p>
+                                                </td>
+                                                <td className="py-4 px-5">
+                                                    <span className="text-lg font-extrabold text-purple-600">₹{fmt(w.amount)}</span>
+                                                </td>
+                                                <td className="py-4 px-5">
+                                                    {w.accountDetails?.method === 'upi' ? (
+                                                        <div>
+                                                            <Badge color="purple" label="UPI" />
+                                                            <p className="mt-1.5 text-sm font-bold text-slate-700">{w.accountDetails.upiId}</p>
+                                                        </div>
+                                                    ) : (
+                                                        <div className="space-y-0.5">
+                                                            <Badge color="blue" label="Bank Transfer" />
+                                                            <p className="text-sm font-bold text-slate-700 mt-1">{w.accountDetails?.name}</p>
+                                                            <p className="text-xs font-mono text-slate-500">A/C: {w.accountDetails?.accountNumber}</p>
+                                                            <p className="text-xs text-slate-400">IFSC: {w.accountDetails?.ifsc}</p>
+                                                        </div>
+                                                    )}
+                                                </td>
+                                                <td className="py-4 px-5 text-right">
+                                                    <div className="flex items-center justify-end gap-2">
+                                                        <button
+                                                            onClick={() => handleWithdrawAction(w._id, 'approved')}
+                                                            className="flex items-center gap-1.5 px-4 py-2 bg-green-500 text-white rounded-xl text-sm font-bold hover:bg-green-600 transition-all shadow-sm"
+                                                        >
+                                                            <Check size={14} /> Mark Paid
+                                                        </button>
+                                                        <button
+                                                            onClick={() => handleWithdrawAction(w._id, 'rejected')}
+                                                            className="flex items-center gap-1.5 px-3 py-2 bg-red-50 text-red-500 rounded-xl text-sm font-bold hover:bg-red-500 hover:text-white transition-all"
+                                                        >
+                                                            <X size={14} /> Reject
+                                                        </button>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* ════ PLANS TAB ════ */}
+                    {activeTab === 'plans' && (
+                        <div className="p-6 space-y-8">
+
+                            {/* Add Plan Form */}
+                            <div className="bg-slate-50 rounded-xl p-5 border border-slate-200">
+                                <h3 className="font-bold text-slate-800 mb-4 flex items-center gap-2">
+                                    <Plus size={16} className="text-blue-600" /> Create New Plan
+                                </h3>
+                                <form onSubmit={handleCreatePlan} className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
                                     {[
-                                        { label: 'Plan Name', key: 'name', placeholder: 'e.g. Plan 5000', type: 'text' },
+                                        { label: 'Plan Name', key: 'name', placeholder: 'Plan 5000', type: 'text' },
                                         { label: 'Investment (₹)', key: 'amount', placeholder: '5000', type: 'number' },
                                         { label: 'Daily Return (₹)', key: 'daily', placeholder: '800', type: 'number' },
                                     ].map(f => (
-                                        <div key={f.key} className="flex flex-col gap-2">
-                                            <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest">{f.label}</label>
+                                        <div key={f.key}>
+                                            <label className="block text-xs font-bold text-slate-500 mb-1.5">{f.label}</label>
                                             <input
                                                 type={f.type} placeholder={f.placeholder} required
                                                 value={newPlan[f.key]}
                                                 onChange={e => setNewPlan({ ...newPlan, [f.key]: e.target.value })}
-                                                className="h-12 bg-slate-50 border border-slate-100 rounded-xl px-4 text-sm font-black text-slate-900 outline-none focus:border-royal-blue/30 transition-all"
+                                                className="w-full h-11 bg-white border border-slate-200 rounded-xl px-3 text-sm font-semibold text-slate-800 outline-none focus:border-blue-400 transition-all"
                                             />
                                         </div>
                                     ))}
-                                    <div className="flex flex-col gap-2">
-                                        <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Tier</label>
+                                    <div>
+                                        <label className="block text-xs font-bold text-slate-500 mb-1.5">Tier</label>
                                         <select
                                             value={newPlan.tier}
                                             onChange={e => setNewPlan({ ...newPlan, tier: e.target.value })}
-                                            className="h-12 bg-slate-50 border border-slate-100 rounded-xl px-4 text-sm font-black text-slate-900 outline-none"
+                                            className="w-full h-11 bg-white border border-slate-200 rounded-xl px-3 text-sm font-semibold text-slate-800 outline-none"
                                         >
                                             <option value="standard">⭐ Standard</option>
                                             <option value="vip">👑 VIP</option>
                                         </select>
                                     </div>
-                                    <div className="flex flex-col gap-2">
-                                        <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest sm:block hidden">&nbsp;</label>
-                                        <button type="submit" className="h-12 bg-royal-blue text-white rounded-xl text-[10px] font-black uppercase tracking-widest flex items-center justify-center gap-2 hover:opacity-90 transition-all shadow-md shadow-blue-500/20">
-                                            <Plus size={14} /> Create
+                                    <div className="flex flex-col justify-end">
+                                        <button type="submit" className="h-11 bg-blue-600 text-white rounded-xl text-sm font-bold flex items-center justify-center gap-2 hover:bg-blue-700 transition-all shadow-md shadow-blue-200">
+                                            <Plus size={15} /> Add
                                         </button>
                                     </div>
                                 </form>
-                                {planMsg && (
-                                    <p className="mt-3 text-[10px] font-black text-emerald-500 uppercase tracking-widest">{planMsg}</p>
-                                )}
+                                {planMsg && <p className="mt-3 text-sm font-semibold text-green-600">{planMsg}</p>}
                             </div>
 
-                            {/* Standard Plans */}
+                            {/* Plans List */}
                             {['standard', 'vip'].map(tier => (
                                 <div key={tier}>
-                                    <div className="flex items-center gap-3 mb-4">
-                                        <span className="text-lg">{tier === 'vip' ? '👑' : '⭐'}</span>
-                                        <h4 className="text-sm font-black text-slate-900 uppercase tracking-widest">{tier === 'vip' ? 'VIP Plans' : 'Standard Plans'}</h4>
+                                    <div className="flex items-center gap-3 mb-3">
+                                        <span className="text-base">{tier === 'vip' ? '👑' : '⭐'}</span>
+                                        <h4 className="font-bold text-slate-700">{tier === 'vip' ? 'VIP Plans' : 'Standard Plans'}</h4>
                                         <div className="flex-1 h-px bg-slate-100" />
+                                        <Badge color={tier === 'vip' ? 'purple' : 'blue'} label={`${plans.filter(p => p.tier === tier).length} plans`} />
                                     </div>
                                     <div className="space-y-3">
                                         {plans.filter(p => p.tier === tier).map(plan => (
-                                            <div key={plan._id} className={`rounded-2xl border ${plan.isActive ? 'border-slate-100 bg-slate-50/50' : 'border-dashed border-slate-200 bg-white opacity-60'} p-5`}>
+                                            <div key={plan._id} className={`rounded-xl border p-4 transition-all ${plan.isActive ? 'bg-white border-slate-200' : 'bg-slate-50 border-dashed border-slate-200 opacity-60'}`}>
                                                 {editingPlan?._id === plan._id ? (
-                                                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 items-end">
+                                                    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 items-end">
                                                         {[
                                                             { label: 'Name', key: 'name', type: 'text' },
                                                             { label: 'Investment (₹)', key: 'amount', type: 'number' },
                                                             { label: 'Daily Return (₹)', key: 'daily', type: 'number' },
                                                         ].map(f => (
                                                             <div key={f.key}>
-                                                                <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-1">{f.label}</label>
+                                                                <label className="block text-xs font-bold text-slate-400 mb-1">{f.label}</label>
                                                                 <input
-                                                                    type={f.type}
-                                                                    value={editingPlan[f.key]}
+                                                                    type={f.type} value={editingPlan[f.key]}
                                                                     onChange={e => setEditingPlan({ ...editingPlan, [f.key]: e.target.value })}
-                                                                    className="w-full h-11 bg-white border border-slate-200 rounded-xl px-3 text-sm font-black text-slate-900 outline-none focus:border-royal-blue/40 transition-all"
+                                                                    className="w-full h-10 bg-white border border-slate-200 rounded-xl px-3 text-sm font-semibold outline-none focus:border-blue-400"
                                                                 />
                                                             </div>
                                                         ))}
                                                         <div>
-                                                            <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-1">Tier</label>
-                                                            <select
-                                                                value={editingPlan.tier}
-                                                                onChange={e => setEditingPlan({ ...editingPlan, tier: e.target.value })}
-                                                                className="w-full h-11 bg-white border border-slate-200 rounded-xl px-3 text-sm font-black text-slate-900 outline-none transition-all"
-                                                            >
+                                                            <label className="block text-xs font-bold text-slate-400 mb-1">Tier</label>
+                                                            <select value={editingPlan.tier} onChange={e => setEditingPlan({ ...editingPlan, tier: e.target.value })} className="w-full h-10 bg-white border border-slate-200 rounded-xl px-3 text-sm font-semibold outline-none">
                                                                 <option value="standard">⭐ Standard</option>
                                                                 <option value="vip">👑 VIP</option>
                                                             </select>
                                                         </div>
                                                         <div className="flex gap-2">
-                                                            <button onClick={() => handleUpdatePlan(plan._id)} className="flex-1 h-11 bg-emerald-500 text-white rounded-xl text-[10px] font-black uppercase tracking-widest flex items-center justify-center transition-all"><Check size={14} /></button>
-                                                            <button onClick={() => setEditingPlan(null)} className="h-11 w-11 bg-slate-100 text-slate-400 rounded-xl flex items-center justify-center transition-all shrink-0"><X size={14} /></button>
+                                                            <button onClick={() => handleUpdatePlan(plan._id)} className="flex-1 h-10 bg-green-500 text-white rounded-xl text-sm font-bold flex items-center justify-center hover:bg-green-600"><Check size={14} /></button>
+                                                            <button onClick={() => setEditingPlan(null)} className="h-10 w-10 bg-slate-100 text-slate-400 rounded-xl flex items-center justify-center hover:bg-slate-200"><X size={14} /></button>
                                                         </div>
                                                     </div>
                                                 ) : (
-                                                    <div className="flex items-center justify-between">
-                                                        <div className="flex items-center gap-4">
-                                                            <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${tier === 'vip' ? 'bg-purple-50 text-purple-500' : 'bg-blue-50 text-royal-blue'}`}>
+                                                    <div className="flex items-center justify-between flex-wrap gap-3">
+                                                        <div className="flex items-center gap-3">
+                                                            <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${tier === 'vip' ? 'bg-purple-100 text-purple-600' : 'bg-blue-100 text-blue-600'}`}>
                                                                 {tier === 'vip' ? <Crown size={18} /> : <Star size={18} />}
                                                             </div>
                                                             <div>
-                                                                <p className="text-sm font-black text-slate-900">{plan.name}</p>
-                                                                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">₹{plan.amount?.toLocaleString()} invest • ₹{plan.daily?.toLocaleString()}/day</p>
+                                                                <p className="font-bold text-slate-800">{plan.name}</p>
+                                                                <p className="text-xs text-slate-400">
+                                                                    Invest <span className="font-bold text-slate-600">₹{fmt(plan.amount)}</span> · Get <span className="font-bold text-green-600">₹{fmt(plan.daily)}/day</span>
+                                                                </p>
                                                             </div>
                                                         </div>
-                                                        <div className="flex items-center gap-3">
-                                                            <span className={`text-[9px] font-black uppercase tracking-widest px-3 py-1 rounded-full ${plan.isActive ? 'bg-emerald-50 text-emerald-500' : 'bg-red-50 text-red-400'}`}>
-                                                                {plan.isActive ? 'Active' : 'Hidden'}
-                                                            </span>
-                                                            <button
-                                                                onClick={() => api.patch(`/admin/plans/${plan._id}`, { isActive: !plan.isActive }).then(fetchAdminData)}
-                                                                className="h-9 px-3 bg-slate-100 text-slate-500 rounded-lg text-[9px] font-black uppercase tracking-widest hover:bg-slate-200 transition-all"
-                                                            >
+                                                        <div className="flex items-center gap-2">
+                                                            <Badge color={plan.isActive ? 'green' : 'red'} label={plan.isActive ? 'Active' : 'Hidden'} />
+                                                            <button onClick={() => api.patch(`/admin/plans/${plan._id}`, { isActive: !plan.isActive }).then(fetchAdminData)} className="px-3 py-1.5 bg-slate-100 text-slate-500 rounded-lg text-xs font-bold hover:bg-slate-200 transition-all">
                                                                 {plan.isActive ? 'Hide' : 'Show'}
                                                             </button>
-                                                            <button onClick={() => setEditingPlan({ ...plan })} className="h-9 w-9 bg-blue-50 text-royal-blue rounded-lg flex items-center justify-center hover:bg-royal-blue hover:text-white transition-all">
-                                                                <Pencil size={14} />
-                                                            </button>
-                                                            <button onClick={() => handleDeletePlan(plan._id)} className="h-9 w-9 bg-red-50 text-red-400 rounded-lg flex items-center justify-center hover:bg-red-500 hover:text-white transition-all">
-                                                                <Trash2 size={14} />
-                                                            </button>
+                                                            <button onClick={() => setEditingPlan({ ...plan })} className="w-8 h-8 bg-blue-50 text-blue-600 rounded-lg flex items-center justify-center hover:bg-blue-600 hover:text-white transition-all"><Pencil size={13} /></button>
+                                                            <button onClick={() => handleDeletePlan(plan._id)} className="w-8 h-8 bg-red-50 text-red-400 rounded-lg flex items-center justify-center hover:bg-red-500 hover:text-white transition-all"><Trash2 size={13} /></button>
                                                         </div>
                                                     </div>
                                                 )}
                                             </div>
                                         ))}
                                         {plans.filter(p => p.tier === tier).length === 0 && (
-                                            <div className="text-center py-8 text-[10px] font-black text-slate-300 uppercase tracking-widest">No {tier} plans yet</div>
+                                            <p className="text-center text-sm text-slate-300 py-6">No {tier} plans yet</p>
                                         )}
                                     </div>
                                 </div>
                             ))}
                         </div>
-                    ) : activeTab === 'withdrawals' ? (
-                        <div className="overflow-x-auto w-full">
-                            <table className="w-full border-collapse min-w-[800px]">
-                                <thead>
-                                    <tr className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 border-b border-slate-50">
-                                        <th className="py-6 px-8 text-left">User</th>
-                                        <th className="py-6 px-8 text-left">Amount</th>
-                                        <th className="py-6 px-8 text-left">Account Details</th>
-                                        <th className="py-6 px-8 text-right">Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody className="divide-y divide-slate-50">
-                                    {withdrawals.length === 0 ? (
-                                        <tr>
-                                            <td colSpan="4" className="text-center py-24">
-                                                <ArrowRightLeft size={32} className="mx-auto text-slate-200 mb-4" />
-                                                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">No Pending Withdrawal Requests</p>
-                                            </td>
-                                        </tr>
-                                    ) : withdrawals.map(w => (
-                                        <tr key={w._id} className="group hover:bg-slate-50/50 transition-colors">
-                                            <td className="py-6 px-8">
-                                                <span className="text-sm font-black text-slate-900 block">{w.userId?.name}</span>
-                                                <span className="text-[10px] font-bold text-slate-400 font-mono">{w.userId?.mobile}</span>
-                                            </td>
-                                            <td className="py-6 px-8">
-                                                <span className="text-lg font-black text-rose-500">₹{w.amount?.toLocaleString()}</span>
-                                            </td>
-                                            <td className="py-6 px-8">
-                                                {w.accountDetails?.method === 'upi' ? (
-                                                    <div>
-                                                        <span className="text-[9px] font-black text-purple-400 uppercase tracking-widest bg-purple-50 px-2 py-0.5 rounded-full">UPI</span>
-                                                        <p className="text-sm font-black text-slate-900 mt-1">{w.accountDetails.upiId}</p>
-                                                    </div>
-                                                ) : (
-                                                    <div className="space-y-1">
-                                                        <span className="text-[9px] font-black text-blue-500 uppercase tracking-widest bg-blue-50 px-2 py-0.5 rounded-full">BANK</span>
-                                                        <p className="text-sm font-black text-slate-900">{w.accountDetails?.name}</p>
-                                                        <p className="text-[10px] font-mono text-slate-500">{w.accountDetails?.accountNumber}</p>
-                                                        <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">IFSC: {w.accountDetails?.ifsc}</p>
-                                                    </div>
-                                                )}
-                                            </td>
-                                            <td className="py-6 px-8 text-right">
-                                                <div className="flex items-center justify-end gap-3">
-                                                    <button
-                                                        onClick={() => handleWithdrawAction(w._id, 'approved')}
-                                                        className="h-10 px-5 rounded-xl bg-emerald-50 text-emerald-500 hover:bg-emerald-500 hover:text-white flex items-center gap-2 text-[10px] font-black uppercase tracking-widest transition-all"
-                                                    >
-                                                        <Check size={16} /> Pay
-                                                    </button>
-                                                    <button
-                                                        onClick={() => handleWithdrawAction(w._id, 'rejected')}
-                                                        className="h-10 w-10 rounded-xl bg-red-50 text-red-500 hover:bg-red-500 hover:text-white flex items-center justify-center transition-all"
-                                                    >
-                                                        <X size={16} />
-                                                    </button>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                        </div>
-                    ) : activeTab === 'settings' ? (
-                        <div className="p-4 sm:p-10 max-w-3xl mx-auto">
-                            <div className="mb-8 sm:mb-10 text-center">
-                                <h3 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">Financial Protocols</h3>
-                                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-1">Configure global deposit parameters</p>
+                    )}
+
+                    {/* ════ SETTINGS TAB ════ */}
+                    {activeTab === 'settings' && (
+                        <div className="p-6 max-w-2xl mx-auto">
+                            <div className="mb-6">
+                                <h3 className="font-bold text-slate-800 text-lg">Payment Settings</h3>
+                                <p className="text-sm text-slate-400 mt-0.5">Configure UPI ID and QR code for deposits</p>
                             </div>
+                            <form onSubmit={handleUpdateSettings} className="space-y-6">
+                                <div>
+                                    <label className="block text-sm font-bold text-slate-600 mb-2 flex items-center gap-2">
+                                        <CreditCard size={15} className="text-blue-500" /> UPI ID
+                                    </label>
+                                    <input
+                                        type="text" value={settings.upiId} required
+                                        onChange={e => setSettings({ ...settings, upiId: e.target.value })}
+                                        placeholder="example@upi"
+                                        className="w-full h-13 bg-slate-50 border border-slate-200 rounded-xl px-4 text-base font-semibold text-slate-800 outline-none focus:border-blue-400 focus:bg-white transition-all"
+                                    />
+                                    <p className="text-xs text-slate-400 mt-1.5">Users will see this UPI ID when depositing money</p>
+                                </div>
 
-                            <form onSubmit={handleUpdateSettings} className="space-y-8 sm:space-y-10">
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
-                                    <div className="space-y-3">
-                                        <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
-                                            <CreditCard size={14} className="text-royal-blue" /> Merchant UPI ID
-                                        </label>
-                                        <input 
-                                            type="text" 
-                                            value={settings.upiId} 
-                                            onChange={(e) => setSettings({...settings, upiId: e.target.value})} 
-                                            className="w-full h-14 sm:h-15 bg-slate-50 border border-slate-100 rounded-2xl px-6 text-sm font-black text-slate-900 focus:bg-white focus:border-royal-blue/30 outline-none transition-all shadow-inner" 
-                                            placeholder="Enter Gateway UPI ID"
-                                            required 
+                                <div>
+                                    <label className="block text-sm font-bold text-slate-600 mb-2 flex items-center gap-2">
+                                        <ImageIcon size={15} className="text-blue-500" /> QR Code Image
+                                    </label>
+                                    <div className="relative">
+                                        <input
+                                            type="file" accept="image/*" onChange={handleQrUpload}
+                                            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
                                         />
-                                    </div>
-
-                                    <div className="space-y-3">
-                                        <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
-                                            <ImageIcon size={14} className="text-royal-blue" /> Visual QR Code
-                                        </label>
-                                        <div className="relative">
-                                            <input 
-                                                type="file" 
-                                                accept="image/*" 
-                                                onChange={handleQrUpload} 
-                                                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" 
-                                            />
-                                            <div className="w-full h-14 sm:h-15 bg-slate-50 border border-slate-100 rounded-2xl px-6 flex items-center justify-between text-[11px] font-black text-slate-400 uppercase tracking-widest shadow-inner">
-                                                <span>{settings.qrCode ? 'Change QR Image' : 'Upload QR Image'}</span>
-                                                <ArrowRightLeft size={16} />
-                                            </div>
+                                        <div className="h-13 bg-slate-50 border-2 border-dashed border-slate-200 rounded-xl px-4 flex items-center justify-between text-sm font-semibold text-slate-400 hover:border-blue-400 hover:bg-blue-50 transition-all">
+                                            <span>{settings.qrCode ? '✅ QR image loaded — click to change' : '📷 Click to upload QR code image'}</span>
                                         </div>
                                     </div>
                                 </div>
 
                                 {settings.qrCode && (
-                                    <div className="flex flex-col items-center">
-                                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4">Preview Configuration</p>
-                                        <div className="w-40 h-40 sm:w-48 sm:h-48 bg-white border-4 border-slate-50 rounded-3xl p-4 shadow-xl mb-4 group relative overflow-hidden">
-                                            <img src={settings.qrCode} alt="QR Code" className="w-full h-full object-contain" />
-                                            <div className="absolute inset-0 bg-royal-blue/10 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                                                <Zap size={32} className="text-royal-blue" />
-                                            </div>
+                                    <div className="flex items-center gap-5 bg-slate-50 p-4 rounded-xl border border-slate-200">
+                                        <div className="w-32 h-32 bg-white border border-slate-200 rounded-xl p-2 shadow-sm">
+                                            <img src={settings.qrCode} alt="QR Preview" className="w-full h-full object-contain" />
+                                        </div>
+                                        <div>
+                                            <p className="font-bold text-slate-700">QR Code Preview</p>
+                                            <p className="text-xs text-slate-400 mt-1">This QR will be shown to users during deposit</p>
+                                            <button type="button" onClick={() => setSettings({ ...settings, qrCode: '' })} className="mt-3 text-xs text-red-500 font-bold hover:underline">Remove QR</button>
                                         </div>
                                     </div>
                                 )}
 
-                                <div className="pt-6 border-t border-slate-50">
-                                    <button 
-                                        type="submit" 
-                                        className="w-full h-14 sm:h-16 bg-royal-blue text-white rounded-2xl text-[11px] font-black uppercase tracking-[0.2em] shadow-xl shadow-blue-500/20 hover:scale-[1.01] active:scale-[0.99] transition-all flex items-center justify-center gap-3"
-                                    >
-                                        Deploy Protocol Changes <ShieldCheck size={18} />
-                                    </button>
-                                </div>
+                                <button
+                                    type="submit"
+                                    className="w-full h-13 bg-blue-600 text-white rounded-xl text-sm font-bold flex items-center justify-center gap-2 hover:bg-blue-700 transition-all shadow-lg shadow-blue-200"
+                                >
+                                    <ShieldCheck size={16} /> Save Settings
+                                </button>
                             </form>
                         </div>
-                    ) : (
-                        <div className="flex flex-col items-center justify-center py-32 opacity-20">
-                            <ShieldAlert size={48} className="mb-4" />
-                            <p className="text-[10px] font-black uppercase tracking-[0.3em]">No Active Sequences Detected</p>
-                        </div>
                     )}
-                </div>
-            </div>
 
-            {/* System Status Banner */}
-            <div className="bg-slate-900 rounded-2xl p-6 flex flex-col sm:flex-row items-center sm:justify-between gap-8 sm:gap-6 overflow-hidden relative text-center sm:text-left">
-                <div className="absolute top-0 right-0 w-32 h-32 bg-royal-blue/20 rounded-full blur-3xl -mr-16 -mt-16" />
-                <div className="flex flex-col sm:flex-row items-center gap-6 relative z-10 w-full sm:w-auto">
-                    <div className="flex -space-x-3">
-                        {[1, 2, 3].map(i => (
-                            <div key={i} className={`w-10 h-10 rounded-full border-2 border-slate-900 bg-slate-800 flex items-center justify-center text-[10px] font-black text-royal-blue overflow-hidden`}>
-                                <img src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${i}`} alt="Avatar" />
-                            </div>
-                        ))}
-                    </div>
-                    <div>
-                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Live Observers</p>
-                        <p className="text-xs font-bold text-white max-w-[200px] sm:max-w-none">3 Administrators active on network</p>
-                    </div>
                 </div>
-                <div className="flex items-center justify-around sm:justify-end gap-6 sm:gap-8 relative z-10 w-full sm:w-auto border-t border-slate-800 pt-6 sm:pt-0 sm:border-0">
-                    <div className="text-center sm:text-right">
-                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Up-time</p>
-                        <p className="text-xs font-bold text-white">99.9%</p>
-                    </div>
-                    <div className="w-px h-10 bg-slate-800 hidden sm:block" />
-                    <div className="text-center sm:text-right">
-                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Security</p>
-                        <p className="text-xs font-bold text-emerald-500 uppercase">Max</p>
-                    </div>
+
+                {/* ── Footer ── */}
+                <div className="mt-6 text-center text-xs text-slate-300 font-semibold">
+                    Grow India Admin · {new Date().getFullYear()} · Secure Panel
                 </div>
             </div>
         </Layout>
@@ -666,4 +734,3 @@ const AdminDashboard = () => {
 };
 
 export default AdminDashboard;
-
