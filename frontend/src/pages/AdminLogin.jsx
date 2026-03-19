@@ -25,7 +25,7 @@ const AdminLogin = () => {
                 setIsSubmitting(false);
                 return;
             }
-            navigate('/admin');
+            navigate('/admin/dashboard');
         } catch (err) {
             setError(err.response?.data?.message || 'Access Denied: Invalid Credentials');
             setIsSubmitting(false);

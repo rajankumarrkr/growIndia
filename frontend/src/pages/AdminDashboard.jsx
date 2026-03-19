@@ -86,7 +86,7 @@ const AdminDashboard = () => {
     const fetchAdminData = async () => {
         setLoading(true);
         try {
-            const [s, u, r, w, set, pl] = await Promise.all([
+            const results = await Promise.allSettled([
                 api.get('/admin/stats'),
                 api.get('/admin/users'),
                 api.get('/admin/recharges/pending'),
@@ -94,13 +94,22 @@ const AdminDashboard = () => {
                 api.get('/admin/settings'),
                 api.get('/admin/plans'),
             ]);
-            setStats(s.data);
-            setUsers(u.data);
-            setRecharges(r.data);
-            setWithdrawals(w.data);
-            setSettings(set.data);
-            setPlans(pl.data);
-        } catch { }
+
+            if (results[0].status === 'fulfilled') setStats(results[0].value.data);
+            if (results[1].status === 'fulfilled') setUsers(results[1].value.data);
+            if (results[2].status === 'fulfilled') {
+                setRecharges(results[2].value.data);
+            } else {
+                console.error("Failed to fetch recharges:", results[2].reason);
+                alert("Warning: Pending deposits failed to load (likely due to large screenshots). Please try again or clear old requests.");
+            }
+            if (results[3].status === 'fulfilled') setWithdrawals(results[3].value.data);
+            if (results[4].status === 'fulfilled') setSettings(results[4].value.data);
+            if (results[5].status === 'fulfilled') setPlans(results[5].value.data);
+            
+        } catch (err) {
+            console.error("Critical error in admin fetch:", err);
+        }
         setLoading(false);
     };
 
@@ -112,6 +121,20 @@ const AdminDashboard = () => {
     const handleWithdrawAction = async (id, status) => {
         try { await api.patch(`/admin/withdraw/${id}`, { status }); fetchAdminData(); }
         catch { alert('Action failed'); }
+    };
+
+    const handleViewProof = async (id) => {
+        try {
+            const res = await api.get(`/admin/recharge/${id}/proof`);
+            if (res.data.screenshot) {
+                const win = window.open();
+                win.document.write(`<body style="margin:0;display:flex;justify-content:center;align-items:center;background:#0f172a;height:100vh;"><img src="${res.data.screenshot}" style="max-width:100%;max-height:100vh;object-fit:contain;" /></body>`);
+            } else {
+                alert('No proof image found for this transaction');
+            }
+        } catch {
+            alert('Failed to load proof image. It may have been deleted.');
+        }
     };
 
     const handleCreatePlan = async (e) => {
@@ -437,27 +460,12 @@ const AdminDashboard = () => {
                                                     <span className="text-sm font-mono text-slate-500 bg-slate-100 px-2 py-1 rounded-lg">{r.utr || 'N/A'}</span>
                                                 </td>
                                                 <td className="py-4 px-5">
-                                                    {r.screenshot ? (
-                                                        <div className="flex items-center gap-2">
-                                                            <button
-                                                                onClick={() => window.open(r.screenshot, '_blank')}
-                                                                className="w-12 h-12 rounded-xl border-2 border-slate-200 overflow-hidden hover:border-blue-400 transition-all"
-                                                                title="View full size"
-                                                            >
-                                                                <img src={r.screenshot} alt="Proof" className="w-full h-full object-cover" />
-                                                            </button>
-                                                            <a
-                                                                href={r.screenshot}
-                                                                download={`deposit_${r.userId?.name || 'user'}_${r.utr || Date.now()}.jpg`}
-                                                                className="w-8 h-8 flex items-center justify-center bg-slate-100 text-slate-500 rounded-lg hover:bg-blue-500 hover:text-white transition-all shadow-sm"
-                                                                title="Download Receipt"
-                                                            >
-                                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
-                                                            </a>
-                                                        </div>
-                                                    ) : (
-                                                        <span className="text-xs text-red-400 font-semibold">No proof</span>
-                                                    )}
+                                                    <button
+                                                        onClick={() => handleViewProof(r._id)}
+                                                        className="flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 text-blue-600 rounded-lg text-xs font-bold hover:bg-blue-600 hover:text-white transition-all shadow-sm"
+                                                    >
+                                                        <ImageIcon size={14} /> View Proof
+                                                    </button>
                                                 </td>
                                                 <td className="py-4 px-5 text-right">
                                                     <div className="flex items-center justify-end gap-2">

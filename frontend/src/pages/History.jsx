@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Layout from '../components/Layout';
 import api from '../api/axios';
-import { History as HistoryIcon, ArrowDownRight, ArrowUpRight, Clock, CheckCircle, XCircle, Filter, Calendar } from 'lucide-react';
+import { History as HistoryIcon, ArrowDownRight, ArrowUpRight, Clock, CheckCircle, XCircle, Filter, Calendar, TrendingUp } from 'lucide-react';
 
 const History = () => {
     const [history, setHistory] = useState([]);
@@ -16,7 +16,14 @@ const History = () => {
         setLoading(true);
         try {
             const res = await api.get('/wallet/history');
-            setHistory(res.data);
+            if (res.data && Array.isArray(res.data)) {
+                setHistory(res.data);
+            } else {
+                setHistory([]);
+            }
+        } catch (error) {
+            console.error("Failed to fetch history:", error);
+            setHistory([]);
         } finally {
             setLoading(false);
         }
@@ -56,6 +63,24 @@ const History = () => {
             case 'roi': return 'bg-emerald-50 text-emerald-500';
             default: return 'bg-slate-50 text-slate-400';
         }
+    };
+
+    const safeFormatDate = (dateVal) => {
+        if (!dateVal) return 'Unknown Date';
+        try {
+            const d = new Date(dateVal);
+            if (isNaN(d.getTime())) return 'Unknown Date';
+            return d.toLocaleDateString('en-GB', { day: '2-digit', month: 'short' });
+        } catch { return 'Unknown Date'; }
+    };
+
+    const safeFormatTime = (dateVal) => {
+        if (!dateVal) return '';
+        try {
+            const d = new Date(dateVal);
+            if (isNaN(d.getTime())) return '';
+            return d.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
+        } catch { return ''; }
     };
 
     const filteredHistory = history.filter(tx => {
@@ -116,15 +141,15 @@ const History = () => {
                                         {tx.type === 'recharge' ? 'Deposit' : tx.type === 'withdrawal' ? 'Withdrawal' : 'ROI Credit'}
                                     </h4>
                                     <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-0.5 flex items-center gap-1.5">
-                                        {new Date(tx.timestamp).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' })}
+                                        {safeFormatDate(tx.timestamp)}
                                         <span className="opacity-30">•</span>
-                                        {new Date(tx.timestamp).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })}
+                                        {safeFormatTime(tx.timestamp)}
                                     </p>
                                 </div>
                             </div>
                             <div className="text-right flex flex-col items-end gap-2">
                                 <p className={`text-base font-black tracking-tight ${tx.type === 'recharge' || tx.type === 'roi' ? 'text-emerald-500' : 'text-slate-900'}`}>
-                                    {tx.type === 'recharge' || tx.type === 'roi' ? '+' : '-'}₹{tx.amount.toLocaleString()}
+                                    {tx.type === 'recharge' || tx.type === 'roi' ? '+' : '-'}₹{(tx.amount || 0).toLocaleString('en-IN')}
                                 </p>
                                 <div className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full border text-[9px] font-black uppercase tracking-widest shadow-sm ${getStatusStyle(tx.status)}`}>
                                     {getStatusIcon(tx.status)}

@@ -7,7 +7,7 @@ const Navbar = () => {
     const { user } = useContext(AuthContext);
 
     const navItems = [
-        { name: 'Home',     path: '/',            icon: LayoutDashboard },
+        { name: 'Home',     path: '/dashboard',            icon: LayoutDashboard },
         { name: 'Plans',    path: '/plan',         icon: Target          },
         { name: 'Active Plan', path: '/investments',  icon: Activity        },
         { name: 'Team',     path: '/team',         icon: Users           },
@@ -15,7 +15,7 @@ const Navbar = () => {
     ];
 
     if (user?.role === 'admin') {
-        navItems[4] = { name: 'Admin', path: '/admin', icon: ShieldAlert };
+        navItems[4] = { name: 'Admin', path: '/admin/dashboard', icon: ShieldAlert };
     }
 
     return (
@@ -47,7 +47,7 @@ const Navbar = () => {
                         <NavLink
                             key={item.path}
                             to={item.path}
-                            end={item.path === '/'}
+                            end={item.path === '/dashboard'}
                             style={{ flex: 1, textDecoration: 'none', display: 'flex' }}
                         >
                             {({ isActive }) => (

@@ -26,11 +26,19 @@ const SyncScreen = () => (
     </div>
 );
 
+const PublicRoute = ({ children }) => {
+    const { user, loading } = useContext(AuthContext);
+    if (loading) return <SyncScreen />;
+    if (user) return <Navigate to={user.role === 'admin' ? '/admin/dashboard' : '/dashboard'} />;
+    return children;
+};
+
 const PrivateRoute = ({ children, adminOnly = false }) => {
     const { user, loading } = useContext(AuthContext);
     if (loading) return <SyncScreen />;
     if (!user) return <Navigate to={adminOnly ? "/admin/login" : "/login"} />;
-    if (adminOnly && user.role !== 'admin') return <Navigate to="/" />;
+    if (adminOnly && user.role !== 'admin') return <Navigate to="/dashboard" />;
+    if (!adminOnly && user.role === 'admin') return <Navigate to="/admin/dashboard" />;
     return children;
 };
 
@@ -48,31 +56,32 @@ function App() {
         <AuthProvider>
             <BrowserRouter>
                 <Routes>
+                    <Route path="/" element={<Navigate to="/login" replace />} />
                     <Route path="/login" element={
-                        <Suspense fallback={<PageSkeleton />}>
-                            <Login />
-                        </Suspense>
+                        <PublicRoute>
+                            <Suspense fallback={<PageSkeleton />}><Login /></Suspense>
+                        </PublicRoute>
                     } />
                     <Route path="/register" element={
-                        <Suspense fallback={<PageSkeleton />}>
-                            <Register />
-                        </Suspense>
+                        <PublicRoute>
+                            <Suspense fallback={<PageSkeleton />}><Register /></Suspense>
+                        </PublicRoute>
                     } />
                     <Route path="/admin/login" element={
-                        <Suspense fallback={<SyncScreen />}>
-                            <AdminLogin />
-                        </Suspense>
+                        <PublicRoute>
+                            <Suspense fallback={<SyncScreen />}><AdminLogin /></Suspense>
+                        </PublicRoute>
                     } />
 
                     {/* All other routes wrapped in PrivateRoute and granular Suspense */}
-                    <Route path="/" element={<PrivateRoute><Suspense fallback={<SyncScreen />}><Home /></Suspense></PrivateRoute>} />
+                    <Route path="/dashboard" element={<PrivateRoute><Suspense fallback={<SyncScreen />}><Home /></Suspense></PrivateRoute>} />
                     <Route path="/plan" element={<PrivateRoute><Suspense fallback={<SyncScreen />}><Plan /></Suspense></PrivateRoute>} />
                     <Route path="/investments" element={<PrivateRoute><Suspense fallback={<SyncScreen />}><Investments /></Suspense></PrivateRoute>} />
                     <Route path="/wallet" element={<PrivateRoute><Suspense fallback={<SyncScreen />}><Wallet /></Suspense></PrivateRoute>} />
                     <Route path="/history" element={<PrivateRoute><Suspense fallback={<SyncScreen />}><History /></Suspense></PrivateRoute>} />
                     <Route path="/team" element={<PrivateRoute><Suspense fallback={<SyncScreen />}><Team /></Suspense></PrivateRoute>} />
                     <Route path="/profile" element={<PrivateRoute><Suspense fallback={<SyncScreen />}><Profile /></Suspense></PrivateRoute>} />
-                    <Route path="/admin" element={<PrivateRoute adminOnly={true}><Suspense fallback={<SyncScreen />}><AdminDashboard /></Suspense></PrivateRoute>} />
+                    <Route path="/admin/dashboard" element={<PrivateRoute adminOnly={true}><Suspense fallback={<SyncScreen />}><AdminDashboard /></Suspense></PrivateRoute>} />
                 </Routes>
             </BrowserRouter>
         </AuthProvider>

@@ -362,14 +362,14 @@ const Home = () => {
                             </div>
                         </div>
 
-                        <form onSubmit={handleRecharge} style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}>
                             <div className="form-group">
                                 <label style={{ fontSize: '11px', fontWeight: 800, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.1em', display: 'block', marginBottom: '8px', marginLeft: '4px' }}>Amount to Deposit</label>
                                 <div style={{ position: 'relative' }}>
                                     <span style={{ position: 'absolute', left: '20px', top: '50%', transform: 'translateY(-50%)', fontSize: '20px', fontWeight: 900, color: '#94a3b8' }}>₹</span>
                                     <input
                                         type="number" placeholder="0.00"
-                                        value={amount} onChange={e => setAmount(e.target.value)} required
+                                        value={amount} onChange={e => setAmount(e.target.value)} 
                                         style={{
                                             width: '100%', height: '64px', background: '#f8fafc',
                                             border: '2px solid #f1f5f9', borderRadius: '18px',
@@ -385,7 +385,7 @@ const Home = () => {
                                 <label style={{ fontSize: '11px', fontWeight: 800, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.1em', display: 'block', marginBottom: '8px', marginLeft: '4px' }}>Transaction ID (UTR)</label>
                                 <input
                                     type="text" placeholder="Enter 12-digit UTR number"
-                                    value={utr} onChange={e => setUtr(e.target.value)} required
+                                    value={utr} onChange={e => setUtr(e.target.value)} 
                                     style={{
                                         width: '100%', height: '56px', background: '#f8fafc',
                                         border: '2px solid #f1f5f9', borderRadius: '18px',
@@ -403,7 +403,7 @@ const Home = () => {
                                     border: '2px dashed #e2e8f0', borderRadius: '18px',
                                     cursor: 'pointer', transition: 'all 0.2s'
                                 }}>
-                                    <input type="file" accept="image/*" onChange={handleScreenshotUpload} required={!screenshot} style={{ display: 'none' }} />
+                                    <input type="file" accept="image/*" onChange={handleScreenshotUpload} style={{ display: 'none' }} />
                                     <div style={{ 
                                         width: '44px', height: '44px', borderRadius: '14px', 
                                         background: screenshot ? '#f0fdf4' : 'white', 
@@ -426,16 +426,16 @@ const Home = () => {
                                 <div style={{
                                     padding: '14px', borderRadius: '16px', fontSize: '11px',
                                     fontWeight: 800, textAlign: 'center', textTransform: 'uppercase', letterSpacing: '0.08em',
-                                    background: msg.includes('Failed') || msg.includes('Please') ? '#fef2f2' : '#f0fdf4',
-                                    color: msg.includes('Failed') || msg.includes('Please') ? '#dc2626' : '#15803d',
-                                    border: `1px solid ${msg.includes('Failed') || msg.includes('Please') ? '#fecaca' : '#bbf7d0'}`,
+                                    background: msg.includes('Failed') || msg.includes('Please') || msg.includes('Minimum') ? '#fef2f2' : '#f0fdf4',
+                                    color: msg.includes('Failed') || msg.includes('Please') || msg.includes('Minimum') ? '#dc2626' : '#15803d',
+                                    border: `1px solid ${msg.includes('Failed') || msg.includes('Please') || msg.includes('Minimum') ? '#fecaca' : '#bbf7d0'}`,
                                     animation: 'slideUp 0.3s ease-out'
                                 }}>
                                     {msg}
                                 </div>
                             )}
 
-                            <button type="submit" style={{
+                            <button type="button" onClick={handleRecharge} style={{
                                 width: '100%', height: '60px', background: 'linear-gradient(135deg, #2563eb, #1d4ed8)',
                                 border: 'none', borderRadius: '20px', color: 'white', fontWeight: 900,
                                 fontSize: '14px', letterSpacing: '0.12em', textTransform: 'uppercase',
@@ -444,7 +444,7 @@ const Home = () => {
                             }}>
                                 Confirm & Submit
                             </button>
-                        </form>
+                        </div>
                     </div>
                 </div>
             )}

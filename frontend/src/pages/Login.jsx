@@ -54,7 +54,7 @@ const Login = () => {
         setIsSubmitting(true);
         try {
             const res = await login(mobile, password);
-            navigate(res.user.role === 'admin' ? '/admin' : '/');
+            navigate(res.user.role === 'admin' ? '/admin/dashboard' : '/dashboard');
         } catch (err) {
             setError(err.response?.data?.message || 'Access Denied: Invalid Credentials');
             setIsSubmitting(false); // Re-enable on error

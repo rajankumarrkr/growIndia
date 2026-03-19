@@ -55,7 +55,9 @@ const Investments = () => {
                                     </div>
                                     <div>
                                         <h3 className="text-lg font-black text-slate-900 leading-tight">{inv.planName}</h3>
-                                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Protocol Sync: Online</p>
+                                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">
+                                            Activated: {new Date(inv.createdAt).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}
+                                        </p>
                                     </div>
                                 </div>
                                 <div className="text-right">

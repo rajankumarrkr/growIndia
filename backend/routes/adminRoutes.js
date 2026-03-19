@@ -73,13 +73,28 @@ router.put('/settings', auth, admin, async (req, res) => {
 // Get Pending Recharges
 router.get('/recharges/pending', auth, admin, async (req, res) => {
     try {
-        // Fetch pending recharges and populate user details (name, mobile) to display in the admin dashboard
-        const recharges = await Transaction.find({ type: 'recharge', status: 'pending' }).populate('userId', 'name mobile').lean();
+        // Exclude screenshot to prevent 90MB+ payload timeouts
+        const recharges = await Transaction.find({ type: 'recharge', status: 'pending' })
+            .select('-screenshot')
+            .populate('userId', 'name mobile').lean();
         res.json(recharges);
     } catch (err) {
         res.status(500).json({ message: err.message });
     }
 });
+
+// Fetch Single Proof Image
+router.get('/recharge/:id/proof', auth, admin, async (req, res) => {
+    try {
+        const recharge = await Transaction.findById(req.params.id).select('screenshot').lean();
+        if (!recharge) return res.status(404).json({ message: 'Not found' });
+        res.json({ screenshot: recharge.screenshot });
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+});
+
+// Approve Recharge & Referral Commission
 
 // Get Pending Withdrawals
 router.get('/withdrawals/pending', auth, admin, async (req, res) => {
@@ -95,7 +110,7 @@ router.get('/withdrawals/pending', auth, admin, async (req, res) => {
 router.patch('/recharge/:id', auth, admin, async (req, res) => {
     try {
         const { status } = req.body; // 'approved' or 'rejected'
-        const recharge = await Transaction.findById(req.id || req.params.id);
+        const recharge = await Transaction.findById(req.params.id);
         if (!recharge || recharge.status !== 'pending') return res.status(400).json({ message: 'Invalid recharge' });
 
         recharge.status = status;
@@ -126,7 +141,7 @@ router.patch('/recharge/:id', auth, admin, async (req, res) => {
 router.patch('/withdraw/:id', auth, admin, async (req, res) => {
     try {
         const { status } = req.body; // 'approved' or 'rejected'
-        const withdrawal = await Transaction.findById(req.id || req.params.id);
+        const withdrawal = await Transaction.findById(req.params.id);
         if (!withdrawal || withdrawal.status !== 'pending') return res.status(400).json({ message: 'Invalid withdrawal' });
 
         withdrawal.status = status;

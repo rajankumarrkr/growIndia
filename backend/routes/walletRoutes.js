@@ -82,7 +82,11 @@ router.post('/withdraw', auth, async (req, res) => {
 // Transaction History
 router.get('/history', auth, async (req, res) => {
     try {
-        const history = await Transaction.find({ userId: req.user.id }).sort({ timestamp: -1 }).lean();
+        // Exclude the bulky base64 'screenshot' field to avoid massive payloads
+        const history = await Transaction.find({ userId: req.user.id })
+            .select('-screenshot')
+            .sort({ timestamp: -1 })
+            .lean();
         res.json(history);
     } catch (err) {
         res.status(500).json({ message: err.message });
