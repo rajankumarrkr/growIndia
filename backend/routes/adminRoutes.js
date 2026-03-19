@@ -5,11 +5,14 @@ const Transaction = require('../models/Transaction');
 const AdminSettings = require('../models/AdminSettings');
 const Plan = require('../models/Plan');
 const { processDailyIncome } = require('../utils/incomeLogic');
+const cache = require('../utils/cache');
 const router = express.Router();
 
 // Get Admin Stats
 router.get('/stats', auth, admin, async (req, res) => {
     try {
+        if (cache.has('adminStats')) return res.json(cache.get('adminStats'));
+
         const totalUsers = await User.countDocuments({ role: 'user' });
         const totalDeposits = await Transaction.aggregate([
             { $match: { type: 'recharge', status: 'approved' } },
@@ -20,11 +23,13 @@ router.get('/stats', auth, admin, async (req, res) => {
             { $group: { _id: null, total: { $sum: '$amount' } } }
         ]);
 
-        res.json({
+        const stats = {
             totalUsers,
             totalDeposits: totalDeposits[0]?.total || 0,
             totalWithdrawals: totalWithdrawals[0]?.total || 0,
-        });
+        };
+        cache.set('adminStats', stats, 15);
+        res.json(stats);
     } catch (err) {
         res.status(500).json({ message: err.message });
     }
@@ -130,7 +135,7 @@ router.patch('/recharge/:id', auth, admin, async (req, res) => {
                 }
             }
         }
-
+        cache.del('adminStats');
         res.json({ message: `Recharge ${status}` });
     } catch (err) {
         res.status(500).json({ message: err.message });
@@ -153,7 +158,7 @@ router.patch('/withdraw/:id', auth, admin, async (req, res) => {
             user.walletBalance += withdrawal.amount;
             await user.save();
         }
-
+        cache.del('adminStats');
         res.json({ message: `Withdrawal ${status}` });
     } catch (err) {
         res.status(500).json({ message: err.message });
@@ -179,7 +184,9 @@ router.patch('/user/:id/balance', auth, admin, async (req, res) => {
 // Get all plans (admin sees all including inactive)
 router.get('/plans', auth, admin, async (req, res) => {
     try {
+        if (cache.has('adminPlans')) return res.json(cache.get('adminPlans'));
         const plans = await Plan.find().sort({ tier: 1, amount: 1 }).lean();
+        cache.set('adminPlans', plans, 3600);
         res.json(plans);
     } catch (err) {
         res.status(500).json({ message: err.message });
@@ -195,6 +202,7 @@ router.post('/plans', auth, admin, async (req, res) => {
         }
         const plan = new Plan({ name, amount, daily, tier });
         await plan.save();
+        cache.del(['adminPlans', 'activePlans']);
         res.json({ message: 'Plan created', plan });
     } catch (err) {
         res.status(500).json({ message: err.message });
@@ -206,6 +214,7 @@ router.patch('/plans/:id', auth, admin, async (req, res) => {
     try {
         const plan = await Plan.findByIdAndUpdate(req.params.id, req.body, { new: true });
         if (!plan) return res.status(404).json({ message: 'Plan not found' });
+        cache.del(['adminPlans', 'activePlans']);
         res.json({ message: 'Plan updated', plan });
     } catch (err) {
         res.status(500).json({ message: err.message });
@@ -216,6 +225,7 @@ router.patch('/plans/:id', auth, admin, async (req, res) => {
 router.delete('/plans/:id', auth, admin, async (req, res) => {
     try {
         await Plan.findByIdAndDelete(req.params.id);
+        cache.del(['adminPlans', 'activePlans']);
         res.json({ message: 'Plan deleted' });
     } catch (err) {
         res.status(500).json({ message: err.message });

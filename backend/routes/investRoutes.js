@@ -3,6 +3,7 @@ const { auth } = require('../middleware/auth');
 const Investment = require('../models/Investment');
 const Plan = require('../models/Plan');
 const User = require('../models/User');
+const cache = require('../utils/cache');
 const router = express.Router();
 
 // Seed default plans if none exist
@@ -27,7 +28,10 @@ seedDefaultPlans();
 // Get Plans (returns standard first, then vip — so frontend index-based split still works)
 router.get('/plans', async (req, res) => {
     try {
+        if (cache.has('activePlans')) return res.json(cache.get('activePlans'));
+        
         const plans = await Plan.find({ isActive: true }).sort({ tier: 1, amount: 1 }).lean();
+        cache.set('activePlans', plans, 3600); // 1 hour caching for static plans
         res.json(plans);
     } catch (err) {
         res.status(500).json({ message: err.message });

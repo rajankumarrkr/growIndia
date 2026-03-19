@@ -12,6 +12,15 @@ const app = express();
 
 // Security and Performance Middleware
 app.use(helmet());
+
+const rateLimit = require('express-rate-limit');
+const limiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 500, // limit each IP to 500 requests per windowMs
+    message: { message: 'Too many requests from this IP, please try again after 15 minutes' }
+});
+app.use('/api', limiter);
+
 app.use(compression());
 app.use(cors({
     origin: process.env.FRONTEND_URL || '*',

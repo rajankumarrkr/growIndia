@@ -200,10 +200,13 @@ const AdminDashboard = () => {
     ];
 
     /* ── search filter ── */
-    const filteredUsers = users.filter(u =>
-        u.name?.toLowerCase().includes(search.toLowerCase()) ||
-        u.mobile?.includes(search)
-    );
+    const filteredUsers = React.useMemo(() => {
+        const lowerSearch = search.toLowerCase();
+        return users.filter(u =>
+            u.name?.toLowerCase().includes(lowerSearch) ||
+            u.mobile?.includes(search)
+        );
+    }, [users, search]);
 
     return (
         <Layout title="Admin Panel" hideNav={true}>
