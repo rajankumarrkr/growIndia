@@ -1,8 +1,8 @@
 import React, { useContext, useState, useEffect, useRef } from 'react';
 import { AuthContext } from '../context/AuthContext';
-import { 
-    ArrowDownRight, ArrowUpRight, Target, CreditCard, CheckCircle, 
-    Layers, X, TrendingUp, ShieldCheck, Users, Zap, ArrowRight, 
+import {
+    ArrowDownRight, ArrowUpRight, Target, CreditCard, CheckCircle,
+    Layers, X, TrendingUp, ShieldCheck, Users, Zap, ArrowRight,
     History, Bell, Wallet, BarChart3, Globe2, Cpu, LineChart,
     Image as ImageIcon, Download, Smartphone
 } from 'lucide-react';
@@ -66,7 +66,7 @@ const Home = () => {
 
     useEffect(() => {
         if (showRecharge) {
-            api.get('/wallet/deposit-info').then(res => setDepositInfo(res.data)).catch(() => {});
+            api.get('/wallet/deposit-info').then(res => setDepositInfo(res.data)).catch(() => { });
         }
     }, [showRecharge]);
 
@@ -250,7 +250,7 @@ const Home = () => {
                     <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
                         <defs>
                             <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
-                                <path d="M 40 0 L 0 0 0 40" fill="none" stroke="white" strokeWidth="1"/>
+                                <path d="M 40 0 L 0 0 0 40" fill="none" stroke="white" strokeWidth="1" />
                             </pattern>
                         </defs>
                         <rect width="100%" height="100%" fill="url(#grid)" />
@@ -268,9 +268,9 @@ const Home = () => {
                         </span>
                     </div>
 
-                    <div style={{ 
-                        display: 'flex', gap: '0', 
-                        background: 'rgba(255,255,255,0.1)', 
+                    <div style={{
+                        display: 'flex', gap: '0',
+                        background: 'rgba(255,255,255,0.1)',
                         backdropFilter: 'blur(10px)',
                         borderRadius: '16px',
                         padding: '16px 0'
@@ -358,13 +358,13 @@ const Home = () => {
                 <h3 style={{ fontSize: '13px', fontWeight: 900, color: '#0f172a', textTransform: 'uppercase', letterSpacing: '0.1em' }}>TRADING HUB</h3>
             </div>
 
-            <div style={{ 
+            <div style={{
                 display: 'flex', overflowX: 'auto', gap: '12px', paddingBottom: '16px',
-                scrollbarWidth: 'none', msOverflowStyle: 'none' 
+                scrollbarWidth: 'none', msOverflowStyle: 'none'
             }} className="hide-scrollbar">
                 {tradingBanners.map((banner, i) => (
                     <div key={i} style={{
-                        minWidth: '220px', background: '#f8fafc', 
+                        minWidth: '220px', background: '#f8fafc',
                         borderRadius: '24px', padding: '24px',
                         border: '1.5px solid #f1f5f9',
                         display: 'flex', alignItems: 'center', gap: '16px',
@@ -393,30 +393,72 @@ const Home = () => {
 
             {/* Start Investing Banner */}
             <div
-                style={{
-                    background: '#0f172a',
-                    borderRadius: '24px', padding: '24px',
-                    display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                    marginBottom: '20px', cursor: 'pointer',
-                    boxShadow: '0 20px 40px rgba(0,0,0,0.1)',
-                }}
                 onClick={() => navigate('/plan')}
+                style={{
+                    background: 'linear-gradient(135deg, #0f172a 0%, #1e3a8a 50%, #2563eb 100%)',
+                    borderRadius: '28px',
+                    padding: '28px 24px',
+                    marginBottom: '20px',
+                    cursor: 'pointer',
+                    boxShadow: '0 24px 50px -10px rgba(37,99,235,0.45)',
+                    position: 'relative',
+                    overflow: 'hidden',
+                }}
             >
-                <div>
-                    <p style={{ fontSize: '10px', fontWeight: 800, color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '8px' }}>
-                        READY TO GROW?
-                    </p>
-                    <p style={{ fontSize: '20px', fontWeight: 900, color: 'white', lineHeight: 1.2 }}>
-                        Start Investing<br />Today
-                    </p>
+                {/* Decorative blobs */}
+                <div style={{ position: 'absolute', top: '-30px', right: '-30px', width: '140px', height: '140px', background: 'rgba(99,179,237,0.12)', borderRadius: '50%', filter: 'blur(30px)', pointerEvents: 'none' }} />
+                <div style={{ position: 'absolute', bottom: '-20px', left: '20%', width: '100px', height: '100px', background: 'rgba(124,58,237,0.12)', borderRadius: '50%', filter: 'blur(24px)', pointerEvents: 'none' }} />
+                {/* Grid pattern */}
+                <div style={{ position: 'absolute', inset: 0, opacity: 0.06, pointerEvents: 'none' }}>
+                    <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+                        <defs><pattern id="inv-grid" width="28" height="28" patternUnits="userSpaceOnUse"><path d="M 28 0 L 0 0 0 28" fill="none" stroke="white" strokeWidth="0.8" /></pattern></defs>
+                        <rect width="100%" height="100%" fill="url(#inv-grid)" />
+                    </svg>
                 </div>
-                <div style={{
-                    width: '52px', height: '52px', borderRadius: '16px',
-                    background: '#2563eb', color: 'white',
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    boxShadow: '0 8px 20px rgba(37,99,235,0.4)',
-                }}>
-                    <ArrowRight size={26} />
+
+                <div style={{ position: 'relative', zIndex: 1 }}>
+                    {/* Top row — label + icon */}
+                    <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: '16px' }}>
+                        <div>
+                            <p style={{ fontSize: '10px', fontWeight: 800, color: 'rgba(255,255,255,0.45)', textTransform: 'uppercase', letterSpacing: '0.18em', marginBottom: '8px' }}>
+                                🚀 Ready to Grow?
+                            </p>
+                            <p style={{ fontSize: '26px', fontWeight: 900, color: 'white', lineHeight: 1.15, letterSpacing: '-0.5px' }}>
+                                Start Investing<br />Today
+                            </p>
+                        </div>
+                        {/* Animated arrow button */}
+                        <div style={{
+                            width: '56px', height: '56px', borderRadius: '18px',
+                            background: 'linear-gradient(135deg, #3b82f6, #2563eb)',
+                            display: 'flex', alignItems: 'center', justifyContent: 'center',
+                            boxShadow: '0 10px 28px rgba(37,99,235,0.55)',
+                            flexShrink: 0
+                        }}>
+                            <TrendingUp size={24} color="white" />
+                        </div>
+                    </div>
+
+                    {/* Divider */}
+                    <div style={{ height: '1px', background: 'rgba(255,255,255,0.1)', marginBottom: '16px' }} />
+
+                    {/* Bottom row — tags + arrow */}
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                            <span style={{ fontSize: '10px', fontWeight: 800, color: 'rgba(255,255,255,0.55)', background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.12)', padding: '5px 12px', borderRadius: '20px' }}>
+                                Min ₹500
+                            </span>
+                            <span style={{ fontSize: '10px', fontWeight: 800, color: '#4ade80', background: 'rgba(74,222,128,0.1)', border: '1px solid rgba(74,222,128,0.2)', padding: '5px 12px', borderRadius: '20px' }}>
+                                Daily ROI ⚡
+                            </span>
+                            <span style={{ fontSize: '10px', fontWeight: 800, color: '#c4b5fd', background: 'rgba(196,181,253,0.08)', border: '1px solid rgba(196,181,253,0.15)', padding: '5px 12px', borderRadius: '20px' }}>
+                                10% Referral 🎁
+                            </span>
+                        </div>
+                        <div style={{ width: '36px', height: '36px', borderRadius: '12px', background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                            <ArrowRight size={18} color="white" />
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -425,7 +467,7 @@ const Home = () => {
                 .hide-scrollbar::-webkit-scrollbar { display: none; }
                 .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
             `}</style>
-            
+
             {/* ... keeping the Deposit Modal logic same as before ... */}
             {showRecharge && (
                 <div style={{
@@ -467,7 +509,7 @@ const Home = () => {
                         }}>
                             {/* Decorative elements */}
                             <div style={{ position: 'absolute', top: '-10px', right: '-10px', width: '100px', height: '100px', background: 'rgba(59,130,246,0.1)', borderRadius: '50%', blur: '40px' }} />
-                            
+
                             <div style={{ position: 'relative', zIndex: 1 }}>
                                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '24px' }}>
                                     <div style={{ width: '44px', height: '32px', background: 'rgba(255,255,255,0.1)', borderRadius: '6px', border: '1px solid rgba(255,255,255,0.2)' }} />
@@ -478,7 +520,7 @@ const Home = () => {
                                     <p style={{ fontSize: '9px', fontWeight: 700, color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '6px' }}>OFFICIAL UPI ID</p>
                                     <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                                         <p style={{ fontSize: '18px', fontWeight: 700, letterSpacing: '0.5px', fontFamily: 'monospace' }}>{depositInfo.upiId}</p>
-                                        <button 
+                                        <button
                                             onClick={handleCopyUpi}
                                             style={{ background: 'rgba(255,255,255,0.1)', border: 'none', borderRadius: '8px', padding: '6px 12px', color: 'white', fontSize: '10px', fontWeight: 800, cursor: 'pointer' }}
                                         >
@@ -512,7 +554,7 @@ const Home = () => {
                                     <span style={{ position: 'absolute', left: '20px', top: '50%', transform: 'translateY(-50%)', fontSize: '20px', fontWeight: 900, color: '#94a3b8' }}>₹</span>
                                     <input
                                         type="number" placeholder="0.00"
-                                        value={amount} onChange={e => setAmount(e.target.value)} 
+                                        value={amount} onChange={e => setAmount(e.target.value)}
                                         style={{
                                             width: '100%', height: '64px', background: '#f8fafc',
                                             border: '2px solid #f1f5f9', borderRadius: '18px',
@@ -528,7 +570,7 @@ const Home = () => {
                                 <label style={{ fontSize: '11px', fontWeight: 800, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.1em', display: 'block', marginBottom: '8px', marginLeft: '4px' }}>Transaction ID (UTR)</label>
                                 <input
                                     type="text" placeholder="Enter 12-digit UTR number"
-                                    value={utr} onChange={e => setUtr(e.target.value)} 
+                                    value={utr} onChange={e => setUtr(e.target.value)}
                                     style={{
                                         width: '100%', height: '56px', background: '#f8fafc',
                                         border: '2px solid #f1f5f9', borderRadius: '18px',
@@ -540,16 +582,16 @@ const Home = () => {
 
                             <div className="form-group">
                                 <label style={{ fontSize: '11px', fontWeight: 800, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.1em', display: 'block', marginBottom: '8px', marginLeft: '4px' }}>Proof of Payment</label>
-                                <label style={{ 
-                                    display: 'flex', alignItems: 'center', gap: '16px', 
-                                    padding: '16px 20px', background: '#f8fafc', 
+                                <label style={{
+                                    display: 'flex', alignItems: 'center', gap: '16px',
+                                    padding: '16px 20px', background: '#f8fafc',
                                     border: '2px dashed #e2e8f0', borderRadius: '18px',
                                     cursor: 'pointer', transition: 'all 0.2s'
                                 }}>
                                     <input type="file" accept="image/*" onChange={handleScreenshotUpload} style={{ display: 'none' }} />
-                                    <div style={{ 
-                                        width: '44px', height: '44px', borderRadius: '14px', 
-                                        background: screenshot ? '#f0fdf4' : 'white', 
+                                    <div style={{
+                                        width: '44px', height: '44px', borderRadius: '14px',
+                                        background: screenshot ? '#f0fdf4' : 'white',
                                         color: screenshot ? '#22c55e' : '#94a3b8',
                                         display: 'flex', alignItems: 'center', justifyContent: 'center',
                                         boxShadow: '0 4px 12px rgba(0,0,0,0.03)'
@@ -579,13 +621,13 @@ const Home = () => {
                             )}
 
                             <button type="button" onClick={handleRecharge} disabled={isSubmitting} style={{
-                                width: '100%', height: '60px', 
+                                width: '100%', height: '60px',
                                 background: isSubmitting ? '#94a3b8' : 'linear-gradient(135deg, #2563eb, #1d4ed8)',
                                 border: 'none', borderRadius: '20px', color: 'white', fontWeight: 900,
                                 fontSize: '14px', letterSpacing: '0.12em', textTransform: 'uppercase',
-                                cursor: isSubmitting ? 'not-allowed' : 'pointer', 
+                                cursor: isSubmitting ? 'not-allowed' : 'pointer',
                                 boxShadow: isSubmitting ? 'none' : '0 12px 24px rgba(37,99,235,0.3)',
-                                marginTop: '10px', 
+                                marginTop: '10px',
                                 transition: 'all 0.2s ease',
                                 display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px',
                                 opacity: isSubmitting ? 0.8 : 1
