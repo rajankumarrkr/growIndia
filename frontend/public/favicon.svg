@@ -1,4 +1,24 @@
-﻿<svg xmlns="http://www.w3.org/2000/svg" width="192" height="192" viewBox="0 0 192 192">
-  <rect width="192" height="192" rx="42" ry="42" fill="#2563eb"/>
-  <text x="96" y="120" text-anchor="middle" font-family="Arial Black,Arial,sans-serif" font-weight="900" font-size="105" fill="white">G</text>
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0d1b3e"/>
+      <stop offset="100%" style="stop-color:#0a1128"/>
+    </linearGradient>
+    <linearGradient id="gGrad" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#00c6e0"/>
+      <stop offset="50%" style="stop-color:#00d68f"/>
+      <stop offset="100%" style="stop-color:#a8f000"/>
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="1.5" result="coloredBlur"/>
+      <feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+  <!-- Background -->
+  <rect width="64" height="64" rx="14" fill="url(#bg)"/>
+  <!-- G letter -->
+  <text x="32" y="43" text-anchor="middle" font-family="Arial Black,Arial,sans-serif" font-weight="900" font-size="38" fill="url(#gGrad)" filter="url(#glow)">G</text>
+  <!-- Arrow up -->
+  <polyline points="41,14 47,8 47,20" fill="url(#gGrad)" stroke="none"/>
+  <line x1="36" y1="20" x2="47" y2="8" stroke="url(#gGrad)" stroke-width="3" stroke-linecap="round"/>
 </svg>

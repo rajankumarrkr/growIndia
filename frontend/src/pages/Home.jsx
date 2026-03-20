@@ -1,10 +1,10 @@
-import React, { useContext, useState, useEffect } from 'react';
+import React, { useContext, useState, useEffect, useRef } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import { 
     ArrowDownRight, ArrowUpRight, Target, CreditCard, CheckCircle, 
     Layers, X, TrendingUp, ShieldCheck, Users, Zap, ArrowRight, 
     History, Bell, Wallet, BarChart3, Globe2, Cpu, LineChart,
-    Image as ImageIcon
+    Image as ImageIcon, Download, Smartphone
 } from 'lucide-react';
 import api from '../api/axios';
 import Layout from '../components/Layout';
@@ -19,6 +19,50 @@ const Home = () => {
     const [screenshot, setScreenshot] = useState('');
     const [msg, setMsg] = useState('');
     const [depositInfo, setDepositInfo] = useState({ upiId: 'Loading...', qrCode: '' });
+    const [isSubmitting, setIsSubmitting] = useState(false);
+
+    // PWA Install Banner
+    const [showInstallBanner, setShowInstallBanner] = useState(false);
+    const [installing, setInstalling] = useState(false);
+    const deferredPrompt = useRef(null);
+
+    useEffect(() => {
+        // Check if already dismissed
+        const dismissed = localStorage.getItem('pwa_install_dismissed');
+        if (dismissed) return;
+
+        const handler = (e) => {
+            e.preventDefault();
+            deferredPrompt.current = e;
+            setShowInstallBanner(true);
+        };
+
+        window.addEventListener('beforeinstallprompt', handler);
+        window.addEventListener('appinstalled', () => {
+            setShowInstallBanner(false);
+            deferredPrompt.current = null;
+        });
+
+        return () => window.removeEventListener('beforeinstallprompt', handler);
+    }, []);
+
+    const handleInstall = async () => {
+        if (!deferredPrompt.current) return;
+        setInstalling(true);
+        deferredPrompt.current.prompt();
+        const { outcome } = await deferredPrompt.current.userChoice;
+        if (outcome === 'accepted') {
+            localStorage.setItem('pwa_install_dismissed', 'true');
+            setShowInstallBanner(false);
+        }
+        deferredPrompt.current = null;
+        setInstalling(false);
+    };
+
+    const handleDismissInstall = () => {
+        localStorage.setItem('pwa_install_dismissed', 'true');
+        setShowInstallBanner(false);
+    };
 
     useEffect(() => {
         if (showRecharge) {
@@ -44,12 +88,14 @@ const Home = () => {
     const handleRecharge = async (e) => {
         e.preventDefault();
         if (!screenshot) { setMsg('Please upload payment screenshot'); setTimeout(() => setMsg(''), 2000); return; }
+        setIsSubmitting(true);
         try {
             await api.post('/wallet/recharge', { amount, utr, screenshot });
             setMsg('Deposit Request Submitted!');
-            setTimeout(() => { setShowRecharge(false); setMsg(''); setAmount(''); setUtr(''); setScreenshot(''); }, 2500);
+            setTimeout(() => { setShowRecharge(false); setMsg(''); setAmount(''); setUtr(''); setScreenshot(''); setIsSubmitting(false); }, 2500);
         } catch (err) {
             setMsg(err.response?.data?.message || 'Submission Failed');
+            setIsSubmitting(false);
         }
     };
 
@@ -83,7 +129,7 @@ const Home = () => {
     return (
         <Layout title="Dashboard">
             {/* Greeting */}
-            <div style={{ marginBottom: '24px' }}>
+            <div style={{ marginBottom: showInstallBanner ? '16px' : '24px' }}>
                 <h2 style={{ fontSize: '22px', fontWeight: 900, color: '#0f172a', lineHeight: 1.2 }}>
                     Welcome back, {user?.name?.split(' ')[0] || 'Investor'} 👋
                 </h2>
@@ -91,6 +137,103 @@ const Home = () => {
                     {getTimeGreeting()}
                 </p>
             </div>
+
+            {/* PWA Install Banner */}
+            {showInstallBanner && (
+                <div style={{
+                    background: 'linear-gradient(135deg, #1e3a8a 0%, #2563eb 50%, #7c3aed 100%)',
+                    borderRadius: '24px',
+                    padding: '20px',
+                    marginBottom: '24px',
+                    boxShadow: '0 16px 40px -8px rgba(37,99,235,0.45)',
+                    position: 'relative',
+                    overflow: 'hidden',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '16px'
+                }}>
+                    {/* Background shimmer */}
+                    <div style={{
+                        position: 'absolute', top: '-20px', right: '-20px',
+                        width: '120px', height: '120px',
+                        background: 'rgba(255,255,255,0.07)',
+                        borderRadius: '50%'
+                    }} />
+                    <div style={{
+                        position: 'absolute', bottom: '-30px', left: '30%',
+                        width: '80px', height: '80px',
+                        background: 'rgba(255,255,255,0.05)',
+                        borderRadius: '50%'
+                    }} />
+
+                    {/* App Logo Icon */}
+                    <div style={{
+                        width: '56px', height: '56px', minWidth: '56px',
+                        borderRadius: '16px',
+                        overflow: 'hidden',
+                        border: '2px solid rgba(255,255,255,0.25)',
+                        boxShadow: '0 4px 16px rgba(0,0,0,0.3)',
+                        zIndex: 1
+                    }}>
+                        <img src="/icons/icon-192.svg" alt="Grow India" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    </div>
+
+                    {/* Text */}
+                    <div style={{ flex: 1, zIndex: 1 }}>
+                        <p style={{
+                            fontSize: '14px', fontWeight: 900, color: 'white',
+                            marginBottom: '2px', letterSpacing: '-0.2px'
+                        }}>
+                            Install Grow India App
+                        </p>
+                        <p style={{ fontSize: '11px', fontWeight: 600, color: 'rgba(255,255,255,0.65)' }}>
+                            Faster access • Works offline • Home screen
+                        </p>
+                    </div>
+
+                    {/* Buttons */}
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', zIndex: 1 }}>
+                        <button
+                            onClick={handleInstall}
+                            disabled={installing}
+                            style={{
+                                background: 'white',
+                                border: 'none',
+                                borderRadius: '12px',
+                                padding: '8px 14px',
+                                fontSize: '11px',
+                                fontWeight: 900,
+                                color: '#2563eb',
+                                cursor: installing ? 'not-allowed' : 'pointer',
+                                display: 'flex', alignItems: 'center', gap: '5px',
+                                whiteSpace: 'nowrap',
+                                boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+                                transition: 'all 0.2s'
+                            }}
+                        >
+                            <Download size={13} />
+                            {installing ? 'Installing...' : 'Install'}
+                        </button>
+                        <button
+                            onClick={handleDismissInstall}
+                            style={{
+                                background: 'transparent',
+                                border: '1px solid rgba(255,255,255,0.3)',
+                                borderRadius: '12px',
+                                padding: '6px 14px',
+                                fontSize: '10px',
+                                fontWeight: 700,
+                                color: 'rgba(255,255,255,0.75)',
+                                cursor: 'pointer',
+                                whiteSpace: 'nowrap',
+                                transition: 'all 0.2s'
+                            }}
+                        >
+                            Later
+                        </button>
+                    </div>
+                </div>
+            )}
 
             {/* Balance Card Section */}
             <div style={{
@@ -435,14 +578,27 @@ const Home = () => {
                                 </div>
                             )}
 
-                            <button type="button" onClick={handleRecharge} style={{
-                                width: '100%', height: '60px', background: 'linear-gradient(135deg, #2563eb, #1d4ed8)',
+                            <button type="button" onClick={handleRecharge} disabled={isSubmitting} style={{
+                                width: '100%', height: '60px', 
+                                background: isSubmitting ? '#94a3b8' : 'linear-gradient(135deg, #2563eb, #1d4ed8)',
                                 border: 'none', borderRadius: '20px', color: 'white', fontWeight: 900,
                                 fontSize: '14px', letterSpacing: '0.12em', textTransform: 'uppercase',
-                                cursor: 'pointer', boxShadow: '0 12px 24px rgba(37,99,235,0.3)',
-                                marginTop: '10px', transition: 'transform 0.2s, box-shadow 0.2s'
+                                cursor: isSubmitting ? 'not-allowed' : 'pointer', 
+                                boxShadow: isSubmitting ? 'none' : '0 12px 24px rgba(37,99,235,0.3)',
+                                marginTop: '10px', 
+                                transition: 'all 0.2s ease',
+                                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px',
+                                opacity: isSubmitting ? 0.8 : 1
                             }}>
-                                Confirm & Submit
+                                {isSubmitting ? (
+                                    <>
+                                        <div style={{
+                                            width: '18px', height: '18px', border: '3px solid rgba(255,255,255,0.3)',
+                                            borderTopColor: 'white', borderRadius: '50%', animation: 'spin 1s linear infinite'
+                                        }} />
+                                        Processing...
+                                    </>
+                                ) : 'Confirm & Submit'}
                             </button>
                         </div>
                     </div>
