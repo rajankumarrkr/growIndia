@@ -54,10 +54,10 @@ const Plan = () => {
         }
     };
 
-    const handleBuy = async (index) => {
-        setBuying(index);
+    const handleBuy = async (planId) => {
+        setBuying(planId);
         try {
-            await api.post('/invest/purchase', { planIndex: index });
+            await api.post('/invest/purchase', { planId });
             setMsg({ text: 'Investment Activated!', type: 'success' });
             const profile = await api.get('/user/profile');
             setUser(profile.data);
@@ -233,10 +233,8 @@ const Plan = () => {
             {/* Plan Cards */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', paddingBottom: '24px' }}>
                 {plans
-                    .map((plan, index) => ({ ...plan, originalIndex: index }))
-                    .filter((_, index) => activeTab === 'Standard' ? index < 4 : index >= 4)
-                    .map((plan) => {
-                        const index = plan.originalIndex;
+                    .filter(plan => activeTab === 'Standard' ? plan.tier === 'standard' : plan.tier === 'vip')
+                    .map((plan, index) => {
                         const theme = TIER_THEMES[index % TIER_THEMES.length];
                         const roiPercent = ((plan.daily / plan.amount) * 100).toFixed(1);
                         const totalProfit = plan.daily * 99;
@@ -319,8 +317,8 @@ const Plan = () => {
 
                                 {/* CTA Button */}
                                 <button
-                                    onClick={() => handleBuy(plan.originalIndex)}
-                                    disabled={buying === plan.originalIndex}
+                                    onClick={() => handleBuy(plan._id)}
+                                    disabled={buying === plan._id}
                                     style={{
                                         width: '100%', height: '50px', borderRadius: '14px',
                                         background: 'rgba(255,255,255,0.96)', border: 'none',
@@ -336,7 +334,7 @@ const Plan = () => {
                                     onTouchStart={e => e.currentTarget.style.transform = 'scale(0.97)'}
                                     onTouchEnd={e => e.currentTarget.style.transform = 'scale(1)'}
                                 >
-                                    {buying === index
+                                    {buying === plan._id
                                         ? 'Activating...'
                                         : <><span>Activate Plan</span><ArrowRight size={14} /></>
                                     }

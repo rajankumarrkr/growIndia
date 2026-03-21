@@ -10,6 +10,7 @@ export default defineConfig({
         tailwindcss(),
         VitePWA({
             registerType: 'autoUpdate',
+            injectRegister: 'auto',
             includeAssets: ['favicon.svg', 'icons/*.svg'],
             manifest: {
                 name: 'Grow India',

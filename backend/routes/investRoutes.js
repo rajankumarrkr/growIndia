@@ -30,7 +30,7 @@ router.get('/plans', async (req, res) => {
     try {
         if (cache.has('activePlans')) return res.json(cache.get('activePlans'));
         
-        const plans = await Plan.find({ isActive: true }).sort({ tier: 1, amount: 1 }).lean();
+        const plans = await Plan.find({ isActive: { $ne: false } }).sort({ tier: 1, amount: 1 }).lean();
         cache.set('activePlans', plans, 3600); // 1 hour caching for static plans
         res.json(plans);
     } catch (err) {
@@ -48,7 +48,7 @@ router.post('/purchase', auth, async (req, res) => {
             plan = await Plan.findById(planId);
         } else {
             // Legacy support: index-based
-            const plans = await Plan.find({ isActive: true }).sort({ tier: 1, amount: 1 });
+            const plans = await Plan.find({ isActive: { $ne: false } }).sort({ tier: 1, amount: 1 });
             plan = plans[planIndex];
         }
 

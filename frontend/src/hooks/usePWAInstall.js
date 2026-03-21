@@ -71,7 +71,7 @@ const usePWAInstall = () => {
                 alert("Please use the 'Share' menu and 'Add to Home Screen' in Safari.");
                 return;
             }
-            alert("App is not ready for installation yet. \n\nIMPORTANT: \n1. Use 'http://localhost:5173' (IP addresses don't work without HTTPS). \n2. Wait a few seconds for the Service Worker to register. \n3. Ensure you are NOT in Incognito/Private mode. \n4. Use Chrome, Edge, or Safari.");
+            alert("App isn't ready for one-click installation yet. \n\nTroubleshooting:\n1. Use 'localhost:5173' (Avoid IP addresses like 192.168...)\n2. Refresh the page once or twice.\n3. Chrome on Android requires a PNG icon (I detected only SVGs). \n4. Ensure you aren't in 'Private/Incognito' mode.");
             return;
         }
 

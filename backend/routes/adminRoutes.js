@@ -200,7 +200,7 @@ router.post('/plans', auth, admin, async (req, res) => {
         if (!name || !amount || !daily || !tier) {
             return res.status(400).json({ message: 'All fields required: name, amount, daily, tier' });
         }
-        const plan = new Plan({ name, amount, daily, tier });
+        const plan = new Plan({ name, amount, daily, tier, isActive: true });
         await plan.save();
         cache.del(['adminPlans', 'activePlans']);
         res.json({ message: 'Plan created', plan });

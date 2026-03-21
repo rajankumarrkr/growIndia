@@ -25,15 +25,6 @@
 <body>
   <div id="root"></div>
   <script type="module" src="/src/main.jsx"></script>
-  <script>
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/sw.js', { type: 'module' })
-          .then(reg => console.log('SW registered:', reg))
-          .catch(err => console.log('SW contribution failed:', err));
-      });
-    }
-  </script>
 </body>
 
 </html>
