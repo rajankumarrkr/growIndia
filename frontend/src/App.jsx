@@ -13,6 +13,7 @@ const AdminLogin = lazy(() => import('./pages/AdminLogin'));
 const Investments = lazy(() => import('./pages/Investments'));
 const Wallet = lazy(() => import('./pages/Wallet'));
 const History = lazy(() => import('./pages/History'));
+import InstallBanner from './components/InstallBanner';
 
 const SyncScreen = () => (
     <div style={{ width: '100vw', height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#f8fafc' }}>
@@ -55,6 +56,7 @@ function App() {
     return (
         <AuthProvider>
             <BrowserRouter>
+                <InstallBanner />
                 <Routes>
                     <Route path="/" element={<Navigate to="/login" replace />} />
                     <Route path="/login" element={

@@ -10,7 +10,7 @@ export default defineConfig({
         tailwindcss(),
         VitePWA({
             registerType: 'autoUpdate',
-            includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'icons/*.png'],
+            includeAssets: ['favicon.svg', 'icons/*.svg'],
             manifest: {
                 name: 'Grow India',
                 short_name: 'GrowIndia',
