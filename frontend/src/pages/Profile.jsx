@@ -1,12 +1,14 @@
 import React, { useContext, useState } from 'react';
 import Layout from '../components/Layout';
 import { AuthContext } from '../context/AuthContext';
-import { User, Shield, CreditCard, History, Headphones, LogOut, ChevronRight, Settings, Banknote, ShieldCheck, Mail, MapPin, Activity, Wallet, Smartphone, Landmark, X, Zap } from 'lucide-react';
+import { User, Shield, CreditCard, History, Headphones, LogOut, ChevronRight, Settings, Banknote, ShieldCheck, Mail, MapPin, Activity, Wallet, Smartphone, Landmark, X, Zap, Download } from 'lucide-react';
 import api from '../api/axios';
 import { Link } from 'react-router-dom';
+import usePWAInstall from '../hooks/usePWAInstall';
 
 const Profile = () => {
     const { user, logout, setUser } = useContext(AuthContext);
+    const { isInstalled, handleInstall } = usePWAInstall();
     const [showBankModal, setShowBankModal] = useState(false);
     const [bankData, setBankData] = useState({
         holderName: user?.bankDetails?.holderName || '',
@@ -144,6 +146,17 @@ const Profile = () => {
                     <LogOut size={16} /> Logout
                 </button>
             </div>
+
+            {!isInstalled && (
+                <div className="px-4 mb-24">
+                    <button
+                        onClick={handleInstall}
+                        className="w-full fintech-card !p-5 flex items-center justify-center gap-3 text-[11px] font-black uppercase tracking-[0.2em] text-royal-blue bg-blue-50/50 border-blue-100/50 hover:bg-blue-50 hover:border-blue-200 transition-all active:scale-[0.98]"
+                    >
+                        <Download size={16} /> Install Grow India App
+                    </button>
+                </div>
+            )}
 
             {/* Bank Repository Modal */}
             <div className={`fixed inset-0 z-[200] flex items-end justify-center transition-all duration-500 ${showBankModal ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}>

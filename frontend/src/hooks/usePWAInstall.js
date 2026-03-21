@@ -40,8 +40,11 @@ const usePWAInstall = () => {
         checkIOS();
         checkDismissed();
 
+        console.log('PWA Detection:', { isStandalone, isIOS, isDismissed });
+
         // 4. Capture the beforeinstallprompt event
         const handleBeforeInstallPrompt = (e) => {
+            console.log('beforeinstallprompt event fired!');
             // Prevent the default browser prompt
             e.preventDefault();
             // Store the event so it can be triggered later
@@ -61,7 +64,16 @@ const usePWAInstall = () => {
     }, []);
 
     const handleInstall = async () => {
-        if (!installPrompt) return;
+        if (!installPrompt) {
+            if (isIOS) {
+                // For iOS, the instructions are already shown in the banner.
+                // For the Profile page button, we can show an alert or just rely on the banner.
+                alert("Please use the 'Share' menu and 'Add to Home Screen' in Safari.");
+                return;
+            }
+            alert("App is not ready for installation yet. \n\nIMPORTANT: \n1. Use 'http://localhost:5173' (IP addresses don't work without HTTPS). \n2. Wait a few seconds for the Service Worker to register. \n3. Ensure you are NOT in Incognito/Private mode. \n4. Use Chrome, Edge, or Safari.");
+            return;
+        }
 
         // Show the install prompt
         installPrompt.prompt();
