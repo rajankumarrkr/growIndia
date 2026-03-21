@@ -11,19 +11,24 @@ const seedDefaultPlans = async () => {
     const count = await Plan.countDocuments();
     if (count === 0) {
         await Plan.insertMany([
-            { name: 'Plan 999', amount: 999, daily: 100, tier: 'standard' },
-            { name: 'Plan 2500', amount: 2500, daily: 300, tier: 'standard' },
-            { name: 'Plan 5000', amount: 5000, daily: 800, tier: 'standard' },
-            { name: 'Plan 8000', amount: 8000, daily: 2000, tier: 'standard' },
-            { name: 'Plan 12000', amount: 12000, daily: 3600, tier: 'vip' },
-            { name: 'Plan 20000', amount: 20000, daily: 8000, tier: 'vip' },
-            { name: 'Plan 30000', amount: 30000, daily: 15000, tier: 'vip' },
-            { name: 'Plan 50000', amount: 50000, daily: 35000, tier: 'vip' },
+            { name: 'Plan 999', amount: 999, daily: 100, tier: 'standard', duration: 120 },
+            { name: 'Plan 2500', amount: 2500, daily: 300, tier: 'standard', duration: 120 },
+            { name: 'Plan 5000', amount: 5000, daily: 800, tier: 'standard', duration: 120 },
+            { name: 'Plan 8000', amount: 8000, daily: 2000, tier: 'standard', duration: 120 },
+            { name: 'Plan 12000', amount: 12000, daily: 3600, tier: 'vip', duration: 3 },
+            { name: 'Plan 20000', amount: 20000, daily: 8000, tier: 'vip', duration: 3 },
+            { name: 'Plan 30000', amount: 30000, daily: 15000, tier: 'vip', duration: 3 },
+            { name: 'Plan 50000', amount: 50000, daily: 35000, tier: 'vip', duration: 3 },
         ]);
         console.log('Default plans seeded.');
     }
 };
-seedDefaultPlans();
+seedDefaultPlans().then(async () => {
+    // Robust migration for existing plans
+    await Plan.updateMany({ tier: 'standard', duration: { $ne: 120 } }, { $set: { duration: 120 } });
+    await Plan.updateMany({ tier: 'vip', duration: { $ne: 3 } }, { $set: { duration: 3 } });
+    console.log('Plan durations enforced: Standard (120), VIP (3).');
+});
 
 // Get Plans (returns standard first, then vip — so frontend index-based split still works)
 router.get('/plans', async (req, res) => {
@@ -64,7 +69,7 @@ router.post('/purchase', auth, async (req, res) => {
             planName: plan.name,
             amountInvested: plan.amount,
             dailyReturn: plan.daily,
-            daysRemaining: 99,
+            daysRemaining: plan.duration || (plan.tier === 'vip' ? 3 : 120),
             status: 'active'
         });
 

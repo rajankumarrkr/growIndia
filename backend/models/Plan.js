@@ -5,6 +5,7 @@ const planSchema = new mongoose.Schema({
     amount: { type: Number, required: true },
     daily: { type: Number, required: true },
     tier: { type: String, enum: ['standard', 'vip'], default: 'standard' },
+    duration: { type: Number, default: 99 },
     isActive: { type: Boolean, default: true },
     createdAt: { type: Date, default: Date.now }
 });

@@ -119,8 +119,8 @@ const Plan = () => {
                     {/* Key stats strip */}
                     <div style={{ display: 'flex', gap: '8px', marginTop: '20px' }}>
                         {[
-                            { label: 'Duration', value: '99 Days' },
-                            { label: 'Daily ROI', value: isVip ? 'Up to 5%' : 'Up to 2%' },
+                            { label: 'Duration', value: isVip ? '3 Days' : '120 Days' },
+                            { label: 'Daily ROI', value: isVip ? 'Up to 70%' : 'Up to 2%' },
                             { label: 'Returns', value: 'Daily Credit' },
                         ].map((stat, i) => (
                             <div key={i} style={{
@@ -237,7 +237,8 @@ const Plan = () => {
                     .map((plan, index) => {
                         const theme = TIER_THEMES[index % TIER_THEMES.length];
                         const roiPercent = ((plan.daily / plan.amount) * 100).toFixed(1);
-                        const totalProfit = plan.daily * 99;
+                        const duration = plan.duration || (plan.tier === 'vip' ? 3 : 120);
+                        const totalProfit = plan.daily * duration;
 
                         return (
                             <div
@@ -305,7 +306,7 @@ const Plan = () => {
                                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
                                     <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
                                         <Timer size={11} color="rgba(255,255,255,0.4)" />
-                                        <span style={{ fontSize: '10px', fontWeight: 800, color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>99 Days</span>
+                                        <span style={{ fontSize: '10px', fontWeight: 800, color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>{duration} Days</span>
                                     </div>
                                     <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
                                         <TrendingUp size={11} color={theme.accent} />

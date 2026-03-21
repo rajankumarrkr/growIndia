@@ -196,11 +196,11 @@ router.get('/plans', auth, admin, async (req, res) => {
 // Create new plan
 router.post('/plans', auth, admin, async (req, res) => {
     try {
-        const { name, amount, daily, tier } = req.body;
+        const { name, amount, daily, tier, duration } = req.body;
         if (!name || !amount || !daily || !tier) {
             return res.status(400).json({ message: 'All fields required: name, amount, daily, tier' });
         }
-        const plan = new Plan({ name, amount, daily, tier, isActive: true });
+        const plan = new Plan({ name, amount, daily, tier, duration, isActive: true });
         await plan.save();
         cache.del(['adminPlans', 'activePlans']);
         res.json({ message: 'Plan created', plan });
