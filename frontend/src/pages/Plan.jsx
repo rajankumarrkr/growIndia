@@ -58,14 +58,14 @@ const Plan = () => {
         setBuying(planId);
         try {
             await api.post('/invest/purchase', { planId });
-            setMsg({ text: 'Investment Activated!', type: 'success' });
+            setMsg({ text: 'Investment Activated Successfully!', type: 'success' });
             const profile = await api.get('/user/profile');
             setUser(profile.data);
         } catch (err) {
             setMsg({ text: err.response?.data?.message || 'Activation Failed', type: 'error' });
         }
         setBuying(null);
-        setTimeout(() => setMsg({ text: '', type: '' }), 3000);
+        setTimeout(() => setMsg({ text: '', type: '' }), 3500);
     };
 
     const isVip = activeTab === 'VIP';
@@ -200,25 +200,52 @@ const Plan = () => {
                 </div>
             </div>
 
-            {/* Notification */}
+            {/* Custom Toast Notification */}
             {msg.text && (
-                <div style={{
-                    padding: '14px 16px', borderRadius: '16px', marginBottom: '20px',
-                    display: 'flex', alignItems: 'center', gap: '12px',
-                    background: msg.type === 'success' ? '#f0fdf4' : '#fef2f2',
-                    border: `1px solid ${msg.type === 'success' ? '#bbf7d0' : '#fecaca'}`,
-                    color: msg.type === 'success' ? '#15803d' : '#dc2626',
-                    fontSize: '13px', fontWeight: 700,
-                }}>
+                <>
+                    <style>
+                        {`
+                        @keyframes toastSlideIn {
+                            0% { transform: translate(-50%, -20px) scale(0.9); opacity: 0; }
+                            12% { transform: translate(-50%, 30px) scale(1); opacity: 1; }
+                            88% { transform: translate(-50%, 30px) scale(1); opacity: 1; }
+                            100% { transform: translate(-50%, -20px) scale(0.9); opacity: 0; }
+                        }
+                        `}
+                    </style>
                     <div style={{
-                        width: '32px', height: '32px', borderRadius: '10px', flexShrink: 0,
-                        background: msg.type === 'success' ? '#22c55e' : '#ef4444',
-                        display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white',
+                        position: 'fixed',
+                        top: '0',
+                        left: '50%',
+                        zIndex: 9999,
+                        padding: '10px 20px 10px 10px',
+                        borderRadius: '999px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '12px',
+                        background: 'rgba(20, 20, 20, 0.95)',
+                        backdropFilter: 'blur(16px)',
+                        WebkitBackdropFilter: 'blur(16px)',
+                        border: '1px solid rgba(255,255,255,0.1)',
+                        color: 'white',
+                        fontSize: '13px',
+                        fontWeight: 700,
+                        boxShadow: '0 20px 40px -10px rgba(0,0,0,0.5)',
+                        animation: 'toastSlideIn 3.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards',
+                        pointerEvents: 'none',
+                        width: 'max-content',
                     }}>
-                        {msg.type === 'success' ? <Check size={16} /> : <Activity size={16} />}
+                        <div style={{
+                            width: '32px', height: '32px', borderRadius: '50%', flexShrink: 0,
+                            background: msg.type === 'success' ? 'linear-gradient(135deg, #22c55e, #16a34a)' : 'linear-gradient(135deg, #ef4444, #dc2626)',
+                            display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white',
+                            boxShadow: msg.type === 'success' ? '0 0 15px rgba(34,197,94,0.4)' : '0 0 15px rgba(239,68,68,0.4)',
+                        }}>
+                            {msg.type === 'success' ? <Check size={16} strokeWidth={3} /> : <Activity size={16} strokeWidth={3} />}
+                        </div>
+                        <span style={{ letterSpacing: '0.02em', paddingRight: '4px' }}>{msg.text}</span>
                     </div>
-                    {msg.text}
-                </div>
+                </>
             )}
 
             {/* Skeletons */}
