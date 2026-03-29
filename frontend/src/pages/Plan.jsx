@@ -57,15 +57,24 @@ const Plan = () => {
     const handleBuy = async (planId) => {
         setBuying(planId);
         try {
-            await api.post('/invest/purchase', { planId });
+            const res = await api.post('/invest/purchase', { planId });
             setMsg({ text: 'Investment Activated Successfully!', type: 'success' });
-            const profile = await api.get('/user/profile');
-            setUser(profile.data);
+            
+            // Remove loading state immediately for snappy feeling
+            setBuying(null);
+            setTimeout(() => setMsg({ text: '', type: '' }), 3500);
+
+            // Optimistically update or fetch in background
+            if (res.data?.user) {
+                setUser(res.data.user);
+            } else {
+                api.get('/user/profile').then(profile => setUser(profile.data)).catch(console.error);
+            }
         } catch (err) {
             setMsg({ text: err.response?.data?.message || 'Activation Failed', type: 'error' });
+            setBuying(null);
+            setTimeout(() => setMsg({ text: '', type: '' }), 3500);
         }
-        setBuying(null);
-        setTimeout(() => setMsg({ text: '', type: '' }), 3500);
     };
 
     const isVip = activeTab === 'VIP';
@@ -207,8 +216,8 @@ const Plan = () => {
                         {`
                         @keyframes toastSlideIn {
                             0% { transform: translate(-50%, -20px) scale(0.9); opacity: 0; }
-                            12% { transform: translate(-50%, 30px) scale(1); opacity: 1; }
-                            88% { transform: translate(-50%, 30px) scale(1); opacity: 1; }
+                            8% { transform: translate(-50%, 30px) scale(1); opacity: 1; }
+                            92% { transform: translate(-50%, 30px) scale(1); opacity: 1; }
                             100% { transform: translate(-50%, -20px) scale(0.9); opacity: 0; }
                         }
                         `}
