@@ -7,7 +7,7 @@ import {
     Star, Crown, Plus, Pencil, Trash2, ArrowUpCircle,
     ArrowDownCircle, RefreshCw, BarChart3, ShieldCheck,
     Bell, ChevronRight, Clock, IndianRupee, UserCheck,
-    Wallet, FileText
+    Wallet, FileText, Download
 } from 'lucide-react';
 import Layout from '../components/Layout';
 import { AuthContext } from '../context/AuthContext';
@@ -74,6 +74,7 @@ const AdminDashboard = () => {
     const [activeTab, setActiveTab] = useState('overview');
     const [loading, setLoading] = useState(true);
     const [search, setSearch] = useState('');
+    const [qrFile, setQrFile] = useState(null);
 
     const [newPlan, setNewPlan] = useState({ name: '', amount: '', daily: '', tier: 'standard' });
     const [editingPlan, setEditingPlan] = useState(null);
@@ -137,6 +138,24 @@ const AdminDashboard = () => {
         }
     };
 
+    const handleDownloadProof = async (rechargeId, name) => {
+        try {
+            const res = await api.get(`/admin/recharge/${rechargeId}/proof`);
+            if (!res.data.screenshot) return alert('Proof not found');
+            
+            const response = await fetch(res.data.screenshot);
+            const blob = await response.blob();
+            const link = document.createElement('a');
+            link.href = window.URL.createObjectURL(blob);
+            link.download = `proof-${name}-${Date.now()}.jpg`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        } catch (err) {
+            alert('Download failed. You can try right-clicking "View Proof" and saving the image.');
+        }
+    };
+
     const handleCreatePlan = async (e) => {
         e.preventDefault();
         try {
@@ -161,13 +180,27 @@ const AdminDashboard = () => {
 
     const handleUpdateSettings = async (e) => {
         e.preventDefault();
-        try { await api.put('/admin/settings', settings); alert('Settings updated!'); }
+        try {
+            const formData = new FormData();
+            formData.append('upiId', settings.upiId);
+            if (qrFile) {
+                formData.append('qrCode', qrFile);
+            } else {
+                formData.append('qrCode', settings.qrCode);
+            }
+            await api.put('/admin/settings', formData, {
+                headers: { 'Content-Type': 'multipart/form-data' }
+            });
+            alert('Settings updated!');
+            setQrFile(null);
+        }
         catch { alert('Failed to update'); }
     };
 
     const handleQrUpload = (e) => {
         const file = e.target.files[0];
         if (file) {
+            setQrFile(file);
             const reader = new FileReader();
             reader.onloadend = () => setSettings({ ...settings, qrCode: reader.result });
             reader.readAsDataURL(file);
@@ -463,12 +496,20 @@ const AdminDashboard = () => {
                                                     <span className="text-sm font-mono text-slate-500 bg-slate-100 px-2 py-1 rounded-lg">{r.utr || 'N/A'}</span>
                                                 </td>
                                                 <td className="py-4 px-5">
-                                                    <button
-                                                        onClick={() => handleViewProof(r._id)}
-                                                        className="flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 text-blue-600 rounded-lg text-xs font-bold hover:bg-blue-600 hover:text-white transition-all shadow-sm"
-                                                    >
-                                                        <ImageIcon size={14} /> View Proof
-                                                    </button>
+                                                    <div className="flex flex-col gap-2">
+                                                        <button
+                                                            onClick={() => handleViewProof(r._id)}
+                                                            className="flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 text-blue-600 rounded-lg text-xs font-bold hover:bg-blue-600 hover:text-white transition-all shadow-sm"
+                                                        >
+                                                            <ImageIcon size={14} /> View
+                                                        </button>
+                                                        <button
+                                                            onClick={() => handleDownloadProof(r._id, r.userId?.name)}
+                                                            className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-50 text-slate-600 rounded-lg text-xs font-bold hover:bg-slate-600 hover:text-white transition-all shadow-sm"
+                                                        >
+                                                            <Download size={14} /> Download
+                                                        </button>
+                                                    </div>
                                                 </td>
                                                 <td className="py-4 px-5 text-right">
                                                     <div className="flex items-center justify-end gap-2">

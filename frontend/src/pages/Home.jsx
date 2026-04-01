@@ -17,6 +17,7 @@ const Home = () => {
     const [amount, setAmount] = useState('');
     const [utr, setUtr] = useState('');
     const [screenshot, setScreenshot] = useState('');
+    const [screenshotFile, setScreenshotFile] = useState(null);
     const [msg, setMsg] = useState('');
     const [depositInfo, setDepositInfo] = useState({ upiId: 'Loading...', qrCode: '' });
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -73,6 +74,7 @@ const Home = () => {
     const handleScreenshotUpload = (e) => {
         const file = e.target.files[0];
         if (file) {
+            setScreenshotFile(file);
             const reader = new FileReader();
             reader.onloadend = () => setScreenshot(reader.result);
             reader.readAsDataURL(file);
@@ -87,12 +89,19 @@ const Home = () => {
 
     const handleRecharge = async (e) => {
         e.preventDefault();
-        if (!screenshot) { setMsg('Please upload payment screenshot'); setTimeout(() => setMsg(''), 2000); return; }
+        if (!screenshotFile) { setMsg('Please upload payment screenshot'); setTimeout(() => setMsg(''), 2000); return; }
         setIsSubmitting(true);
         try {
-            await api.post('/wallet/recharge', { amount, utr, screenshot });
+            const formData = new FormData();
+            formData.append('amount', amount);
+            formData.append('utr', utr);
+            formData.append('screenshot', screenshotFile);
+
+            await api.post('/wallet/recharge', formData, {
+                headers: { 'Content-Type': 'multipart/form-data' }
+            });
             setMsg('Deposit Request Submitted!');
-            setTimeout(() => { setShowRecharge(false); setMsg(''); setAmount(''); setUtr(''); setScreenshot(''); setIsSubmitting(false); }, 2500);
+            setTimeout(() => { setShowRecharge(false); setMsg(''); setAmount(''); setUtr(''); setScreenshot(''); setScreenshotFile(null); setIsSubmitting(false); }, 2500);
         } catch (err) {
             setMsg(err.response?.data?.message || 'Submission Failed');
             setIsSubmitting(false);

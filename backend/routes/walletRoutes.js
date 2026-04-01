@@ -3,6 +3,7 @@ const { auth } = require('../middleware/auth');
 const Transaction = require('../models/Transaction');
 const User = require('../models/User');
 const AdminSettings = require('../models/AdminSettings');
+const { upload, uploadToCloudinary } = require('../middleware/upload');
 const router = express.Router();
 
 // Recharge Request
@@ -20,16 +21,29 @@ router.get('/deposit-info', auth, async (req, res) => {
 });
 
 // Recharge Request
-router.post('/recharge', auth, async (req, res) => {
+router.post('/recharge', auth, upload.single('screenshot'), async (req, res) => {
     try {
-        const { amount, utr, screenshot } = req.body;
+        const { amount, utr } = req.body;
         if (amount < 300) return res.status(400).json({ message: 'Minimum recharge is 300 INR' });
+
+        let screenshotUrl = '';
+        if (req.file) {
+            const result = await uploadToCloudinary(req.file.buffer, 'recharges');
+            screenshotUrl = result.secure_url;
+        } else if (req.body.screenshot && req.body.screenshot.startsWith('data:image')) {
+            // If someone sends base64, we should still handle it but upload to Cloudinary
+            const cloudinary = require('../config/cloudinary');
+            const result = await cloudinary.uploader.upload(req.body.screenshot, { folder: 'recharges' });
+            screenshotUrl = result.secure_url;
+        }
+
+        if (!screenshotUrl) return res.status(400).json({ message: 'Please upload payment screenshot' });
 
         const recharge = new Transaction({
             userId: req.user.id,
             amount,
             utr,
-            screenshot,
+            screenshot: screenshotUrl,
             type: 'recharge',
             status: 'pending'
         });

@@ -6,6 +6,7 @@ const AdminSettings = require('../models/AdminSettings');
 const Plan = require('../models/Plan');
 const { processDailyIncome } = require('../utils/incomeLogic');
 const cache = require('../utils/cache');
+const { upload, uploadToCloudinary } = require('../middleware/upload');
 const router = express.Router();
 
 // Get Admin Stats
@@ -58,15 +59,26 @@ router.get('/settings', auth, admin, async (req, res) => {
     }
 });
 
-router.put('/settings', auth, admin, async (req, res) => {
+router.put('/settings', auth, admin, upload.single('qrCode'), async (req, res) => {
     try {
-        const { upiId, qrCode } = req.body;
+        const { upiId } = req.body;
+        let qrCodeUrl = req.body.qrCode;
+
+        if (req.file) {
+            const result = await uploadToCloudinary(req.file.buffer, 'admin_settings');
+            qrCodeUrl = result.secure_url;
+        } else if (req.body.qrCode && req.body.qrCode.startsWith('data:image')) {
+            const cloudinary = require('../config/cloudinary');
+            const result = await cloudinary.uploader.upload(req.body.qrCode, { folder: 'admin_settings' });
+            qrCodeUrl = result.secure_url;
+        }
+
         let settings = await AdminSettings.findOne();
         if (!settings) {
-            settings = new AdminSettings({ upiId, qrCode });
+            settings = new AdminSettings({ upiId, qrCode: qrCodeUrl });
         } else {
             if (upiId !== undefined) settings.upiId = upiId;
-            if (qrCode !== undefined) settings.qrCode = qrCode;
+            if (qrCodeUrl !== undefined) settings.qrCode = qrCodeUrl;
         }
         await settings.save();
         res.json({ message: 'Settings updated successfully', settings });
