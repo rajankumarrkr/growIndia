@@ -540,19 +540,31 @@ const Home = () => {
                                     </div>
                                 </div>
 
-                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
-                                    <div>
-                                        <p style={{ fontSize: '9px', fontWeight: 700, color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '4px' }}>VALID FOR</p>
-                                        <p style={{ fontSize: '13px', fontWeight: 700 }}>EVERYONE</p>
-                                    </div>
-                                    <div style={{ background: 'white', padding: '8px', borderRadius: '12px', width: '80px', height: '80px' }}>
+                                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '10px 0' }}>
+                                    <div style={{ 
+                                        background: 'white', 
+                                        padding: '12px', 
+                                        borderRadius: '20px', 
+                                        width: '180px', 
+                                        height: '180px',
+                                        boxShadow: '0 12px 40px rgba(0,0,0,0.4)',
+                                        border: '4px solid rgba(255,255,255,0.1)'
+                                    }}>
                                         {depositInfo.qrCode ? (
                                             <img src={depositInfo.qrCode} alt="QR" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
                                         ) : (
-                                            <div style={{ width: '100%', height: '100%', background: '#f1f5f9', borderRadius: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                                                <Zap size={20} color="#cbd5e1" />
+                                            <div style={{ width: '100%', height: '100%', background: '#f1f5f9', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                                <Zap size={40} color="#cbd5e1" />
                                             </div>
                                         )}
+                                    </div>
+                                    <div style={{ marginTop: '20px', textAlign: 'center' }}>
+                                        <p style={{ fontSize: '10px', fontWeight: 800, color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase', letterSpacing: '0.15em', marginBottom: '4px' }}>Scan with PhonePe, GPay, Paytm</p>
+                                        <div style={{ display: 'flex', gap: '8px', justifyContent: 'center', opacity: 0.6 }}>
+                                            <div style={{ width: '4px', height: '4px', borderRadius: '50%', background: '#22c55e' }} />
+                                            <div style={{ width: '4px', height: '4px', borderRadius: '50%', background: '#3b82f6' }} />
+                                            <div style={{ width: '4px', height: '4px', borderRadius: '50%', background: '#eab308' }} />
+                                        </div>
                                     </div>
                                 </div>
                             </div>
