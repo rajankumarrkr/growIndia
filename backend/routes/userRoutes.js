@@ -27,4 +27,28 @@ router.post('/bank-details', auth, async (req, res) => {
     }
 });
 
+// Change Password
+router.post('/change-password', auth, async (req, res) => {
+    try {
+        const { oldPassword, newPassword } = req.body;
+        if (!oldPassword || !newPassword) {
+            return res.status(400).json({ message: 'Both old and new passwords are required' });
+        }
+
+        const user = await User.findById(req.user.id);
+        const isMatch = await user.comparePassword(oldPassword);
+        
+        if (!isMatch) {
+            return res.status(400).json({ message: 'Incorrect old password' });
+        }
+
+        user.password = newPassword;
+        await user.save();
+        
+        res.json({ message: 'Password updated successfully' });
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+});
+
 module.exports = router;

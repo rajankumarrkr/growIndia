@@ -10,11 +10,19 @@ const Profile = () => {
     const { user, logout, setUser } = useContext(AuthContext);
     const { isInstalled, handleInstall } = usePWAInstall();
     const [showBankModal, setShowBankModal] = useState(false);
+    const [showPasswordModal, setShowPasswordModal] = useState(false);
     const [bankData, setBankData] = useState({
         holderName: user?.bankDetails?.holderName || '',
         accountNumber: user?.bankDetails?.accountNumber || '',
         ifsc: user?.bankDetails?.ifsc || ''
     });
+    const [passwordData, setPasswordData] = useState({
+        oldPassword: '',
+        newPassword: '',
+        confirmPassword: ''
+    });
+    const [passwordError, setPasswordError] = useState('');
+    const [passwordSuccess, setPasswordSuccess] = useState('');
 
     const handleBankUpdate = async (e) => {
         e.preventDefault();
@@ -26,6 +34,32 @@ const Profile = () => {
         } catch (err) { }
     };
 
+    const handlePasswordChange = async (e) => {
+        e.preventDefault();
+        setPasswordError('');
+        setPasswordSuccess('');
+        
+        if (passwordData.newPassword !== passwordData.confirmPassword) {
+            setPasswordError('New passwords do not match');
+            return;
+        }
+
+        try {
+            const res = await api.post('/user/change-password', {
+                oldPassword: passwordData.oldPassword,
+                newPassword: passwordData.newPassword
+            });
+            setPasswordSuccess(res.data.message);
+            setPasswordData({ oldPassword: '', newPassword: '', confirmPassword: '' });
+            setTimeout(() => {
+                setShowPasswordModal(false);
+                setPasswordSuccess('');
+            }, 2000);
+        } catch (err) {
+            setPasswordError(err.response?.data?.message || 'Failed to update password');
+        }
+    };
+
     const menuSections = [
         {
             title: 'Financial Modules',
@@ -34,6 +68,7 @@ const Profile = () => {
                 { name: 'Wallet Hub', icon: <Wallet className="text-slate-600" />, path: '/wallet' },
                 { name: 'History', icon: <History className="text-slate-400" />, path: '/history' },
                 { name: 'Bank Registry', icon: <Landmark className="text-royal-blue" />, action: () => setShowBankModal(true) },
+                { name: 'Security Protocol', icon: <Shield className="text-emerald-500" />, action: () => setShowPasswordModal(true) },
             ]
         },
         {
@@ -217,6 +252,83 @@ const Profile = () => {
 
                         <button className="btn-fintech btn-fintech-primary w-full mt-8 uppercase tracking-[0.2em] text-[11px] font-black h-14 rounded-2xl">
                             Update Withdrawal Info
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            {/* Security Protocol Modal */}
+            <div className={`fixed inset-0 z-[200] flex items-end justify-center transition-all duration-500 ${showPasswordModal ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}>
+                {/* Backdrop overlay */}
+                <div 
+                    className={`absolute inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity duration-500 ${showPasswordModal ? 'opacity-100' : 'opacity-0'}`}
+                    onClick={() => setShowPasswordModal(false)}
+                />
+                
+                {/* Modal Content */}
+                <div className={`relative w-full max-w-xl bg-white rounded-t-[2.5rem] p-8 pb-12 shadow-2xl transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${showPasswordModal ? 'translate-y-0' : 'translate-y-full'}`}>
+                    <div className="w-12 h-1.5 bg-slate-200 rounded-full mx-auto mb-8" />
+
+                    <div className="flex justify-between items-start mb-8">
+                        <div>
+                            <div className="w-12 h-12 bg-emerald-50 rounded-2xl flex items-center justify-center text-emerald-500 mb-4">
+                                <Shield size={24} />
+                            </div>
+                            <h2 className="text-2xl font-black text-slate-900 tracking-tight">Security Protocol</h2>
+                            <p className="text-label mt-2">Update authentication credentials</p>
+                        </div>
+                        <button onClick={() => setShowPasswordModal(false)} className="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center text-slate-400 hover:bg-slate-100 transition-colors">
+                            <X size={20} />
+                        </button>
+                    </div>
+
+                    <form onSubmit={handlePasswordChange} className="space-y-5">
+                        {passwordError && (
+                            <div className="p-4 bg-red-50 border border-red-100 rounded-2xl text-red-500 text-[10px] font-black uppercase tracking-widest text-center">
+                                {passwordError}
+                            </div>
+                        )}
+                        {passwordSuccess && (
+                            <div className="p-4 bg-emerald-50 border border-emerald-100 rounded-2xl text-emerald-500 text-[10px] font-black uppercase tracking-widest text-center">
+                                {passwordSuccess}
+                            </div>
+                        )}
+                        <div className="space-y-2">
+                            <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Current Password</label>
+                            <input
+                                type="password"
+                                placeholder="Verify old credentials"
+                                className="w-full h-14 bg-slate-50/50 border border-slate-200/60 rounded-2xl px-5 text-sm font-black text-slate-900 focus:bg-white focus:border-emerald-500/50 focus:ring-4 focus:ring-emerald-500/10 transition-all outline-none"
+                                value={passwordData.oldPassword}
+                                onChange={(e) => setPasswordData({ ...passwordData, oldPassword: e.target.value })}
+                                required
+                            />
+                        </div>
+                        <div className="space-y-2">
+                            <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">New Password</label>
+                            <input
+                                type="password"
+                                placeholder="Minimum 6 characters"
+                                className="w-full h-14 bg-slate-50/50 border border-slate-200/60 rounded-2xl px-5 text-sm font-black text-slate-900 focus:bg-white focus:border-royal-blue/50 focus:ring-4 focus:ring-royal-blue/10 transition-all outline-none"
+                                value={passwordData.newPassword}
+                                onChange={(e) => setPasswordData({ ...passwordData, newPassword: e.target.value })}
+                                required
+                            />
+                        </div>
+                        <div className="space-y-2">
+                            <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Confirm New Password</label>
+                            <input
+                                type="password"
+                                placeholder="Repeat for precision"
+                                className="w-full h-14 bg-slate-50/50 border border-slate-200/60 rounded-2xl px-5 text-sm font-black text-slate-900 focus:bg-white focus:border-royal-blue/50 focus:ring-4 focus:ring-royal-blue/10 transition-all outline-none"
+                                value={passwordData.confirmPassword}
+                                onChange={(e) => setPasswordData({ ...passwordData, confirmPassword: e.target.value })}
+                                required
+                            />
+                        </div>
+
+                        <button className="btn-fintech bg-emerald-500 hover:bg-emerald-600 text-white w-full mt-8 uppercase tracking-[0.2em] text-[11px] font-black h-14 rounded-2xl shadow-lg shadow-emerald-200">
+                            Update Credentials
                         </button>
                     </form>
                 </div>
