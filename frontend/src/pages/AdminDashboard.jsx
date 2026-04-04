@@ -75,10 +75,13 @@ const AdminDashboard = () => {
     const [loading, setLoading] = useState(true);
     const [search, setSearch] = useState('');
     const [qrFile, setQrFile] = useState(null);
+    const [processingActions, setProcessingActions] = useState({});
 
     const [newPlan, setNewPlan] = useState({ name: '', amount: '', daily: '', tier: 'standard' });
     const [editingPlan, setEditingPlan] = useState(null);
     const [planMsg, setPlanMsg] = useState('');
+    const [isProcessingPlan, setIsProcessingPlan] = useState(false);
+    const [isProcessingSettings, setIsProcessingSettings] = useState(false);
     const [isProcessingIncome, setIsProcessingIncome] = useState(false);
     const [incomeResult, setIncomeResult] = useState(null);
 
@@ -115,13 +118,37 @@ const AdminDashboard = () => {
     };
 
     const handleRechargeAction = async (id, status) => {
-        try { await api.patch(`/admin/recharge/${id}`, { status }); fetchAdminData(); }
-        catch { alert('Action failed'); }
+        if (processingActions[id]) return;
+        setProcessingActions(prev => ({ ...prev, [id]: true }));
+        try { 
+            await api.patch(`/admin/recharge/${id}`, { status }); 
+            // Optimized refresh: only recharges and stats
+            const [rechargesRes, statsRes] = await Promise.all([
+                api.get('/admin/recharges/pending'),
+                api.get('/admin/stats')
+            ]);
+            setRecharges(rechargesRes.data);
+            setStats(statsRes.data);
+        }
+        catch (err) { alert(err.response?.data?.message || 'Action failed'); }
+        finally { setProcessingActions(prev => { const next = { ...prev }; delete next[id]; return next; }); }
     };
 
     const handleWithdrawAction = async (id, status) => {
-        try { await api.patch(`/admin/withdraw/${id}`, { status }); fetchAdminData(); }
-        catch { alert('Action failed'); }
+        if (processingActions[id]) return;
+        setProcessingActions(prev => ({ ...prev, [id]: true }));
+        try { 
+            await api.patch(`/admin/withdraw/${id}`, { status }); 
+            // Optimized refresh: only withdrawals and stats
+            const [withdrawalsRes, statsRes] = await Promise.all([
+                api.get('/admin/withdrawals/pending'),
+                api.get('/admin/stats')
+            ]);
+            setWithdrawals(withdrawalsRes.data);
+            setStats(statsRes.data);
+        }
+        catch (err) { alert(err.response?.data?.message || 'Action failed'); }
+        finally { setProcessingActions(prev => { const next = { ...prev }; delete next[id]; return next; }); }
     };
 
     const handleViewProof = async (id) => {
@@ -158,12 +185,15 @@ const AdminDashboard = () => {
 
     const handleCreatePlan = async (e) => {
         e.preventDefault();
+        if (isProcessingPlan) return;
+        setIsProcessingPlan(true);
         try {
             await api.post('/admin/plans', { ...newPlan, amount: Number(newPlan.amount), daily: Number(newPlan.daily) });
             setPlanMsg('✅ Plan created!');
             setNewPlan({ name: '', amount: '', daily: '', tier: 'standard' });
             fetchAdminData();
         } catch (err) { setPlanMsg(err.response?.data?.message || 'Error'); }
+        finally { setIsProcessingPlan(false); }
         setTimeout(() => setPlanMsg(''), 3000);
     };
 
@@ -180,6 +210,8 @@ const AdminDashboard = () => {
 
     const handleUpdateSettings = async (e) => {
         e.preventDefault();
+        if (isProcessingSettings) return;
+        setIsProcessingSettings(true);
         try {
             const formData = new FormData();
             formData.append('upiId', settings.upiId);
@@ -195,6 +227,7 @@ const AdminDashboard = () => {
             setQrFile(null);
         }
         catch { alert('Failed to update'); }
+        finally { setIsProcessingSettings(false); }
     };
 
     const handleQrUpload = (e) => {
@@ -515,13 +548,15 @@ const AdminDashboard = () => {
                                                     <div className="flex items-center justify-end gap-2">
                                                         <button
                                                             onClick={() => handleRechargeAction(r._id, 'approved')}
-                                                            className="flex items-center gap-1.5 px-4 py-2 bg-green-500 text-white rounded-xl text-sm font-bold hover:bg-green-600 transition-all shadow-sm"
+                                                            disabled={processingActions[r._id]}
+                                                            className={`flex items-center gap-1.5 px-4 py-2 bg-green-500 text-white rounded-xl text-sm font-bold hover:bg-green-600 transition-all shadow-sm ${processingActions[r._id] ? 'opacity-50 cursor-not-allowed' : ''}`}
                                                         >
-                                                            <Check size={14} /> Approve
+                                                            {processingActions[r._id] ? <div className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : <Check size={14} />} Approve
                                                         </button>
                                                         <button
                                                             onClick={() => handleRechargeAction(r._id, 'rejected')}
-                                                            className="flex items-center gap-1.5 px-3 py-2 bg-red-50 text-red-500 rounded-xl text-sm font-bold hover:bg-red-500 hover:text-white transition-all"
+                                                            disabled={processingActions[r._id]}
+                                                            className={`flex items-center gap-1.5 px-3 py-2 bg-red-50 text-red-500 rounded-xl text-sm font-bold hover:bg-red-500 hover:text-white transition-all ${processingActions[r._id] ? 'opacity-50 cursor-not-allowed' : ''}`}
                                                         >
                                                             <X size={14} /> Reject
                                                         </button>
@@ -644,8 +679,12 @@ const AdminDashboard = () => {
                                         </select>
                                     </div>
                                     <div className="flex flex-col justify-end">
-                                        <button type="submit" className="h-11 bg-blue-600 text-white rounded-xl text-sm font-bold flex items-center justify-center gap-2 hover:bg-blue-700 transition-all shadow-md shadow-blue-200">
-                                            <Plus size={15} /> Add
+                                        <button 
+                                            type="submit" 
+                                            disabled={isProcessingPlan}
+                                            className={`h-11 rounded-xl text-sm font-bold flex items-center justify-center gap-2 transition-all shadow-md ${isProcessingPlan ? 'bg-slate-100 text-slate-400 cursor-not-allowed' : 'bg-blue-600 text-white hover:bg-blue-700 shadow-blue-200'}`}
+                                        >
+                                            {isProcessingPlan ? <div className="w-4 h-4 border-2 border-slate-300 border-t-slate-500 rounded-full animate-spin" /> : <Plus size={15} />} Add
                                         </button>
                                     </div>
                                 </form>
@@ -688,7 +727,7 @@ const AdminDashboard = () => {
                                                             </select>
                                                         </div>
                                                         <div className="flex gap-2">
-                                                            <button onClick={() => handleUpdatePlan(plan._id)} className="flex-1 h-10 bg-green-500 text-white rounded-xl text-sm font-bold flex items-center justify-center hover:bg-green-600"><Check size={14} /></button>
+                                                            <button onClick={() => handleUpdatePlan(plan._id)} disabled={isProcessingPlan} className="flex-1 h-10 bg-green-500 text-white rounded-xl text-sm font-bold flex items-center justify-center hover:bg-green-600">{isProcessingPlan ? <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : <Check size={14} />}</button>
                                                             <button onClick={() => setEditingPlan(null)} className="h-10 w-10 bg-slate-100 text-slate-400 rounded-xl flex items-center justify-center hover:bg-slate-200"><X size={14} /></button>
                                                         </div>
                                                     </div>
@@ -777,7 +816,8 @@ const AdminDashboard = () => {
 
                                 <button
                                     type="submit"
-                                    className="w-full h-13 bg-blue-600 text-white rounded-xl text-sm font-bold flex items-center justify-center gap-2 hover:bg-blue-700 transition-all shadow-lg shadow-blue-200"
+                                    disabled={isProcessingSettings}
+                                    className={`w-full h-13 rounded-xl text-sm font-bold flex items-center justify-center gap-2 transition-all shadow-lg ${isProcessingSettings ? 'bg-slate-100 text-slate-400 cursor-not-allowed' : 'bg-blue-600 text-white hover:bg-blue-700 shadow-blue-200'}`}
                                 >
                                     <ShieldCheck size={16} /> Save Settings
                                 </button>
