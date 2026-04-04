@@ -20,7 +20,8 @@ const Wallet = () => {
     const [submitted, setSubmitted] = useState(false);
 
     const handleWithdraw = async (e) => {
-        e.preventDefault();
+        if (e && e.preventDefault) e.preventDefault();
+        if (loading) return;
         setLoading(true);
         try {
             const payload = { amount: Number(amount), method };

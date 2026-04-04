@@ -48,6 +48,7 @@ const Home = () => {
     }, []);
 
     const handleInstall = async () => {
+        if (installing) return;
         if (!deferredPrompt.current) return;
         setInstalling(true);
         deferredPrompt.current.prompt();
@@ -88,7 +89,8 @@ const Home = () => {
     };
 
     const handleRecharge = async (e) => {
-        e.preventDefault();
+        if (e && e.preventDefault) e.preventDefault();
+        if (isSubmitting) return;
         if (!screenshotFile) { setMsg('Please upload payment screenshot'); setTimeout(() => setMsg(''), 2000); return; }
         setIsSubmitting(true);
         try {

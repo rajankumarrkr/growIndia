@@ -55,6 +55,7 @@ const Plan = () => {
     };
 
     const handleBuy = async (planId) => {
+        if (buying) return;
         setBuying(planId);
         try {
             const res = await api.post('/invest/purchase', { planId });
