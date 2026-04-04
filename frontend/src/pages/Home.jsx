@@ -528,12 +528,47 @@ const Home = () => {
                                 </div>
 
                                 <div style={{ marginBottom: '24px' }}>
-                                    <p style={{ fontSize: '9px', fontWeight: 700, color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '6px' }}>OFFICIAL UPI ID</p>
-                                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                                        <p style={{ fontSize: '18px', fontWeight: 700, letterSpacing: '0.5px', fontFamily: 'monospace' }}>{depositInfo.upiId}</p>
+                                    <p style={{ fontSize: '10px', fontWeight: 800, color: 'rgba(255,255,255,0.45)', textTransform: 'uppercase', letterSpacing: '0.12em', marginBottom: '8px' }}>Official UPI ID</p>
+                                    <div style={{ 
+                                        display: 'flex', 
+                                        alignItems: 'center', 
+                                        justifyContent: 'space-between',
+                                        background: 'rgba(255,255,255,0.06)',
+                                        border: '1px solid rgba(255,255,255,0.1)',
+                                        borderRadius: '14px',
+                                        padding: '10px 14px',
+                                        gap: '12px',
+                                        flexWrap: 'wrap'
+                                    }}>
+                                        <p style={{ 
+                                            fontSize: '15px', 
+                                            fontWeight: 700, 
+                                            letterSpacing: '0.5px', 
+                                            fontFamily: 'monospace',
+                                            color: '#f8fafc',
+                                            margin: 0,
+                                            flex: 1,
+                                            minWidth: '140px',
+                                            wordBreak: 'break-all'
+                                        }}>{depositInfo.upiId}</p>
                                         <button
                                             onClick={handleCopyUpi}
-                                            style={{ background: 'rgba(255,255,255,0.1)', border: 'none', borderRadius: '8px', padding: '6px 12px', color: 'white', fontSize: '10px', fontWeight: 800, cursor: 'pointer' }}
+                                            style={{ 
+                                                background: 'linear-gradient(135deg, #3b82f6, #2563eb)', 
+                                                border: 'none', 
+                                                borderRadius: '10px', 
+                                                padding: '8px 16px', 
+                                                color: 'white', 
+                                                fontSize: '11px', 
+                                                fontWeight: 900, 
+                                                cursor: 'pointer',
+                                                textTransform: 'uppercase',
+                                                letterSpacing: '0.05em',
+                                                boxShadow: '0 4px 12px rgba(37,99,235,0.3)',
+                                                transition: 'transform 0.1s'
+                                            }}
+                                            onTouchStart={e => e.currentTarget.style.transform = 'scale(0.95)'}
+                                            onTouchEnd={e => e.currentTarget.style.transform = 'scale(1)'}
                                         >
                                             COPY
                                         </button>
