@@ -46,6 +46,21 @@ router.get('/users', auth, admin, async (req, res) => {
     }
 });
 
+// Toggle user status
+router.patch('/user/:id/status', auth, admin, async (req, res) => {
+    try {
+        const { status } = req.body;
+        if (!['active', 'blocked'].includes(status)) {
+            return res.status(400).json({ message: 'Invalid status' });
+        }
+        
+        await User.findByIdAndUpdate(req.params.id, { status });
+        res.json({ message: `User status updated to ${status}` });
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+});
+
 // Admin Settings (UPI & QR)
 router.get('/settings', auth, admin, async (req, res) => {
     try {

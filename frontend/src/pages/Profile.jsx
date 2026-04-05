@@ -38,7 +38,7 @@ const Profile = () => {
         e.preventDefault();
         setPasswordError('');
         setPasswordSuccess('');
-        
+
         if (passwordData.newPassword !== passwordData.confirmPassword) {
             setPasswordError('New passwords do not match');
             return;
@@ -75,7 +75,7 @@ const Profile = () => {
             title: 'Ecosystem',
             items: [
                 { name: 'Affiliate Hub', icon: <Zap className="text-amber-500" />, path: '/team' },
-                { name: 'Support Proxy', icon: <Headphones className="text-slate-400" />, path: 'https://t.me/growindia', external: true },
+                { name: 'Support Proxy', icon: <Headphones className="text-slate-400" />, path: 'https://t.me/Growindia8', external: true },
             ]
         }
     ];
@@ -108,7 +108,7 @@ const Profile = () => {
                 <div className="mx-4 fintech-card bg-gradient-to-br from-royal-blue to-primary-indigo !p-8 relative overflow-hidden group border-none !rounded-[2.5rem] shadow-primary">
                     <div className="absolute top-0 right-0 w-48 h-48 bg-white/20 rounded-full blur-[3rem] -translate-y-1/2 translate-x-1/2 transition-all duration-700 group-hover:bg-white/30 group-hover:scale-110" />
                     <div className="absolute bottom-0 left-0 w-32 h-32 bg-blue-300/20 rounded-full blur-[2.5rem] translate-y-1/2 -translate-x-1/2" />
-                    
+
                     <div className="relative z-10 flex flex-col gap-8">
                         <div className="px-2">
                             <p className="text-[9px] font-bold text-white/70 uppercase tracking-[0.3em] mb-2 flex items-center gap-2">
@@ -196,11 +196,11 @@ const Profile = () => {
             {/* Bank Repository Modal */}
             <div className={`fixed inset-0 z-[200] flex items-end justify-center transition-all duration-500 ${showBankModal ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}>
                 {/* Backdrop overlay */}
-                <div 
+                <div
                     className={`absolute inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity duration-500 ${showBankModal ? 'opacity-100' : 'opacity-0'}`}
                     onClick={() => setShowBankModal(false)}
                 />
-                
+
                 {/* Modal Content */}
                 <div className={`relative w-full max-w-xl bg-white rounded-t-[2.5rem] p-8 pb-12 shadow-2xl transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${showBankModal ? 'translate-y-0' : 'translate-y-full'}`}>
                     <div className="w-12 h-1.5 bg-slate-200 rounded-full mx-auto mb-8" />
@@ -260,11 +260,11 @@ const Profile = () => {
             {/* Security Protocol Modal */}
             <div className={`fixed inset-0 z-[200] flex items-end justify-center transition-all duration-500 ${showPasswordModal ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}>
                 {/* Backdrop overlay */}
-                <div 
+                <div
                     className={`absolute inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity duration-500 ${showPasswordModal ? 'opacity-100' : 'opacity-0'}`}
                     onClick={() => setShowPasswordModal(false)}
                 />
-                
+
                 {/* Modal Content */}
                 <div className={`relative w-full max-w-xl bg-white rounded-t-[2.5rem] p-8 pb-12 shadow-2xl transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${showPasswordModal ? 'translate-y-0' : 'translate-y-full'}`}>
                     <div className="w-12 h-1.5 bg-slate-200 rounded-full mx-auto mb-8" />

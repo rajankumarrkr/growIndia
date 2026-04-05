@@ -255,6 +255,19 @@ const AdminDashboard = () => {
         }
     };
 
+    const handleUserStatus = async (id, currentStatus) => {
+        const newStatus = currentStatus === 'active' ? 'blocked' : 'active';
+        const confirmMsg = newStatus === 'blocked' ? 'Are you sure you want to block this user?' : 'Are you sure you want to unblock this user?';
+        if (!window.confirm(confirmMsg)) return;
+
+        try {
+            await api.patch(`/admin/user/${id}/status`, { status: newStatus });
+            setUsers(users.map(u => u._id === id ? { ...u, status: newStatus } : u));
+        } catch (err) {
+            alert(err.response?.data?.message || 'Failed to update status');
+        }
+    };
+
     /* ── tabs config ── */
     const tabs = [
         { id: 'overview', label: 'Overview', icon: BarChart3 },
@@ -455,6 +468,7 @@ const AdminDashboard = () => {
                                             <th className="py-3 px-5">Wallet Balance</th>
                                             <th className="py-3 px-5">Role</th>
                                             <th className="py-3 px-5">Status</th>
+                                            <th className="py-3 px-5 text-right">Action</th>
                                         </tr>
                                     </thead>
                                     <tbody className="divide-y divide-slate-50">
@@ -482,6 +496,20 @@ const AdminDashboard = () => {
                                                         <div className={`w-2 h-2 rounded-full ${u.status === 'active' ? 'bg-green-400 animate-pulse' : 'bg-red-400'}`} />
                                                         <Badge color={u.status === 'active' ? 'green' : 'red'} label={u.status === 'active' ? 'Active' : 'Blocked'} />
                                                     </div>
+                                                </td>
+                                                <td className="py-4 px-5 text-right">
+                                                    {u.role !== 'admin' && (
+                                                        <button
+                                                            onClick={() => handleUserStatus(u._id, u.status)}
+                                                            className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all shadow-sm ${
+                                                                u.status === 'active' 
+                                                                ? 'bg-red-50 text-red-500 hover:bg-red-500 hover:text-white' 
+                                                                : 'bg-green-50 text-green-600 hover:bg-green-600 hover:text-white'
+                                                            }`}
+                                                        >
+                                                            {u.status === 'active' ? 'Block' : 'Unblock'}
+                                                        </button>
+                                                    )}
                                                 </td>
                                             </tr>
                                         ))}
