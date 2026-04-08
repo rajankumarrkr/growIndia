@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Layout from '../components/Layout';
 import api from '../api/axios';
 import { AuthContext } from '../context/AuthContext';
@@ -42,6 +43,7 @@ const Plan = () => {
     const [buying, setBuying] = useState(null);
     const [activeTab, setActiveTab] = useState('Standard');
     const { user, setUser } = useContext(AuthContext);
+    const navigate = useNavigate();
 
     useEffect(() => { fetchPlans(); }, []);
 
@@ -72,9 +74,16 @@ const Plan = () => {
                 api.get('/user/profile').then(profile => setUser(profile.data)).catch(console.error);
             }
         } catch (err) {
-            setMsg({ text: err.response?.data?.message || 'Activation Failed', type: 'error' });
+            const errorMsg = err.response?.data?.message || 'Activation Failed';
+            setMsg({ text: errorMsg, type: 'error' });
             setBuying(null);
-            setTimeout(() => setMsg({ text: '', type: '' }), 3500);
+            
+            // If insufficient balance, redirect to deposit after a short delay
+            if (errorMsg.toLowerCase().includes('insufficient')) {
+                setTimeout(() => navigate('/deposit'), 1500);
+            } else {
+                setTimeout(() => setMsg({ text: '', type: '' }), 3500);
+            }
         }
     };
 

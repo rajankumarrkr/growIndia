@@ -12,6 +12,7 @@ const AdminDashboard = lazy(() => import('./pages/AdminDashboard'));
 const AdminLogin = lazy(() => import('./pages/AdminLogin'));
 const Investments = lazy(() => import('./pages/Investments'));
 const Wallet = lazy(() => import('./pages/Wallet'));
+const Deposit = lazy(() => import('./pages/Deposit'));
 const History = lazy(() => import('./pages/History'));
 import InstallBanner from './components/InstallBanner';
 
@@ -80,6 +81,7 @@ function App() {
                     <Route path="/plan" element={<PrivateRoute><Suspense fallback={<SyncScreen />}><Plan /></Suspense></PrivateRoute>} />
                     <Route path="/investments" element={<PrivateRoute><Suspense fallback={<SyncScreen />}><Investments /></Suspense></PrivateRoute>} />
                     <Route path="/wallet" element={<PrivateRoute><Suspense fallback={<SyncScreen />}><Wallet /></Suspense></PrivateRoute>} />
+                    <Route path="/deposit" element={<PrivateRoute><Suspense fallback={<SyncScreen />}><Deposit /></Suspense></PrivateRoute>} />
                     <Route path="/history" element={<PrivateRoute><Suspense fallback={<SyncScreen />}><History /></Suspense></PrivateRoute>} />
                     <Route path="/team" element={<PrivateRoute><Suspense fallback={<SyncScreen />}><Team /></Suspense></PrivateRoute>} />
                     <Route path="/profile" element={<PrivateRoute><Suspense fallback={<SyncScreen />}><Profile /></Suspense></PrivateRoute>} />

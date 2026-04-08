@@ -13,13 +13,7 @@ import { useNavigate } from 'react-router-dom';
 const Home = () => {
     const { user, setUser } = useContext(AuthContext);
     const navigate = useNavigate();
-    const [showRecharge, setShowRecharge] = useState(false);
-    const [amount, setAmount] = useState('');
-    const [utr, setUtr] = useState('');
-    const [screenshot, setScreenshot] = useState('');
-    const [screenshotFile, setScreenshotFile] = useState(null);
     const [msg, setMsg] = useState('');
-    const [depositInfo, setDepositInfo] = useState({ upiId: 'Loading...', qrCode: '' });
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     // PWA Install Banner
@@ -66,50 +60,6 @@ const Home = () => {
         setShowInstallBanner(false);
     };
 
-    useEffect(() => {
-        if (showRecharge) {
-            api.get('/wallet/deposit-info').then(res => setDepositInfo(res.data)).catch(() => { });
-        }
-    }, [showRecharge]);
-
-    const handleScreenshotUpload = (e) => {
-        const file = e.target.files[0];
-        if (file) {
-            setScreenshotFile(file);
-            const reader = new FileReader();
-            reader.onloadend = () => setScreenshot(reader.result);
-            reader.readAsDataURL(file);
-        }
-    };
-
-    const handleCopyUpi = () => {
-        navigator.clipboard.writeText(depositInfo.upiId);
-        setMsg('UPI ID Copied!');
-        setTimeout(() => setMsg(''), 2000);
-    };
-
-    const handleRecharge = async (e) => {
-        if (e && e.preventDefault) e.preventDefault();
-        if (isSubmitting) return;
-        if (!screenshotFile) { setMsg('Please upload payment screenshot'); setTimeout(() => setMsg(''), 2000); return; }
-        setIsSubmitting(true);
-        try {
-            const formData = new FormData();
-            formData.append('amount', amount);
-            formData.append('utr', utr);
-            formData.append('screenshot', screenshotFile);
-
-            await api.post('/wallet/recharge', formData, {
-                headers: { 'Content-Type': 'multipart/form-data' }
-            });
-            setMsg('Deposit Request Submitted!');
-            setTimeout(() => { setShowRecharge(false); setMsg(''); setAmount(''); setUtr(''); setScreenshot(''); setScreenshotFile(null); setIsSubmitting(false); }, 2500);
-        } catch (err) {
-            setMsg(err.response?.data?.message || 'Submission Failed');
-            setIsSubmitting(false);
-        }
-    };
-
     const getTimeGreeting = () => {
         const h = new Date().getHours();
         if (h < 12) return 'Good Morning';
@@ -118,7 +68,7 @@ const Home = () => {
     };
 
     const quickActions = React.useMemo(() => [
-        { label: 'Deposit', icon: <ArrowDownRight size={22} />, color: '#2563eb', bg: '#eff6ff', onClick: () => setShowRecharge(true) },
+        { label: 'Deposit', icon: <ArrowDownRight size={22} />, color: '#2563eb', bg: '#eff6ff', onClick: () => navigate('/deposit') },
         { label: 'Withdraw', icon: <ArrowUpRight size={22} />, color: '#7c3aed', bg: '#f5f3ff', onClick: () => navigate('/wallet') },
         { label: 'Invest', icon: <Target size={22} />, color: '#059669', bg: '#f0fdf4', onClick: () => navigate('/plan') },
         { label: 'History', icon: <History size={22} />, color: '#d97706', bg: '#fffbeb', onClick: () => navigate('/history') },
@@ -479,231 +429,7 @@ const Home = () => {
                 .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
             `}</style>
 
-            {/* ... keeping the Deposit Modal logic same as before ... */}
-            {showRecharge && (
-                <div style={{
-                    position: 'fixed', inset: 0, background: 'rgba(15,23,42,0.4)',
-                    backdropFilter: 'blur(12px)', zIndex: 200,
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    padding: '20px'
-                }}>
-                    <div style={{
-                        background: 'white', width: '100%', maxWidth: '440px',
-                        borderRadius: '32px', padding: '32px',
-                        boxShadow: '0 30px 60px -12px rgba(15,23,42,0.3)',
-                        maxHeight: '90vh', overflowY: 'auto',
-                        position: 'relative'
-                    }}>
-                        <button
-                            onClick={() => setShowRecharge(false)}
-                            style={{
-                                position: 'absolute', top: '24px', right: '24px',
-                                width: '36px', height: '36px', borderRadius: '50%',
-                                background: '#f8fafc', border: 'none', cursor: 'pointer',
-                                display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#64748b',
-                                transition: 'all 0.2s'
-                            }}
-                        >
-                            <X size={18} />
-                        </button>
-
-                        <div style={{ marginBottom: '32px' }}>
-                            <h2 style={{ fontSize: '24px', fontWeight: 900, color: '#0f172a', letterSpacing: '-0.5px' }}>Deposit</h2>
-                            <p style={{ fontSize: '11px', fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.15em', marginTop: '6px' }}>Secure Payment Gateway</p>
-                        </div>
-
-                        {/* Payment Card */}
-                        <div style={{
-                            background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)',
-                            borderRadius: '24px', padding: '24px', marginBottom: '28px',
-                            color: 'white', position: 'relative', overflow: 'hidden'
-                        }}>
-                            {/* Decorative elements */}
-                            <div style={{ position: 'absolute', top: '-10px', right: '-10px', width: '100px', height: '100px', background: 'rgba(59,130,246,0.1)', borderRadius: '50%', blur: '40px' }} />
-
-                            <div style={{ position: 'relative', zIndex: 1 }}>
-                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '24px' }}>
-                                    <div style={{ width: '44px', height: '32px', background: 'rgba(255,255,255,0.1)', borderRadius: '6px', border: '1px solid rgba(255,255,255,0.2)' }} />
-                                    <span style={{ fontSize: '12px', fontWeight: 800, color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase' }}>Grow India Pay</span>
-                                </div>
-
-                                <div style={{ marginBottom: '24px' }}>
-                                    <p style={{ fontSize: '10px', fontWeight: 800, color: 'rgba(255,255,255,0.45)', textTransform: 'uppercase', letterSpacing: '0.12em', marginBottom: '8px' }}>Official UPI ID</p>
-                                    <div style={{ 
-                                        display: 'flex', 
-                                        alignItems: 'center', 
-                                        justifyContent: 'space-between',
-                                        background: 'rgba(255,255,255,0.06)',
-                                        border: '1px solid rgba(255,255,255,0.1)',
-                                        borderRadius: '14px',
-                                        padding: '10px 14px',
-                                        gap: '12px',
-                                        flexWrap: 'wrap'
-                                    }}>
-                                        <p style={{ 
-                                            fontSize: '15px', 
-                                            fontWeight: 700, 
-                                            letterSpacing: '0.5px', 
-                                            fontFamily: 'monospace',
-                                            color: '#f8fafc',
-                                            margin: 0,
-                                            flex: 1,
-                                            minWidth: '140px',
-                                            wordBreak: 'break-all'
-                                        }}>{depositInfo.upiId}</p>
-                                        <button
-                                            onClick={handleCopyUpi}
-                                            style={{ 
-                                                background: 'linear-gradient(135deg, #3b82f6, #2563eb)', 
-                                                border: 'none', 
-                                                borderRadius: '10px', 
-                                                padding: '8px 16px', 
-                                                color: 'white', 
-                                                fontSize: '11px', 
-                                                fontWeight: 900, 
-                                                cursor: 'pointer',
-                                                textTransform: 'uppercase',
-                                                letterSpacing: '0.05em',
-                                                boxShadow: '0 4px 12px rgba(37,99,235,0.3)',
-                                                transition: 'transform 0.1s'
-                                            }}
-                                            onTouchStart={e => e.currentTarget.style.transform = 'scale(0.95)'}
-                                            onTouchEnd={e => e.currentTarget.style.transform = 'scale(1)'}
-                                        >
-                                            COPY
-                                        </button>
-                                    </div>
-                                </div>
-
-                                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '10px 0' }}>
-                                    <div style={{ 
-                                        background: 'white', 
-                                        padding: '12px', 
-                                        borderRadius: '20px', 
-                                        width: '180px', 
-                                        height: '180px',
-                                        boxShadow: '0 12px 40px rgba(0,0,0,0.4)',
-                                        border: '4px solid rgba(255,255,255,0.1)'
-                                    }}>
-                                        {depositInfo.qrCode ? (
-                                            <img src={depositInfo.qrCode} alt="QR" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
-                                        ) : (
-                                            <div style={{ width: '100%', height: '100%', background: '#f1f5f9', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                                                <Zap size={40} color="#cbd5e1" />
-                                            </div>
-                                        )}
-                                    </div>
-                                    <div style={{ marginTop: '20px', textAlign: 'center' }}>
-                                        <p style={{ fontSize: '10px', fontWeight: 800, color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase', letterSpacing: '0.15em', marginBottom: '4px' }}>Scan with PhonePe, GPay, Paytm</p>
-                                        <div style={{ display: 'flex', gap: '8px', justifyContent: 'center', opacity: 0.6 }}>
-                                            <div style={{ width: '4px', height: '4px', borderRadius: '50%', background: '#22c55e' }} />
-                                            <div style={{ width: '4px', height: '4px', borderRadius: '50%', background: '#3b82f6' }} />
-                                            <div style={{ width: '4px', height: '4px', borderRadius: '50%', background: '#eab308' }} />
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}>
-                            <div className="form-group">
-                                <label style={{ fontSize: '11px', fontWeight: 800, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.1em', display: 'block', marginBottom: '8px', marginLeft: '4px' }}>Amount to Deposit</label>
-                                <div style={{ position: 'relative' }}>
-                                    <span style={{ position: 'absolute', left: '20px', top: '50%', transform: 'translateY(-50%)', fontSize: '20px', fontWeight: 900, color: '#94a3b8' }}>₹</span>
-                                    <input
-                                        type="number" placeholder="0.00"
-                                        value={amount} onChange={e => setAmount(e.target.value)}
-                                        style={{
-                                            width: '100%', height: '64px', background: '#f8fafc',
-                                            border: '2px solid #f1f5f9', borderRadius: '18px',
-                                            padding: '0 20px 0 45px', fontSize: '24px', fontWeight: 900,
-                                            color: '#0f172a', outline: 'none', boxSizing: 'border-box',
-                                            transition: 'all 0.2s'
-                                        }}
-                                    />
-                                </div>
-                            </div>
-
-                            <div className="form-group">
-                                <label style={{ fontSize: '11px', fontWeight: 800, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.1em', display: 'block', marginBottom: '8px', marginLeft: '4px' }}>Transaction ID (UTR)</label>
-                                <input
-                                    type="text" placeholder="Enter 12-digit UTR number"
-                                    value={utr} onChange={e => setUtr(e.target.value)}
-                                    style={{
-                                        width: '100%', height: '56px', background: '#f8fafc',
-                                        border: '2px solid #f1f5f9', borderRadius: '18px',
-                                        padding: '0 20px', fontSize: '15px', fontWeight: 700,
-                                        color: '#0f172a', outline: 'none', boxSizing: 'border-box',
-                                    }}
-                                />
-                            </div>
-
-                            <div className="form-group">
-                                <label style={{ fontSize: '11px', fontWeight: 800, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.1em', display: 'block', marginBottom: '8px', marginLeft: '4px' }}>Proof of Payment</label>
-                                <label style={{
-                                    display: 'flex', alignItems: 'center', gap: '16px',
-                                    padding: '16px 20px', background: '#f8fafc',
-                                    border: '2px dashed #e2e8f0', borderRadius: '18px',
-                                    cursor: 'pointer', transition: 'all 0.2s'
-                                }}>
-                                    <input type="file" accept="image/*" onChange={handleScreenshotUpload} style={{ display: 'none' }} />
-                                    <div style={{
-                                        width: '44px', height: '44px', borderRadius: '14px',
-                                        background: screenshot ? '#f0fdf4' : 'white',
-                                        color: screenshot ? '#22c55e' : '#94a3b8',
-                                        display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                        boxShadow: '0 4px 12px rgba(0,0,0,0.03)'
-                                    }}>
-                                        {screenshot ? <CheckCircle size={22} /> : <ImageIcon size={22} />}
-                                    </div>
-                                    <div style={{ flex: 1 }}>
-                                        <p style={{ fontSize: '13px', fontWeight: 800, color: screenshot ? '#15803d' : '#475569' }}>
-                                            {screenshot ? 'Screenshot Attached ✓' : 'Upload Receipt'}
-                                        </p>
-                                        <p style={{ fontSize: '10px', fontWeight: 600, color: '#94a3b8' }}>PNG, JPG or JPEG allowed</p>
-                                    </div>
-                                </label>
-                            </div>
-
-                            {msg && (
-                                <div style={{
-                                    padding: '14px', borderRadius: '16px', fontSize: '11px',
-                                    fontWeight: 800, textAlign: 'center', textTransform: 'uppercase', letterSpacing: '0.08em',
-                                    background: msg.includes('Failed') || msg.includes('Please') || msg.includes('Minimum') ? '#fef2f2' : '#f0fdf4',
-                                    color: msg.includes('Failed') || msg.includes('Please') || msg.includes('Minimum') ? '#dc2626' : '#15803d',
-                                    border: `1px solid ${msg.includes('Failed') || msg.includes('Please') || msg.includes('Minimum') ? '#fecaca' : '#bbf7d0'}`,
-                                    animation: 'slideUp 0.3s ease-out'
-                                }}>
-                                    {msg}
-                                </div>
-                            )}
-
-                            <button type="button" onClick={handleRecharge} disabled={isSubmitting} style={{
-                                width: '100%', height: '60px',
-                                background: isSubmitting ? '#94a3b8' : 'linear-gradient(135deg, #2563eb, #1d4ed8)',
-                                border: 'none', borderRadius: '20px', color: 'white', fontWeight: 900,
-                                fontSize: '14px', letterSpacing: '0.12em', textTransform: 'uppercase',
-                                cursor: isSubmitting ? 'not-allowed' : 'pointer',
-                                boxShadow: isSubmitting ? 'none' : '0 12px 24px rgba(37,99,235,0.3)',
-                                marginTop: '10px',
-                                transition: 'all 0.2s ease',
-                                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px',
-                                opacity: isSubmitting ? 0.8 : 1
-                            }}>
-                                {isSubmitting ? (
-                                    <>
-                                        <div style={{
-                                            width: '18px', height: '18px', border: '3px solid rgba(255,255,255,0.3)',
-                                            borderTopColor: 'white', borderRadius: '50%', animation: 'spin 1s linear infinite'
-                                        }} />
-                                        Processing...
-                                    </>
-                                ) : 'Confirm & Submit'}
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            )}
+            {/* Removed Deposit Modal - Logic moved to /deposit route */}
 
         </Layout>
     );
